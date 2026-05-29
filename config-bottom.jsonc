@@ -1,0 +1,27 @@
+{
+    "layer": "top",
+    "position": "bottom",
+    "height": 44,
+    "spacing": 14,
+    "margin-left": 20,
+    "margin-right": 20,
+    "margin-bottom": 20,
+
+    "modules-left": [],
+    "modules-center": ["custom/footer-text"],
+    "modules-right": ["clock", "battery"],
+
+    "custom/footer-text": {
+        "format": "<span color='#f5c2e7'>Focus mode • quick launch • workspace status</span>",
+        "tooltip": false
+    },
+
+    "clock": {
+        "format": "{:%I:%M %p}",
+        "tooltip-format": "<big>{:%A, %d %B}</big>"
+    },
+    "battery": {
+        "format": "<span color='#f5c2e7'>{icon}</span> {capacity}%",
+        "format-icons": ["\uf244", "\uf243", "\uf242", "\uf241", "\uf240"]
+    }
+}

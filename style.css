@@ -1,0 +1,132 @@
+* {
+    font-family: "JetBrainsMono Nerd Font", "Font Awesome 6 Free", sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: #e6e1ea;
+}
+
+window#waybar {
+    background: rgba(30,22,28,0.58);
+    border-radius: 14px;
+    border: 1px solid rgba(245,194,231,0.18);
+    padding: 0 20px;
+}
+
+.modules-left {
+    background: rgba(20,16,22,0.48);
+    border-radius: 12px;
+    padding: 6px 16px;
+    border: 1px solid rgba(245,194,231,0.12);
+}
+
+.modules-center {
+    background: transparent;
+    border-radius: 0;
+    padding: 0;
+    margin: 0;
+}
+
+.modules-right {
+    background: transparent;
+    border-radius: 12px;
+    padding: 6px 12px;
+    border: none;
+}
+
+#workspaces {
+    min-width: 220px;
+    margin-right: 16px;
+}
+
+#custom-spotify {
+    min-width: 220px;
+    margin-left: 10px;
+}
+
+#workspaces button {
+    padding: 6px 10px;
+    color: #d8cbe0;
+    background: transparent;
+    transition: all 0.12s ease;
+    border-radius: 10px;
+    margin: 2px 4px;
+    border: 1px solid transparent;
+}
+
+#workspaces button:hover {
+    background: rgba(245,194,231,0.08);
+}
+
+#workspaces button.active {
+    color: #1c1220;
+    background-color: #f5c2e7;
+    border-radius: 12px;
+    border: 1px solid rgba(245,194,231,0.6);
+}
+
+#cpu, #custom-audio-output, #custom-audio-input, #battery, #clock, #custom-power {
+    color: #cfc7d6;
+    padding: 4px 8px;
+    margin: 0 6px;
+    border-radius: 8px;
+}
+
+#network {
+    color: #ffd7fb;
+    background: transparent;
+    padding: 4px 8px;
+    margin: 0 6px;
+    border-radius: 8px;
+    border: none;
+}
+
+#tray {
+    padding: 0 6px;
+    margin: 0 6px;
+}
+
+#custom-power {
+    font-size: 16px;
+    padding-left: 8px;
+    padding-right: 10px;
+}
+
+image#album-art {
+    margin: 0 12px 0 12px; /* espaço interno no pill central */
+    border-radius: 14px;
+    border: 1px solid rgba(245,194,231,0.08);
+}
+
+#custom-spotify, #custom-spotify-prev, #custom-spotify-play, #custom-spotify-next, #cava {
+    color: #f5c2e7;
+    background: transparent;
+    padding: 0 6px;
+    margin: 0 2px;
+}
+
+#custom-spotify {
+    padding-right: 8px;
+}
+
+#custom-spotify-prev, #custom-spotify-play, #custom-spotify-next {
+    font-size: 16px;
+    padding: 6px;
+    color: #d7a9d9;
+    transition: all 0.14s ease;
+    border-radius: 8px;
+}
+
+#custom-spotify-prev:hover, #custom-spotify-play:hover, #custom-spotify-next:hover {
+    color: #fff0f8;
+    background: rgba(245,194,231,0.08);
+}
+
+#cava {
+    padding-left: 6px;
+    color: #f5c2e7;
+    font-family: "JetBrainsMono Nerd Font";
+    font-size: 11px; /* menor para equalizer menos imenso */
+    letter-spacing: 1px;
+}
+
+/* responsive tweaks removed: Waybar CSS doesn't support @media rules */

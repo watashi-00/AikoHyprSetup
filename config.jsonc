@@ -1,0 +1,117 @@
+{
+    "layer": "top",
+    "position": "bottom",
+    "height": 62,
+    "spacing": 12,
+    "margin-bottom": 20,
+    "margin-left": 18,
+    "margin-right": 18,
+
+    "modules-left": ["hyprland/workspaces", "image#album-art", "custom/spotify-prev", "custom/spotify-play", "custom/spotify-next", "custom/spotify", "cava"],
+    "modules-center": [],
+    "modules-right": ["cpu", "custom/audio-output", "custom/audio-input", "network", "battery", "clock", "tray", "custom/power"],
+
+    "hyprland/workspaces": {
+        "format": "{name}",
+        "on-click": "activate",
+        "persistent-workspaces": { "*": 5 },
+        "all-outputs": true
+    },
+
+    "cpu": {
+        "format": "<span color='#f5c2e7'>\uf11b</span>  {usage}%"
+    },
+
+    "custom/audio-output": {
+        "format": "<span color='#f5c2e7'>\uf028</span> {}",
+        "interval": 1,
+        "exec": "/home/watashi/.config/waybar/audio-output.sh",
+        "on-click": "pavucontrol"
+    },
+
+    "custom/audio-input": {
+        "format": "<span color='#f5c2e7'>\uf130</span> {}",
+        "interval": 1,
+        "exec": "/home/watashi/.config/waybar/audio-input.sh",
+        "on-click": "pavucontrol -t 4",
+        "tooltip": false
+    },
+
+    "network": {
+        "format-wifi": "<span color='#f5c2e7'>\uf1eb</span>  {essid}",
+        "format-ethernet": "<span color='#f5c2e7'>\uf796</span>  Conectado",
+        "format-disconnected": "<span color='#f5c2e7'>\u26a0</span>  Desconectado"
+    },
+
+    "battery": {
+        "format": "<span color='#f5c2e7'>{icon}</span>  {capacity}%",
+        "format-icons": ["\uf244", "\uf243", "\uf242", "\uf241", "\uf240"]
+    },
+
+    "clock": {
+        "format": "{:%I:%M %p}",
+        "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
+    },
+
+    "custom/power": {
+        "format": "<span color='#f5c2e7'>\uf011</span>",
+        "on-click": "hyprshutdown",
+        "tooltip": false
+    },
+
+    "tray": {
+        "spacing": 10
+    },
+
+    "image#album-art": {
+        "exec": "bash /home/watashi/.config/waybar/spotify-art.sh",
+        "size": 48,
+        "interval": 2,
+        "tooltip": false
+    },
+
+    "custom/spotify": {
+        "format": "{}",
+        "escape": true,
+        "interval": 2,
+        "exec": "playerctl metadata --format '{{artist}} - {{title}}' 2> /dev/null",
+        "on-click": "playerctl play-pause",
+        "max-length": 32
+    },
+
+    "custom/spotify-prev": {
+        "format": "<span color='#f5c2e7'>\uf048</span>",
+        "on-click": "playerctl previous",
+        "tooltip": false
+    },
+
+    "custom/spotify-play": {
+        "format": "{}",
+        "interval": 1,
+        "exec": "playerctl status 2> /dev/null | grep -q 'Playing' && echo '' || echo ''",
+        "on-click": "playerctl play-pause",
+        "tooltip": false
+    },
+
+    "custom/spotify-next": {
+        "format": "<span color='#f5c2e7'>\uf051</span>",
+        "on-click": "playerctl next",
+        "tooltip": false
+    },
+
+    "cava": {
+        "framerate": 30,
+        "autosens": 0,
+        "sensitivity": 1,
+        "bars": 8,
+        "lower_cutoff_freq": 50,
+        "higher_cutoff_freq": 10000,
+        "method": "pipewire",
+        "source": "auto",
+        "stereo": true,
+        "bar_delimiter": 1,
+        "noise_reduction": 0.77,
+        "input_delay": 2,
+        "format-icons" : [" ", "▁", "▂", "▃", "▄", "▅", "▆", "▇", "█"]
+    }
+}

@@ -1,0 +1,39 @@
+{
+    "layer": "top",
+    "position": "left",
+    "width": 72,
+    "spacing": 18,
+    "margin-top": 20,
+    "margin-bottom": 20,
+    "margin-left": 20,
+    "margin-right": 10,
+
+    "modules-left": ["custom/launcher-terminal", "custom/launcher-browser", "custom/launcher-files", "custom/launcher-code", "custom/launcher-settings", "custom/launcher-menu"],
+    "modules-center": [],
+    "modules-right": [],
+
+    "custom/launcher-terminal": {
+        "format": "<span color='#f5c2e7'></span>",
+        "on-click": "kitty"
+    },
+    "custom/launcher-browser": {
+        "format": "<span color='#f5c2e7'></span>",
+        "on-click": "firefox"
+    },
+    "custom/launcher-files": {
+        "format": "<span color='#f5c2e7'></span>",
+        "on-click": "thunar"
+    },
+    "custom/launcher-code": {
+        "format": "<span color='#f5c2e7'></span>",
+        "on-click": "code"
+    },
+    "custom/launcher-settings": {
+        "format": "<span color='#f5c2e7'></span>",
+        "on-click": "pavucontrol"
+    },
+    "custom/launcher-menu": {
+        "format": "<span color='#f5c2e7'></span>",
+        "on-click": "~/.config/hypr/launcher.sh"
+    }
+}
