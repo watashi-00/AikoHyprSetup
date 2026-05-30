@@ -1,25 +1,21 @@
 {
     "layer": "top",
-    "position": "bottom",
-    "height": 62,
-    "spacing": 12,
-    "margin-bottom": 20,
+    "position": "top",
+    "height": 66,
+    "spacing": 14,
+    "margin-top": 18,
     "margin-left": 18,
     "margin-right": 18,
 
-    "modules-left": ["hyprland/workspaces", "image#album-art", "custom/spotify-prev", "custom/spotify-play", "custom/spotify-next", "custom/spotify", "cava"],
-    "modules-center": [],
-    "modules-right": ["cpu", "custom/audio-output", "custom/audio-input", "network", "battery", "clock", "tray", "custom/power"],
+    "modules-left": ["hyprland/workspaces"],
+    "modules-center": ["image#album-art", "custom/spotify-prev", "custom/spotify-play", "custom/spotify-next", "custom/spotify"],
+    "modules-right": ["custom/audio-output", "custom/audio-input", "custom/bluetooth", "network", "battery", "clock", "tray", "custom/power"],
 
     "hyprland/workspaces": {
         "format": "{name}",
         "on-click": "activate",
         "persistent-workspaces": { "*": 5 },
         "all-outputs": true
-    },
-
-    "cpu": {
-        "format": "<span color='#f5c2e7'>\uf11b</span>  {usage}%"
     },
 
     "custom/audio-output": {
@@ -35,6 +31,12 @@
         "exec": "/home/watashi/.config/waybar/audio-input.sh",
         "on-click": "pavucontrol -t 4",
         "tooltip": false
+    },
+
+    "custom/bluetooth": {
+        "format": "<span color='#f5c2e7'>\uf294</span>",
+        "tooltip": false,
+        "on-click": "kitty -e bluetoothctl"
     },
 
     "network": {
@@ -65,7 +67,7 @@
 
     "image#album-art": {
         "exec": "bash /home/watashi/.config/waybar/spotify-art.sh",
-        "size": 48,
+        "size": 52,
         "interval": 2,
         "tooltip": false
     },
@@ -76,7 +78,7 @@
         "interval": 2,
         "exec": "playerctl metadata --format '{{artist}} - {{title}}' 2> /dev/null",
         "on-click": "playerctl play-pause",
-        "max-length": 32
+        "max-length": 40
     },
 
     "custom/spotify-prev": {

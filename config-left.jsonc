@@ -1,11 +1,11 @@
 {
     "layer": "top",
     "position": "left",
-    "width": 72,
-    "spacing": 18,
-    "margin-top": 20,
-    "margin-bottom": 20,
-    "margin-left": 20,
+    "width": 88,
+    "spacing": 20,
+    "margin-top": 18,
+    "margin-bottom": 18,
+    "margin-left": 18,
     "margin-right": 10,
 
     "modules-left": ["custom/launcher-terminal", "custom/launcher-browser", "custom/launcher-files", "custom/launcher-code", "custom/launcher-settings", "custom/launcher-menu"],
