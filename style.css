@@ -29,7 +29,7 @@ window#waybar.top .modules-right {
 
 window#waybar.top .modules-left {
     padding: 6px 18px;
-    min-width: 450px;
+    min-width: 900px;
 }
 
 window#waybar.top .modules-right {
