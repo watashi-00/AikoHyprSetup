@@ -2,37 +2,37 @@
     font-family: "JetBrainsMono Nerd Font", "Font Awesome 6 Free", sans-serif;
     font-size: 13px;
     font-weight: 600;
-    color: #f4e8f7;
+    color: #f5d7ea;
 }
 
 window#waybar {
-    background: rgba(47, 47, 63, 0.85);
-    border-radius: 18px;
-    border: 2px solid rgba(245, 185, 212, 0.18);
-    box-shadow: 0 20px 65px rgba(9, 5, 12, 0.34);
-    padding: 0 18px;
+    background: rgba(43, 40, 58, 0.72);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 210, 235, 0.12);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 0 30px rgba(0,0,0,0.25);
+    padding: 0 12px;
 }
 
 window#waybar.screenshot {
-    background: rgba(47, 47, 63, 0.95);
+    background: rgba(43, 40, 58, 0.95);
     border-radius: 20px;
-    border: 2px solid rgba(245, 185, 212, 0.3);
+    border: 1px solid rgba(255, 210, 235, 0.3);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     padding: 0 10px;
-    margin-top: 10px;
 }
 
 #custom-area, #custom-full, #custom-picker, #custom-edit, #custom-close {
-    color: #f5c2e7;
-    padding: 10px 20px;
-    font-size: 20px;
+    color: #f3c6e3;
+    padding: 8px 16px;
+    font-size: 18px;
     transition: all 0.2s ease;
 }
 
 #custom-area:hover, #custom-full:hover, #custom-picker:hover, #custom-edit:hover, #custom-close:hover {
-    background: rgba(245, 185, 212, 0.2);
-    color: #ffffff;
-    border-radius: 15px;
+    background: rgba(240, 183, 212, 0.2);
+    color: #ffd4ec;
+    border-radius: 14px;
 }
 
 #custom-close {
@@ -48,193 +48,162 @@ window#waybar.top {
 
 window#waybar.top .modules-left,
 window#waybar.top .modules-right {
-    background: rgba(47, 47, 63, 0.85);
-    border-radius: 22px;
-    border: 2px solid rgba(245, 185, 212, 0.18);
-    box-shadow: 0 20px 65px rgba(9, 5, 12, 0.34);
+    background: rgba(42, 39, 56, 0.72);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 210, 235, 0.12);
+    box-shadow: 0 0 30px rgba(0,0,0,0.25);
+    backdrop-filter: blur(12px);
 }
 
 window#waybar.top .modules-left {
-    padding: 6px 18px;
+    padding: 4px 14px;
     min-width: 900px;
     margin-left: 10px;
 }
 
 window#waybar.top .modules-right {
-    padding: 6px 18px;
+    padding: 4px 14px;
     margin-right: 10px;
 }
 
-window#waybar.top, window#waybar.bottom {
-    min-height: 66px;
+window#waybar.top {
+    min-height: 54px;
+}
+
+window#waybar.bottom {
+    min-height: 48px;
+    background: rgba(43, 40, 58, 0.78);
+    border-radius: 18px;
+    border: 1px solid rgba(255, 210, 235, 0.10);
 }
 
 window#waybar.left {
-    padding: 14px 10px;
-}
-
-.modules-left, .modules-center, .modules-right {
-}
-
-.modules-left {
-    padding: 10px 18px;
-}
-
-.modules-center {
-}
-
-.modules-right {
-    background: rgba(47, 47, 63, 0.4);
+    min-width: 76px;
+    background: rgba(40, 38, 54, 0.82);
     border-radius: 22px;
-    padding: 10px 18px;
+    border: 1px solid rgba(255, 205, 230, 0.10);
+    padding: 10px 6px;
 }
 
 #workspaces {
-    min-width: 260px;
-    margin-right: 12px;
+    min-width: 240px;
+    margin-right: 8px;
 }
 
 #workspaces button {
     padding: 0;
-    min-width: 44px;
-    min-height: 44px;
-    color: #e9dce7;
+    min-width: 38px;
+    min-height: 38px;
+    color: #f5d7ea;
     background: rgba(255, 255, 255, 0.04);
     transition: all 0.16s ease;
-    border-radius: 14px;
-    margin: 2px 4px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    margin: 2px 3px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 #workspaces button:hover {
-    background: rgba(245, 185, 212, 0.12);
-    border-color: rgba(245, 185, 212, 0.22);
+    background: rgba(240, 183, 212, 0.15);
+    border-color: rgba(240, 183, 212, 0.25);
+    color: #ffd4ec;
 }
 
 #workspaces button.active {
-    color: #1f1526;
-    background-color: rgba(245, 185, 212, 0.84);
-    border-color: rgba(245, 185, 212, 0.56);
+    color: #2b283a;
+    background-color: #f0b7d4;
+    border-color: #f6cce4;
 }
 
 #custom-spotify {
-    color: #f2cee8;
+    color: #f6cce4;
     padding: 0 5px;
 }
 
 #cava {
-    color: #f5c2e7;
-    margin-left: 10px;
-    padding: 0 5px;
+    color: #f0b7d4;
+    margin-left: 8px;
+    padding: 0 4px;
     font-size: 10px;
     letter-spacing: -2px;
 }
 
-
 #custom-spotify-prev, #custom-spotify-play, #custom-spotify-next,
 #custom-audio-output, #custom-audio-input, #bluetooth,
 #network, #battery, #clock, #custom-power {
-    color: #f5c2e7;
+    color: #f3c6e3;
     background: transparent;
-    padding: 8px 6px;
-    margin: 0 2px;
-    border-radius: 16px;
+    padding: 6px 5px;
+    margin: 0 1px;
+    border-radius: 14px;
     border: none;
     transition: all 0.16s ease;
-}
-
-#custom-spotify-prev, #custom-spotify-play, #custom-spotify-next {
-    font-size: 16px;
-    padding: 10px;
-    margin: 0 2px;
 }
 
 #custom-spotify-prev:hover, #custom-spotify-play:hover, #custom-spotify-next:hover,
 #custom-audio-output:hover, #custom-audio-input:hover, #bluetooth:hover,
 #network:hover, #battery:hover, #clock:hover, #custom-power:hover {
-    background: rgba(245, 185, 212, 0.18);
-    color: #ffffff;
-    border-color: rgba(245, 185, 212, 0.25);
+    background: rgba(240, 183, 212, 0.18);
+    color: #ffd4ec;
 }
 
 #custom-power {
-    font-size: 17px;
-    padding-left: 10px;
-    padding-right: 10px;
+    font-size: 16px;
+    padding-left: 8px;
+    padding-right: 8px;
 }
 
 image#album-art {
-    min-width: 52px;
-    min-height: 52px;
-    margin: 0 10px 0 120px;
-    border-radius: 16px;
-    border: 1px solid rgba(245, 185, 212, 0.14);
-    background: rgba(255, 255, 255, 0.04);
-}
-
-#custom-audio-output, #custom-audio-input {
-    min-width: 60px;
-}
-
-#network, #battery, #clock, #custom-power {
-    min-width: 48px;
+    min-width: 44px;
+    min-height: 44px;
+    margin: 0 8px 0 100px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 210, 235, 0.14);
 }
 
 #tray {
-    padding: 0 8px;
-    margin: 0 4px;
+    padding: 0 6px;
+    margin: 0 2px;
 }
 
 #custom-launcher-terminal, #custom-launcher-browser, #custom-launcher-files,
 #custom-launcher-code, #custom-launcher-settings, #custom-launcher-menu {
-    min-width: 58px;
-    min-height: 58px;
-    font-size: 24px;
-    border-radius: 18px;
+    min-width: 52px;
+    min-height: 52px;
+    font-size: 22px;
+    color: #f3c6e3;
+    border-radius: 16px;
     background: transparent;
     border: none;
     transition: all 0.18s ease;
+    margin: 4px 0;
 }
 
 #custom-launcher-terminal:hover, #custom-launcher-browser:hover, #custom-launcher-files:hover,
 #custom-launcher-code:hover, #custom-launcher-settings:hover, #custom-launcher-menu:hover {
-    background: rgba(245, 185, 212, 0.16);
-    color: #ffffff;
-}
-
-window#waybar.left {
-    min-width: 92px;
-}
-
-window#waybar.bottom {
-    background: rgba(47, 47, 63, 0.85);
-    border-radius: 18px;
-    padding: 0 18px;
-}
-
-#custom-footer-text {
-    color: #ddc2e8;
+    background: rgba(240, 183, 212, 0.16);
+    color: #ffd4ec;
 }
 
 #taskbar {
-    padding: 0 10px;
+    padding: 0 8px;
 }
 
 #taskbar button {
-    padding: 2px 8px;
-    margin: 0 4px;
-    border-radius: 12px;
+    padding: 2px 6px;
+    margin: 0 3px;
+    border-radius: 10px;
     transition: all 0.2s ease;
 }
 
 #taskbar button:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.08);
 }
 
 #taskbar button.active {
-    background: rgba(245, 185, 212, 0.2);
+    background: rgba(240, 183, 212, 0.25);
+    border-bottom: 2px solid #f0b7d4;
 }
 
 #taskbar button.minimized {
-    opacity: 0.5;
+    opacity: 0.45;
 }
