@@ -3,10 +3,9 @@
     "layer": "overlay",
     "position": "top",
     "height": 50,
-    "margin-top": 10,
-    "margin-left": 0,
-    "margin-right": 0,
-    "spacing": 15,
+    "width": 400,
+    "margin-top": 12,
+    "spacing": 10,
     "exclusive": false,
     "fixed-center": true,
 
