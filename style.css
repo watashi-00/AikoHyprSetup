@@ -13,18 +13,15 @@ window#waybar {
     padding: 0 18px;
 }
 
-window#waybar[position="top"], window#waybar[position="bottom"] {
+window#waybar.top, window#waybar.bottom {
     min-height: 66px;
 }
 
-window#waybar[position="left"] {
+window#waybar.left {
     padding: 14px 10px;
 }
 
 .modules-left, .modules-center, .modules-right {
-    display: flex;
-    align-items: center;
-    gap: 10px;
 }
 
 .modules-left {
@@ -82,11 +79,11 @@ window#waybar[position="left"] {
 #custom-audio-output, #custom-audio-input, #custom-bluetooth,
 #network, #battery, #clock, #custom-power {
     color: #f5c2e7;
-    background: rgba(255, 255, 255, 0.04);
+    background: transparent;
     padding: 8px 10px;
     margin: 0 4px;
     border-radius: 16px;
-    border: 1px solid rgba(245, 185, 212, 0.10);
+    border: none;
     transition: all 0.16s ease;
 }
 
@@ -111,8 +108,8 @@ window#waybar[position="left"] {
 }
 
 image#album-art {
-    width: 52px;
-    height: 52px;
+    min-width: 52px;
+    min-height: 52px;
     margin: 0 10px;
     border-radius: 16px;
     border: 1px solid rgba(245, 185, 212, 0.14);
@@ -125,7 +122,6 @@ image#album-art {
 
 #network, #battery, #clock, #custom-power, #custom-bluetooth {
     min-width: 56px;
-    text-align: center;
 }
 
 #tray {
@@ -135,14 +131,11 @@ image#album-art {
 
 #custom-launcher-terminal, #custom-launcher-browser, #custom-launcher-files,
 #custom-launcher-code, #custom-launcher-settings, #custom-launcher-menu {
-    width: 58px;
-    height: 58px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    min-width: 58px;
+    min-height: 58px;
     border-radius: 18px;
-    background: rgba(30, 19, 36, 0.82);
-    border: 1px solid rgba(245, 185, 212, 0.10);
+    background: transparent;
+    border: none;
     transition: all 0.18s ease;
 }
 
@@ -152,11 +145,11 @@ image#album-art {
     color: #ffffff;
 }
 
-window#waybar[position="left"] {
-    width: 92px;
+window#waybar.left {
+    min-width: 92px;
 }
 
-window#waybar[position="bottom"] {
+window#waybar.bottom {
     background: rgba(24, 14, 28, 0.90);
     border-radius: 18px;
     padding: 0 18px;
