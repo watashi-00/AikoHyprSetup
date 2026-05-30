@@ -3,15 +3,25 @@
     "layer": "overlay",
     "position": "top",
     "height": 50,
-    "width": 400,
     "margin-top": 12,
-    "spacing": 10,
+    "spacing": 0,
     "exclusive": false,
     "fixed-center": true,
 
     "modules-left": [],
-    "modules-center": ["custom/area", "custom/full", "custom/picker", "custom/edit", "custom/close"],
+    "modules-center": ["group/screenshot-tools"],
     "modules-right": [],
+
+    "group/screenshot-tools": {
+        "orientation": "horizontal",
+        "modules": [
+            "custom/area",
+            "custom/full",
+            "custom/picker",
+            "custom/edit",
+            "custom/close"
+        ]
+    },
 
     "custom/area": {
         "format": "",

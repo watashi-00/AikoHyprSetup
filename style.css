@@ -14,6 +14,13 @@ window#waybar {
 }
 
 window#waybar.screenshot {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+}
+
+#screenshot-tools {
     background: rgba(43, 40, 58, 0.95);
     border-radius: 20px;
     border: 1px solid rgba(255, 210, 235, 0.3);
