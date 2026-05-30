@@ -29,7 +29,7 @@
     "modules-right": ["custom/audio-output", "custom/audio-input", "bluetooth", "network", "battery", "clock", "custom/power"],
 
     "hyprland/workspaces": {
-        "format": "{icon}",
+        "format": "{icon}<sup>{count}</sup>",
         "on-click": "activate",
         "all-outputs": false,
         "persistent-workspaces": {
