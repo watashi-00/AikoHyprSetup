@@ -1,1 +1,59 @@
-/home/watashi/.config/hypr/wofi.css
+/* Wofi Pink Palette Theme */
+* {
+    font-family: "JetBrainsMono Nerd Font", "Font Awesome 6 Free", sans-serif;
+    font-size: 14px;
+}
+
+window {
+    background: rgba(32, 33, 41, 0.95);
+    border: 1px solid rgba(245, 185, 212, 0.25);
+    border-radius: 8px;
+    padding: 16px;
+}
+
+#input {
+    color: #e6e1ea;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(245, 185, 212, 0.2);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 12px;
+}
+
+#input:focus {
+    border-color: rgba(245, 185, 212, 0.65);
+}
+
+#inner-box,
+#outer-box {
+    margin: 4px;
+}
+
+#scroll {
+    margin-top: 4px;
+}
+
+#text {
+    margin: 5px;
+}
+
+entry {
+    color: #e6e1ea;
+    padding: 10px;
+    border-radius: 8px;
+    margin: 2px 0;
+}
+
+entry:selected {
+    background-color: rgba(99, 72, 91, 0.85);
+    color: #ffffff;
+    border: 1px solid rgba(245, 185, 212, 0.35);
+}
+
+#text:selected {
+    color: #ffffff;
+}
+
+label {
+    margin: 5px;
+}
