@@ -1,30 +1,45 @@
 #!/bin/bash
-ADDR=$1
-if [ -z "$ADDR" ]; then
-    ADDR=$(hyprctl activewindow -j | jq -r ".address")
-fi
+MODE=$1
+ADDR=$2
 
-# Get window info
-WINDOW_INFO=$(hyprctl clients -j | jq -r ".[] | select(.address == \"$ADDR\")")
-WORKSPACE=$(echo "$WINDOW_INFO" | jq -r ".workspace.name")
+if [[ "$MODE" == "minimize" ]]; then
+    if [ -z "$ADDR" ]; then
+        ADDR=$(hyprctl activewindow -j | jq -r ".address")
+    fi
+    if [[ "$ADDR" != "null" && -n "$ADDR" ]]; then
+        hyprctl dispatch movetoworkspacesilent "special:minimized,address:$ADDR"
+    fi
 
-if [[ "$WORKSPACE" == "special:minimized" ]]; then
-    # Moving back to the active workspace
-    CURRENT_WS=$(hyprctl monitors -j | jq -r '.[] | select(.focused == true) | .activeWorkspace.id')
-    hyprctl dispatch movetoworkspace "$CURRENT_WS,address:$ADDR"
+elif [[ "$MODE" == "restore" ]]; then
+    # Find the last window added to the special workspace
+    ADDR=$(hyprctl clients -j | jq -r '.[] | select(.workspace.name == "special:minimized") | .address' | tail -n 1)
     
-    # Give it a moment to settle
-    sleep 0.1
-    
-    # Force tiling mode by toggling floating off if it's currently on
-    IS_FLOATING=$(hyprctl clients -j | jq -r ".[] | select(.address == \"$ADDR\") | .floating")
-    if [[ "$IS_FLOATING" == "true" ]]; then
-        hyprctl dispatch togglefloating "address:$ADDR"
+    if [[ "$ADDR" != "null" && -n "$ADDR" ]]; then
+        CURRENT_WS=$(hyprctl monitors -j | jq -r '.[] | select(.focused == true) | .activeWorkspace.id')
+        hyprctl dispatch movetoworkspace "$CURRENT_WS,address:$ADDR"
+        
+        sleep 0.1
+        
+        # Force tiling mode
+        IS_FLOATING=$(hyprctl clients -j | jq -r ".[] | select(.address == \"$ADDR\") | .floating")
+        if [[ "$IS_FLOATING" == "true" ]]; then
+            hyprctl dispatch togglefloating "address:$ADDR"
+        fi
+        
+        hyprctl dispatch focuswindow "address:$ADDR"
+    fi
+
+else
+    # Toggle behavior for taskbar clicks (compatibility)
+    if [ -z "$ADDR" ]; then
+        ADDR=$(hyprctl activewindow -j | jq -r ".address")
     fi
     
-    # Focus the restored window
-    hyprctl dispatch focuswindow "address:$ADDR"
-else
-    # Minimize: move to the special workspace
-    hyprctl dispatch movetoworkspacesilent "special:minimized,address:$ADDR"
+    WORKSPACE=$(hyprctl clients -j | jq -r ".[] | select(.address == \"$ADDR\") | .workspace.name")
+    
+    if [[ "$WORKSPACE" == "special:minimized" ]]; then
+        $0 restore "$ADDR"
+    else
+        $0 minimize "$ADDR"
+    fi
 fi
