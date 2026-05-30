@@ -6,9 +6,9 @@
 }
 
 window#waybar {
-    background: #2F2F3F;
+    background: rgba(47, 47, 63, 0.85);
     border-radius: 18px;
-    border: 1px solid rgba(245, 185, 212, 0.18);
+    border: 2px solid rgba(245, 185, 212, 0.18);
     box-shadow: 0 20px 65px rgba(9, 5, 12, 0.34);
     padding: 0 18px;
 }
@@ -43,7 +43,9 @@ window#waybar.left {
 }
 
 #workspaces button {
-    padding: 8px 12px;
+    padding: 0;
+    min-width: 44px;
+    min-height: 44px;
     color: #e9dce7;
     background: rgba(255, 255, 255, 0.04);
     transition: all 0.16s ease;
@@ -135,6 +137,7 @@ image#album-art {
 #custom-launcher-code, #custom-launcher-settings, #custom-launcher-menu {
     min-width: 58px;
     min-height: 58px;
+    font-size: 24px;
     border-radius: 18px;
     background: transparent;
     border: none;
@@ -152,7 +155,7 @@ window#waybar.left {
 }
 
 window#waybar.bottom {
-    background: #2F2F3F;
+    background: rgba(47, 47, 63, 0.85);
     border-radius: 18px;
     padding: 0 18px;
 }
