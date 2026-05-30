@@ -1,9 +1,9 @@
 {
     "layer": "top",
     "position": "bottom",
-    "height": 40,
+    "height": 34,
     "width": 900,
-    "spacing": 8,
+    "spacing": 6,
     "margin-bottom": 10,
 
     "modules-left": [],
@@ -12,8 +12,8 @@
 
     "wlr/taskbar": {
         "format": "{icon}",
-        "icon-size": 20,
-        "spacing": 8,
+        "icon-size": 16,
+        "spacing": 6,
         "on-click": "activate",
         "on-click-middle": "close",
         "all-outputs": false,
