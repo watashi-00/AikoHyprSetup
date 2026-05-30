@@ -16,7 +16,7 @@ if [[ "$WORKSPACE" == "special:minimized" ]]; then
     # Give it a moment to settle
     sleep 0.1
     
-    # If the window is still floating, toggle it to tiling mode
+    # Force tiling mode by toggling floating off if it's currently on
     IS_FLOATING=$(hyprctl clients -j | jq -r ".[] | select(.address == \"$ADDR\") | .floating")
     if [[ "$IS_FLOATING" == "true" ]]; then
         hyprctl dispatch togglefloating "address:$ADDR"
