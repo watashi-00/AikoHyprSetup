@@ -43,6 +43,7 @@ window#waybar.top {
     background: transparent;
     border: none;
     box-shadow: none;
+    padding: 0;
 }
 
 window#waybar.top .modules-left,
@@ -56,7 +57,7 @@ window#waybar.top .modules-right {
 window#waybar.top .modules-left {
     padding: 6px 18px;
     min-width: 900px;
-    margin-left: 20px;
+    margin-left: 88px;
 }
 
 window#waybar.top .modules-right {
