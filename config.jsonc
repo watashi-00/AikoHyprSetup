@@ -29,10 +29,25 @@
     "modules-right": ["custom/audio-output", "custom/audio-input", "bluetooth", "network", "battery", "clock", "custom/power"],
 
     "hyprland/workspaces": {
-        "format": "{name}",
+        "format": "{icon}",
         "on-click": "activate",
-        "persistent-workspaces": { "*": 5 },
-        "all-outputs": true
+        "all-outputs": false,
+        "persistent-workspaces": {
+            "eDP-1": [1, 2, 3, 4, 5],
+            "HDMI-A-1": [6, 7, 8, 9, 10]
+        },
+        "format-icons": {
+            "1": "1",
+            "2": "2",
+            "3": "3",
+            "4": "4",
+            "5": "5",
+            "6": "1",
+            "7": "2",
+            "8": "3",
+            "9": "4",
+            "10": "5"
+        }
     },
 
     "custom/audio-output": {
