@@ -13,6 +13,32 @@ window#waybar {
     padding: 0 18px;
 }
 
+window#waybar.screenshot {
+    background: rgba(47, 47, 63, 0.95);
+    border-radius: 20px;
+    border: 2px solid rgba(245, 185, 212, 0.3);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    padding: 0 10px;
+    margin-top: 10px;
+}
+
+#custom-area, #custom-full, #custom-picker, #custom-edit, #custom-close {
+    color: #f5c2e7;
+    padding: 10px 20px;
+    font-size: 20px;
+    transition: all 0.2s ease;
+}
+
+#custom-area:hover, #custom-full:hover, #custom-picker:hover, #custom-edit:hover, #custom-close:hover {
+    background: rgba(245, 185, 212, 0.2);
+    color: #ffffff;
+    border-radius: 15px;
+}
+
+#custom-close {
+    color: #ff95a1;
+}
+
 window#waybar.top {
     background: transparent;
     border: none;
