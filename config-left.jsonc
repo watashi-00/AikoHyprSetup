@@ -3,13 +3,13 @@
     "position": "left",
     "width": 88,
     "spacing": 20,
-    "margin-top": 18,
-    "margin-bottom": 18,
+    "margin-top": 250,
+    "margin-bottom": 250,
     "margin-left": 18,
     "margin-right": 10,
 
-    "modules-left": ["custom/launcher-terminal", "custom/launcher-browser", "custom/launcher-files", "custom/launcher-code", "custom/launcher-settings", "custom/launcher-menu"],
-    "modules-center": [],
+    "modules-left": [],
+    "modules-center": ["custom/launcher-terminal", "custom/launcher-browser", "custom/launcher-files", "custom/launcher-code", "custom/launcher-settings", "custom/launcher-menu"],
     "modules-right": [],
 
     "custom/launcher-terminal": {
