@@ -15,9 +15,9 @@
         "format": "{icon}",
         "icon-size": 24,
         "spacing": 12,
-        "on-click": "minimize-toggle",
+        "on-click": "activate",
         "on-click-middle": "close",
-        "all-outputs": true,
+        "all-outputs": false,
         "all-workspaces": true,
         "ignore-list": [
             "Waybar"
