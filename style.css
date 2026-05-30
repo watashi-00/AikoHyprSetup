@@ -6,7 +6,7 @@
 }
 
 window#waybar {
-    background: rgba(24, 14, 28, 0.88);
+    background: #2F2F3F;
     border-radius: 18px;
     border: 1px solid rgba(245, 185, 212, 0.18);
     box-shadow: 0 20px 65px rgba(9, 5, 12, 0.34);
@@ -29,11 +29,10 @@ window#waybar.left {
 }
 
 .modules-center {
-    padding: 10px 18px;
 }
 
 .modules-right {
-    background: rgba(28, 16, 34, 0.36);
+    background: rgba(47, 47, 63, 0.4);
     border-radius: 22px;
     padding: 10px 18px;
 }
@@ -65,18 +64,26 @@ window#waybar.left {
 }
 
 #custom-spotify {
-    min-width: 260px;
-    margin-left: 10px;
     color: #f2cee8;
+    padding: 0 5px;
 }
 
+#cava {
+    color: #f5c2e7;
+    margin-left: 10px;
+    padding: 0 5px;
+    font-size: 10px;
+    letter-spacing: -2px;
+}
+
+
 #custom-spotify-prev, #custom-spotify-play, #custom-spotify-next,
-#custom-audio-output, #custom-audio-input, #custom-bluetooth,
+#custom-audio-output, #custom-audio-input, #bluetooth,
 #network, #battery, #clock, #custom-power {
     color: #f5c2e7;
     background: transparent;
-    padding: 8px 10px;
-    margin: 0 4px;
+    padding: 8px 6px;
+    margin: 0 2px;
     border-radius: 16px;
     border: none;
     transition: all 0.16s ease;
@@ -89,7 +96,7 @@ window#waybar.left {
 }
 
 #custom-spotify-prev:hover, #custom-spotify-play:hover, #custom-spotify-next:hover,
-#custom-audio-output:hover, #custom-audio-input:hover, #custom-bluetooth:hover,
+#custom-audio-output:hover, #custom-audio-input:hover, #bluetooth:hover,
 #network:hover, #battery:hover, #clock:hover, #custom-power:hover {
     background: rgba(245, 185, 212, 0.18);
     color: #ffffff;
@@ -98,25 +105,25 @@ window#waybar.left {
 
 #custom-power {
     font-size: 17px;
-    padding-left: 12px;
-    padding-right: 12px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 image#album-art {
     min-width: 52px;
     min-height: 52px;
-    margin: 0 10px;
+    margin: 0 10px 0 120px;
     border-radius: 16px;
     border: 1px solid rgba(245, 185, 212, 0.14);
     background: rgba(255, 255, 255, 0.04);
 }
 
 #custom-audio-output, #custom-audio-input {
-    min-width: 70px;
+    min-width: 60px;
 }
 
-#network, #battery, #clock, #custom-power, #custom-bluetooth {
-    min-width: 56px;
+#network, #battery, #clock, #custom-power {
+    min-width: 48px;
 }
 
 #tray {
@@ -145,7 +152,7 @@ window#waybar.left {
 }
 
 window#waybar.bottom {
-    background: rgba(24, 14, 28, 0.90);
+    background: #2F2F3F;
     border-radius: 18px;
     padding: 0 18px;
 }

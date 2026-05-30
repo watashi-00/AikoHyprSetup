@@ -4,6 +4,7 @@
 REPO_DIR="/home/watashi/.config/waybar"
 HYPR_SRC="/home/watashi/.config/hypr/hyprland.conf"
 WOFI_SRC="/home/watashi/.config/wofi"
+MAKO_SRC="/home/watashi/.config/mako"
 
 echo "Updating local backups of external configs..."
 
@@ -23,6 +24,15 @@ if [ -d "$WOFI_SRC" ]; then
     echo "✓ Wofi configs updated."
 else
     echo "✗ Wofi directory not found at $WOFI_SRC"
+fi
+
+# Backup Mako
+if [ -d "$MAKO_SRC" ]; then
+    mkdir -p "$REPO_DIR/mako-config"
+    cp -r "$MAKO_SRC/"* "$REPO_DIR/mako-config/"
+    echo "✓ Mako configs updated."
+else
+    echo "✗ Mako directory not found at $MAKO_SRC"
 fi
 
 echo "Done! You can now commit the changes."
