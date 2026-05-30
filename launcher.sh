@@ -6,4 +6,15 @@ if pgrep -x "wofi" > /dev/null; then
     exit 0
 fi
 
-wofi --show drun --prompt "Buscar..." --conf ~/.config/waybar/wofi.conf --style ~/.config/waybar/wofi.css
+WOFI_CONF="$HOME/.config/wofi/config"
+WOFI_STYLE="$HOME/.config/wofi/style.css"
+
+if [ ! -f "$WOFI_CONF" ]; then
+    WOFI_CONF="$HOME/.config/waybar/wofi.conf"
+fi
+
+if [ ! -f "$WOFI_STYLE" ]; then
+    WOFI_STYLE="$HOME/.config/waybar/wofi.css"
+fi
+
+wofi --show drun --prompt "Buscar..." --conf "$WOFI_CONF" --style "$WOFI_STYLE"

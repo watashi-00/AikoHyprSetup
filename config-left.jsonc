@@ -34,7 +34,6 @@
     },
     "custom/launcher-menu": {
         "format": "",
-        "on-click": "~/.config/hypr/launcher.sh"
+        "on-click": "$HOME/.config/waybar/launcher.sh"
     }
 }
-

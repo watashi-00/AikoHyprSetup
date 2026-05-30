@@ -53,14 +53,14 @@
     "custom/audio-output": {
         "format": "<span color='#f5c2e7'>\uf028</span> {}",
         "interval": 1,
-        "exec": "/home/watashi/.config/waybar/audio-output.sh",
+        "exec": "$HOME/.config/waybar/audio-output.sh",
         "on-click": "pavucontrol"
     },
 
     "custom/audio-input": {
         "format": "<span color='#f5c2e7'>\uf130</span> {}",
         "interval": 1,
-        "exec": "/home/watashi/.config/waybar/audio-input.sh",
+        "exec": "$HOME/.config/waybar/audio-input.sh",
         "on-click": "pavucontrol -t 4",
         "tooltip": false
     },
@@ -102,7 +102,7 @@
     },
 
     "image#album-art": {
-        "exec": "bash /home/watashi/.config/waybar/spotify-art.sh",
+        "exec": "bash $HOME/.config/waybar/spotify-art.sh",
         "size": 52,
         "interval": 2,
         "tooltip": false

@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Define paths
-REPO_DIR="/home/watashi/.config/waybar"
-HYPR_SRC="/home/watashi/.config/hypr/hyprland.conf"
-WOFI_SRC="/home/watashi/.config/wofi"
-MAKO_SRC="/home/watashi/.config/mako"
+REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+HYPR_SRC="$HOME/.config/hypr/hyprland.conf"
+WOFI_SRC="$HOME/.config/wofi"
+MAKO_SRC="$HOME/.config/mako"
 
 echo "Updating local backups of external configs..."
 
