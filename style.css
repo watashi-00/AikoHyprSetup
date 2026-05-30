@@ -153,3 +153,26 @@ window#waybar.bottom {
 #custom-footer-text {
     color: #ddc2e8;
 }
+
+#taskbar {
+    padding: 0 10px;
+}
+
+#taskbar button {
+    padding: 2px 8px;
+    margin: 0 4px;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+}
+
+#taskbar button:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+#taskbar button.active {
+    background: rgba(245, 185, 212, 0.2);
+}
+
+#taskbar button.minimized {
+    opacity: 0.5;
+}

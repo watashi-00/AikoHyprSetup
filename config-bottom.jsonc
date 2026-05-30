@@ -8,12 +8,18 @@
     "margin-bottom": 20,
 
     "modules-left": [],
-    "modules-center": ["custom/footer-text"],
+    "modules-center": ["wlr/taskbar"],
     "modules-right": ["clock", "battery"],
 
-    "custom/footer-text": {
-        "format": "<span color='#f5c2e7'>Focus mode • quick launch • workspace status</span>",
-        "tooltip": false
+    "wlr/taskbar": {
+        "format": "{icon}",
+        "icon-size": 24,
+        "spacing": 12,
+        "on-click": "activate",
+        "on-click-middle": "close",
+        "ignore-list": [
+            "Waybar"
+        ]
     },
 
     "clock": {
