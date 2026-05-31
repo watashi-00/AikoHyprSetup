@@ -8,7 +8,7 @@
 
     "modules-left": [],
     "modules-center": ["wlr/taskbar"],
-    "modules-right": ["clock", "battery"],
+    "modules-right": [],
 
     "wlr/taskbar": {
         "format": "{icon}",
@@ -21,14 +21,5 @@
         "ignore-list": [
             "Waybar"
         ]
-    },
-
-    "clock": {
-        "format": "{:%I:%M %p}",
-        "tooltip-format": "<big>{:%A, %d %B}</big>"
-    },
-    "battery": {
-        "format": "<span color='#ff8fbd'>{icon}</span> {capacity}%",
-        "format-icons": ["\uf244", "\uf243", "\uf242", "\uf241", "\uf240"]
     }
 }

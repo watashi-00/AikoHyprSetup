@@ -106,7 +106,7 @@ packages_for_pm() {
                 pipewire pipewire-pulse wireplumber pavucontrol wl-clipboard \
                 cliphist libnotify network-manager-applet grim slurp curl \
                 hyprpicker swappy xdg-utils bluez ttf-font-awesome \
-                ttf-jetbrains-mono-nerd polkit-kde-agent
+                ttf-jetbrains-mono-nerd polkit-kde-agent zenity gthumb imagemagick
             ;;
         apt)
             printf '%s\n' \
@@ -114,7 +114,7 @@ packages_for_pm() {
                 pipewire pipewire-pulse wireplumber pavucontrol wl-clipboard \
                 cliphist libnotify-bin network-manager-gnome grim slurp curl \
                 hyprpicker swappy xdg-utils bluez fonts-font-awesome \
-                fonts-jetbrains-mono polkit-kde-agent-1
+                fonts-jetbrains-mono polkit-kde-agent-1 zenity gthumb imagemagick
             ;;
         dnf)
             printf '%s\n' \
@@ -122,7 +122,7 @@ packages_for_pm() {
                 pipewire pipewire-pulseaudio wireplumber pavucontrol wl-clipboard \
                 cliphist libnotify NetworkManager-applet grim slurp curl \
                 hyprpicker swappy xdg-utils bluez fontawesome-fonts \
-                jetbrains-mono-fonts polkit-kde
+                jetbrains-mono-fonts polkit-kde zenity gthumb ImageMagick
             ;;
         zypper)
             printf '%s\n' \
@@ -130,7 +130,7 @@ packages_for_pm() {
                 pipewire pipewire-pulseaudio wireplumber pavucontrol wl-clipboard \
                 cliphist libnotify-tools NetworkManager-applet grim slurp curl \
                 hyprpicker swappy xdg-utils bluez fontawesome-fonts \
-                jetbrains-mono-fonts polkit-kde-agent-6
+                jetbrains-mono-fonts polkit-kde-agent-6 zenity gthumb ImageMagick
             ;;
         apk)
             printf '%s\n' \
@@ -138,7 +138,7 @@ packages_for_pm() {
                 pipewire pipewire-pulse wireplumber pavucontrol wl-clipboard \
                 cliphist libnotify network-manager-applet grim slurp curl \
                 hyprpicker swappy xdg-utils bluez fontawesome-fonts \
-                ttf-jetbrains-mono polkit-kde-agent
+                ttf-jetbrains-mono polkit-kde-agent zenity gthumb imagemagick
             ;;
     esac
 }
@@ -273,7 +273,7 @@ install_configs() {
         style.css audio-input.sh audio-output.sh clipboard-history.sh
         clipboard-listener.sh launcher.sh minimize.sh restart-waybar.sh
         screenshot.sh spotify-art.sh spotify-info.sh spotify-playstate.sh
-        wallpaper.sh
+        wallpaper.sh power-menu.sh
     )
 
     log "${MAGENTA}Installing Waybar files...${NC}"
@@ -301,14 +301,18 @@ install_configs() {
         "$waybar_dir/launcher.sh" "$waybar_dir/minimize.sh" \
         "$waybar_dir/restart-waybar.sh" "$waybar_dir/screenshot.sh" \
         "$waybar_dir/spotify-art.sh" "$waybar_dir/spotify-info.sh" \
-        "$waybar_dir/spotify-playstate.sh" "$waybar_dir/wallpaper.sh"
+        "$waybar_dir/spotify-playstate.sh" "$waybar_dir/wallpaper.sh" \
+        "$waybar_dir/power-menu.sh"
 }
 
 post_install_checks() {
-    required_bins=(hyprland waybar wofi mako hyprpaper kitty jq playerctl pactl wpctl wl-copy wl-paste cliphist notify-send grim slurp curl)
-    optional_bins=(hyprpicker swappy nm-applet bluetoothctl pavucontrol cava)
+    required_bins=(
+        hyprland waybar wofi mako hyprpaper kitty jq playerctl pactl wpctl 
+        wl-copy wl-paste cliphist notify-send grim slurp curl
+        hyprpicker swappy nm-applet bluetoothctl pavucontrol cava zenity 
+        gthumb magick
+    )
     missing_required=()
-    missing_optional=()
 
     printf "\n${BOLD}--- Binary Check ---${NC}\n"
     for bin in "${required_bins[@]}"; do
@@ -317,15 +321,6 @@ post_install_checks() {
         else
             printf "  ${RED}✘${NC} %-15s ${RED}[MISSING]${NC}\n" "$bin"
             missing_required+=("$bin")
-        fi
-    done
-
-    for bin in "${optional_bins[@]}"; do
-        if have "$bin"; then
-            printf "  ${CYAN}ℹ${NC} %-15s ${GREEN}[OK]${NC}\n" "$bin"
-        else
-            printf "  ${YELLOW}⚠${NC} %-15s ${YELLOW}[OPTIONAL MISSING]${NC}\n" "$bin"
-            missing_optional+=("$bin")
         fi
     done
 
@@ -425,6 +420,22 @@ action_apply_changes() {
     return 0
 }
 
+action_wallpaper_changer() {
+    local wp_script="$SOURCE_DIR/wallpaper.sh"
+    
+    if [ -f "$wp_script" ]; then
+        log "Using local wallpaper script..."
+        bash "$wp_script" select
+        success "Wallpaper process completed!"
+    elif [ -x "$HOME/.config/waybar/wallpaper.sh" ]; then
+        "$HOME/.config/waybar/wallpaper.sh" select
+        success "Wallpaper process completed!"
+    else
+        warn "Wallpaper script not found. Please install configurations first."
+    fi
+    return 0
+}
+
 action_exit() {
     if [ -t 1 ]; then clear; fi
     log "Exiting..."
@@ -433,22 +444,25 @@ action_exit() {
 
 interactive_menu() {
     declare -A labels=(
-        [0]="🚀  Full Installation (Recommended)"
-        [1]="📦  Install Packages Only"
-        [2]="🎨  Copy Configurations Only"
-        [3]="🔍  Check Dependencies"
-        [4]="🔄  Apply Changes Now"
-        [5]="✘   Exit"
+        [1]="🚀  Full Installation (Recommended)"
+        [2]="📦  Install Packages Only"
+        [3]="🎨  Copy Configurations Only"
+        [4]="🔍  Check Dependencies"
+        [5]="🔄  Apply Changes Now"
+        [6]="🖼️   Update Wallpaper"
+        [0]="✘   Exit"
     )
+
     declare -A actions=(
-        [0]="action_full_install"
-        [1]="action_install_packages"
-        [2]="action_install_configs"
-        [3]="action_check_deps"
-        [4]="action_apply_changes"
-        [5]="action_exit"
+        [1]="action_full_install"
+        [2]="action_install_packages"
+        [3]="action_install_configs"
+        [4]="action_check_deps"
+        [5]="action_apply_changes"
+        [6]="action_wallpaper_changer"
+        [0]="action_exit"
     )
-    local order=(0 1 2 3 4 5)
+    local order=(1 2 3 4 5 6 0)
     
     menu "" labels actions order
 }

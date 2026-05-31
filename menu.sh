@@ -26,7 +26,7 @@ _menu_render() {
     local order_name="$2"
     local -n labels_ref="$labels_name"
     local -n order_ref="$order_name"
-    local index key
+    local index key item_num=1
 
     _menu_clear
 
@@ -37,8 +37,15 @@ _menu_render() {
 
     for index in "${!order_ref[@]}"; do
         key="${order_ref[$index]}"
-        printf "  ${CYAN}${BOLD}%d)${NC} %s\n" "$((index + 1))" "${labels_ref[$key]}"
+        if [ "$key" = "0" ]; then continue; fi
+        printf "  ${CYAN}${BOLD}%d)${NC} %s\n" "$item_num" "${labels_ref[$key]}"
+        item_num=$((item_num + 1))
     done
+
+    # Always show 0 at the end if it exists
+    if [ -n "${labels_ref[0]}" ]; then
+        printf "  ${CYAN}${BOLD}0)${NC} %s\n" "${labels_ref[0]}"
+    fi
 
     printf "\n${WHITE}Choose an option and press [ENTER] (or 'q' to exit): ${NC}"
 }
@@ -63,8 +70,23 @@ menu() {
             return 0
         fi
 
-        if [[ "$choice" =~ ^[0-9]+$ ]] && [ "$choice" -ge 1 ] && [ "$choice" -le "${#order_ref[@]}" ]; then
-            key="${order_ref[$((choice - 1))]}"
+        key=""
+        if [[ "$choice" == "0" ]] && [ -n "${labels_ref[0]}" ]; then
+            key="0"
+        elif [[ "$choice" =~ ^[0-9]+$ ]] && [ "$choice" -ge 1 ]; then
+            # Map choice to non-zero keys
+            local current=1
+            for k in "${order_ref[@]}"; do
+                if [ "$k" = "0" ]; then continue; fi
+                if [ "$current" -eq "$choice" ]; then
+                    key="$k"
+                    break
+                fi
+                current=$((current + 1))
+            done
+        fi
+
+        if [ -n "$key" ]; then
             action="${actions_ref[$key]}"
             
             if [ -n "$action" ] && declare -f "$action" > /dev/null; then

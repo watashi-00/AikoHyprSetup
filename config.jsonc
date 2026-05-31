@@ -93,7 +93,7 @@
 
     "custom/power": {
         "format": "<span color='#ff8fbd'>\uf011</span>",
-        "on-click": "hyprshutdown",
+        "on-click": "$HOME/.config/waybar/power-menu.sh",
         "tooltip": false
     },
 
@@ -103,7 +103,7 @@
 
     "image#album-art": {
         "exec": "bash $HOME/.config/waybar/spotify-art.sh",
-        "size": 32,
+        "size": 44,
         "interval": 2,
         "tooltip": false
     },
@@ -114,7 +114,7 @@
         "interval": 2,
         "exec": "playerctl metadata --format '{{artist}} - {{title}}' 2> /dev/null",
         "on-click": "playerctl play-pause",
-        "max-length": 34
+        "max-length": 18
     },
 
     "custom/spotify-prev": {

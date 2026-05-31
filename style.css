@@ -92,7 +92,7 @@ window#waybar.left {
 
 #workspaces {
     min-width: 226px;
-    margin-right: 7px;
+    margin-right: 60px;
 }
 
 #workspaces button {
@@ -119,10 +119,32 @@ window#waybar.left {
     border-color: #ffc2dc;
 }
 
-#custom-spotify {
-    color: #ffc2dc;
-    padding: 0 5px;
+#spotify-info {
+    padding: 0;
+    margin: 0;
 }
+
+#custom-spotify, #custom-spotify label {
+    color: #ffc2dc;
+    padding: 0;
+    margin: 0;
+    min-width: 160px;
+}
+
+#spotify-buttons {
+    min-width: 150px;
+    margin: 0 0 0 5px;
+    padding: 0;
+}
+
+#custom-spotify-prev, #custom-spotify-play, #custom-spotify-next {
+    min-width: 30px; /* Fixed width for better centering */
+}
+
+/* Spacing for 150px width: 30px(button) + 30px(gap) + 30px(button) + 30px(gap) + 30px(button) = 150px */
+#custom-spotify-prev { margin: 0; }
+#custom-spotify-play { margin: 0 30px; }
+#custom-spotify-next { margin: 0; }
 
 #cava {
     color: #ff86b9;
@@ -142,6 +164,7 @@ window#waybar.left {
     border-radius: 11px;
     border: none;
     transition: all 0.16s ease;
+    font-size: 16px;
 }
 
 #custom-spotify-prev:hover, #custom-spotify-play:hover, #custom-spotify-next:hover,
@@ -158,12 +181,13 @@ window#waybar.left {
 }
 
 image#album-art {
-    min-width: 30px;
-    min-height: 30px;
-    margin: 0 8px 0 92px;
+    min-width: 42px;
+    min-height: 42px;
+    margin: 0 8px 0 50px;
     border-radius: 9px;
     border: 1px solid rgba(255, 134, 185, 0.28);
 }
+
 
 #tray {
     padding: 0 6px;
