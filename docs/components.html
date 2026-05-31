@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AikoHyprSetup - Component Documentation</title>
+    <style>
+        :root {
+            --bg: #1a1622;
+            --card-bg: #221c2b;
+            --accent: #ff8fbd;
+            --text: #ffd7e8;
+            --text-dim: #f0c2da;
+            --border: rgba(255, 134, 185, 0.28);
+        }
+
+        body {
+            font-family: 'JetBrainsMono Nerd Font', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 0;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 40px;
+        }
+
+        h1 { color: var(--accent); font-size: 2.5em; margin-bottom: 10px; }
+        h2 { color: var(--accent); border-left: 4px solid var(--accent); padding-left: 15px; margin-top: 50px; }
+
+        .component-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .tag {
+            background: rgba(255, 134, 185, 0.15);
+            color: var(--accent);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+
+        code {
+            background: #0d0812;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #ffc2dc;
+        }
+
+        pre {
+            background: #0d0812;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .preview {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .waybar-mock {
+            background: rgba(26, 22, 34, 0.88);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            padding: 10px 20px;
+            display: inline-flex;
+            gap: 15px;
+        }
+
+        .btn-mock {
+            color: var(--accent);
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>AikoHyprSetup</h1>
+            <p>Component & CSS Tag Documentation</p>
+        </header>
+
+        <section id="waybar">
+            <h2>Waybar Components</h2>
+            <p>All Waybar elements can be styled using their CSS IDs or classes in <code>waybar/style.css</code>.</p>
+
+            <div class="component-card">
+                <h3><span class="tag">#custom-spotify</span> - Music Info</h3>
+                <p>Displays the currently playing song and artist.</p>
+                <pre>#custom-spotify {
+    min-width: 160px;
+    color: #ffc2dc;
+}</pre>
+                <div class="preview">
+                    <div class="waybar-mock">
+                        <span>Nightcore Hits - Clarity</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="component-card">
+                <h3><span class="tag">#spotify-buttons</span> - Media Controls</h3>
+                <p>A container group for the media control buttons.</p>
+                <ul>
+                    <li><code>#custom-spotify-prev</code>: Previous track button.</li>
+                    <li><code>#custom-spotify-play</code>: Play/Pause toggle button.</li>
+                    <li><code>#custom-spotify-next</code>: Next track button.</li>
+                </ul>
+                <div class="preview">
+                    <div class="waybar-mock">
+                        <span class="btn-mock">󰒮</span>
+                        <span class="btn-mock">󰐊</span>
+                        <span class="btn-mock">󰒭</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="component-card">
+                <h3><span class="tag">#workspaces</span> - Workspace Switcher</h3>
+                <p>The 1-5 navigation module.</p>
+                <pre>#workspaces button.active {
+    background-color: #ff8fbd;
+    color: #261621;
+}</pre>
+            </div>
+
+            <div class="component-card">
+                <h3><span class="tag">#custom-power</span> - Power Menu</h3>
+                <p>The logout/shutdown button button on the right side.</p>
+                <div class="preview">
+                    <div class="waybar-mock">
+                        <span class="btn-mock"></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="hyprland">
+            <h2>Hyprland Theme Tags</h2>
+            <p>Special comments used by the <code>theme-selector.sh</code> script to update Hyprland settings dynamically.</p>
+            
+            <div class="component-card">
+                <h3>Theme Markers</h3>
+                <p>Add these comments at the end of the line in <code>configs/hypr/hyprland.conf</code> to make them theme-able:</p>
+                <ul>
+                    <li><code># @theme:gaps_in</code>: Inner gaps between windows.</li>
+                    <li><code># @theme:gaps_out</code>: Outer gaps (screen edge).</li>
+                    <li><code># @theme:active_border</code>: Gradient for active windows.</li>
+                    <li><code># @theme:rounding</code>: Corner radius.</li>
+                    <li><code># @theme:active_opacity</code>: Transparency for active window.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="scripts">
+            <h2>Custom Scripts</h2>
+            <p>Located in the <code>scripts/</code> directory.</p>
+            <ul>
+                <li><code>wallpaper.sh</code>: Graphical wallpaper selector with cropping.</li>
+                <li><code>theme-selector.sh</code>: Dynamic theme engine switcher.</li>
+                <li><code>power-menu.sh</code>: System power options via Wofi.</li>
+            </ul>
+        </section>
+
+        <footer style="text-align: center; margin-top: 50px; opacity: 0.6; font-size: 0.8em;">
+            <p>AikoHyprSetup Documentation &copy; 2026</p>
+        </footer>
+    </div>
+</body>
+</html>
