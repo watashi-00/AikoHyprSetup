@@ -75,25 +75,24 @@ get_var() {
     grep "@hypr-$1:" "$selected_file" | cut -d':' -f2- | sed 's/^ //'
 }
 
-active_border=$(get_var "active-border")
-inactive_border=$(get_var "inactive-border")
 gaps_in=$(get_var "gaps-in")
 gaps_out=$(get_var "gaps-out")
+active_border=$(get_var "active-border")
+inactive_border=$(get_var "inactive-border")
 rounding=$(get_var "rounding")
 active_opacity=$(get_var "active-opacity")
 inactive_opacity=$(get_var "inactive-opacity")
 
-# Patch local config
-sed -i "s#gaps_in = .* #gaps_in = $gaps_in #g" "$HYPR_CONF"
-sed -i "s#gaps_out = .* #gaps_out = $gaps_out #g" "$HYPR_CONF"
-sed -i "s#col.active_border = .* #col.active_border = $active_border #g" "$HYPR_CONF"
-sed -i "s#col.inactive_border = .* #col.inactive_border = $inactive_border #g" "$HYPR_CONF"
-sed -i "s#rounding = .* #rounding = $rounding #g" "$HYPR_CONF"
-sed -i "s#active_opacity = .* #active_opacity = $active_opacity #g" "$HYPR_CONF"
-sed -i "s#inactive_opacity = .* #inactive_opacity = $inactive_opacity #g" "$HYPR_CONF"
+# Patch local config using full-line replacement for safety
+sed -i "s/.*@theme:gaps_in.*/    gaps_in = $gaps_in # @theme:gaps_in/" "$HYPR_CONF"
+sed -i "s/.*@theme:gaps_out.*/    gaps_out = $gaps_out # @theme:gaps_out/" "$HYPR_CONF"
+sed -i "s/.*@theme:active_border.*/    col.active_border = $active_border # @theme:active_border/" "$HYPR_CONF"
+sed -i "s/.*@theme:inactive_border.*/    col.inactive_border = $inactive_border # @theme:inactive_border/" "$HYPR_CONF"
+sed -i "s/.*@theme:rounding.*/    rounding = $rounding # @theme:rounding/" "$HYPR_CONF"
+sed -i "s/.*@theme:active_opacity.*/    active_opacity = $active_opacity # @theme:active_opacity/" "$HYPR_CONF"
+sed -i "s/.*@theme:inactive_opacity.*/    inactive_opacity = $inactive_opacity # @theme:inactive_opacity/" "$HYPR_CONF"
 
 # --- Sync to ~/.config ---
-# (Assumes user already ran install.sh once)
 mkdir -p "$HOME/.config/waybar"
 mkdir -p "$HOME/.config/hypr"
 
