@@ -286,7 +286,7 @@ install_configs() {
         audio-input.sh audio-output.sh clipboard-history.sh
         clipboard-listener.sh launcher.sh menu.sh minimize.sh restart-waybar.sh
         screenshot.sh spotify-art.sh spotify-info.sh spotify-playstate.sh
-        wallpaper.sh power-menu.sh theme-selector.sh
+        wallpaper.sh power-menu.sh theme-selector.sh aiko.sh
     )
 
     log "${MAGENTA}Installing Waybar configs...${NC}"
@@ -465,6 +465,28 @@ action_theme_selector() {
     return 0
 }
 
+action_global_aiko() {
+    local aiko_src="$HOME/.config/waybar/aiko.sh"
+    local aiko_dest="/usr/local/bin/aiko"
+
+    if [ ! -f "$aiko_src" ]; then
+        error "Aiko script not found at $aiko_src. Please run 'Copy Configurations' first."
+        return 0
+    fi
+
+    log "Setting up 'aiko' as a global command..."
+    validate_sudo
+    sudo_cmd ln -sf "$aiko_src" "$aiko_dest"
+    sudo_cmd chmod +x "$aiko_dest"
+    
+    if have aiko; then
+        success "Global command 'aiko' is ready! Try running: aiko --help"
+    else
+        warn "Could not verify 'aiko' command. Check if /usr/local/bin is in your PATH."
+    fi
+    return 0
+}
+
 action_exit() {
     if [ -t 1 ]; then clear; fi
     log "Exiting..."
@@ -480,6 +502,7 @@ interactive_menu() {
         [5]="🔄  Apply Changes Now"
         [6]="🖼️   Update Wallpaper"
         [7]="🎨  Select Theme"
+        [8]="🌍  Make 'aiko' Global Command"
         [0]="✘   Exit"
     )
 
@@ -491,9 +514,10 @@ interactive_menu() {
         [5]="action_apply_changes"
         [6]="action_wallpaper_changer"
         [7]="action_theme_selector"
+        [8]="action_global_aiko"
         [0]="action_exit"
     )
-    local order=(1 2 3 4 5 6 7 0)
+    local order=(1 2 3 4 5 6 7 8 0)
     
     menu "" labels actions order
 }
