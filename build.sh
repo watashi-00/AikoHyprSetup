@@ -28,28 +28,24 @@ rm -f "$OUTPUT_FILE"
 
 # 2. Create build directory
 log "Preparing build directory..."
-mkdir -p "$BUILD_DIR"
+mkdir -p "$BUILD_DIR/waybar"
+mkdir -p "$BUILD_DIR/scripts"
+mkdir -p "$BUILD_DIR/configs"
 
-# 3. List of essential files (based on install.sh)
+# 3. Copy essential files
 log "Copying essential files..."
 
-# Main scripts
-cp install.sh menu.sh "$BUILD_DIR/"
+# Root files
+cp install.sh LICENSE README.md "$BUILD_DIR/"
 
-# Waybar configurations
-cp config.jsonc config-bottom.jsonc config-left.jsonc config-screenshot.jsonc style.css "$BUILD_DIR/"
+# Waybar configs
+cp waybar/* "$BUILD_DIR/waybar/"
 
-# Waybar helper scripts
-cp audio-input.sh audio-output.sh clipboard-history.sh clipboard-listener.sh \
-   launcher.sh minimize.sh restart-waybar.sh screenshot.sh \
-   spotify-art.sh spotify-info.sh spotify-playstate.sh \
-   wallpaper.sh "$BUILD_DIR/"
+# Scripts
+cp scripts/* "$BUILD_DIR/scripts/"
 
-# Configuration directories
-cp -r hypr-config mako-config wofi-config "$BUILD_DIR/"
-
-# Documentation
-cp README.md "$BUILD_DIR/" 2>/dev/null || true
+# System configs
+cp -r configs/* "$BUILD_DIR/configs/"
 
 # 4. Create package
 log "Compressing files into ${OUTPUT_FILE}..."
