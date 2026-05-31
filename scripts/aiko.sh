@@ -9,7 +9,7 @@ if [ -f "$SCRIPT_DIR/../aiko-ideas.md" ]; then
     # Case: Running from the repository (scripts/ folder)
     PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 else
-    # Case: Running from ~/.config/waybar (flat or nested installation)
+    # Case: Running from $HOME/.config/waybar (flat or nested installation)
     if [[ "$SCRIPT_DIR" == */scripts ]]; then
         PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
     else

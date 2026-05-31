@@ -264,10 +264,11 @@ copy_dir_contents() {
 patch_installed_paths() {
     file="$1"
     [ -f "$file" ] || return 0
+    # Replace literal /home/watashi and literal $HOME with the actual $HOME value
     run sed -i \
         -e "s#/home/watashi#$HOME#g" \
-        -e "s#~/.config/hypr/launcher.sh#~/.config/waybar/launcher.sh#g" \
-        -e "s#~/.config/hypr/clipboard-history.sh#~/.config/waybar/clipboard-history.sh#g" \
+        -e "s#\$HOME#$HOME#g" \
+        -e "s#~/.config#$HOME/.config#g" \
         "$file"
 }
 
@@ -292,35 +293,43 @@ install_configs() {
     log "${MAGENTA}Installing Waybar configs...${NC}"
     for file in "${waybar_files[@]}"; do
         copy_file "$SOURCE_DIR/waybar/$file" "$waybar_dir/$file"
+        patch_installed_paths "$waybar_dir/$file"
     done
 
     log "${MAGENTA}Installing helper scripts...${NC}"
     for file in "${scripts[@]}"; do
         copy_file "$SOURCE_DIR/scripts/$file" "$waybar_dir/$file"
+        patch_installed_paths "$waybar_dir/$file"
     done
 
     log "${MAGENTA}Installing Installer itself...${NC}"
     copy_file "$SOURCE_DIR/install.sh" "$waybar_dir/install.sh"
     copy_dir_contents "$SOURCE_DIR/scripts" "$waybar_dir/scripts"
+    
+    # Patch all scripts in the scripts/ subfolder too
+    find "$waybar_dir/scripts" -type f -name "*.sh" -exec sed -i "s#/home/watashi#$HOME#g;s#\$HOME#$HOME#g;s#~/.config#$HOME/.config#g" {} +
 
     log "${MAGENTA}Installing Themes...${NC}"
     copy_dir_contents "$SOURCE_DIR/themes" "$waybar_dir/themes"
+    # Patch paths in themes just in case
+    find "$waybar_dir/themes" -type f -name "*.css" -exec sed -i "s#/home/watashi#$HOME#g;s#\$HOME#$HOME#g;s#~/.config#$HOME/.config#g" {} +
 
     log "${MAGENTA}Installing Mako and Wofi...${NC}"
     copy_dir_contents "$SOURCE_DIR/configs/mako" "$mako_dir"
     copy_dir_contents "$SOURCE_DIR/configs/wofi" "$wofi_dir"
+    patch_installed_paths "$mako_dir/config"
+    patch_installed_paths "$wofi_dir/config"
+    patch_installed_paths "$wofi_dir/style.css"
 
     log "${MAGENTA}Installing Widgets...${NC}"
     copy_dir_contents "$SOURCE_DIR/widgets" "$waybar_dir/widgets"
+    find "$waybar_dir/widgets" -type f \( -name "*.sh" -o -name "*.css" \) -exec sed -i "s#/home/watashi#$HOME#g;s#\$HOME#$HOME#g;s#~/.config#$HOME/.config#g" {} +
 
     if [ "$INSTALL_HYPR" -eq 1 ] && [ -f "$SOURCE_DIR/configs/hypr/hyprland.conf" ]; then
         log "${MAGENTA}Installing Hyprland config...${NC}"
         copy_file "$SOURCE_DIR/configs/hypr/hyprland.conf" "$hypr_dir/hyprland.conf"
         patch_installed_paths "$hypr_dir/hyprland.conf"
     fi
-
-    patch_installed_paths "$waybar_dir/config.jsonc"
-    patch_installed_paths "$waybar_dir/config-left.jsonc"
 
     log "${MAGENTA}Adjusting permissions...${NC}"
     run chmod +x "$waybar_dir"/*.sh
@@ -353,17 +362,19 @@ post_install_checks() {
 apply_changes() {
     log "${MAGENTA}Applying configurations...${NC}"
 
-    if [ -x "$HOME/.config/waybar/wallpaper.sh" ]; then
-        run "$HOME/.config/waybar/wallpaper.sh" apply
+    local waybar_dir="$HOME/.config/waybar"
+
+    if [ -x "$waybar_dir/wallpaper.sh" ]; then
+        run "$waybar_dir/wallpaper.sh" apply
     fi
 
-    if [ -x "$HOME/.config/waybar/restart-waybar.sh" ]; then
-        run "$HOME/.config/waybar/restart-waybar.sh"
+    if [ -x "$waybar_dir/restart-waybar.sh" ]; then
+        run "$waybar_dir/restart-waybar.sh"
     elif have waybar; then
         pkill waybar 2>/dev/null || true
-        waybar --config "$HOME/.config/waybar/config-left.jsonc" --style "$HOME/.config/waybar/style.css" &
-        waybar --config "$HOME/.config/waybar/config.jsonc" --style "$HOME/.config/waybar/style.css" &
-        waybar --config "$HOME/.config/waybar/config-bottom.jsonc" --style "$HOME/.config/waybar/style.css" &
+        waybar --config "$waybar_dir/config-left.jsonc" --style "$waybar_dir/style.css" &
+        waybar --config "$waybar_dir/config.jsonc" --style "$waybar_dir/style.css" &
+        waybar --config "$waybar_dir/config-bottom.jsonc" --style "$waybar_dir/style.css" &
     else
         warn "waybar not found."
     fi
