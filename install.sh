@@ -286,7 +286,7 @@ install_configs() {
         audio-input.sh audio-output.sh clipboard-history.sh
         clipboard-listener.sh launcher.sh menu.sh minimize.sh restart-waybar.sh
         screenshot.sh spotify-art.sh spotify-info.sh spotify-playstate.sh
-        wallpaper.sh power-menu.sh
+        wallpaper.sh power-menu.sh theme-selector.sh
     )
 
     log "${MAGENTA}Installing Waybar configs...${NC}"
@@ -298,6 +298,9 @@ install_configs() {
     for file in "${scripts[@]}"; do
         copy_file "$SOURCE_DIR/scripts/$file" "$waybar_dir/$file"
     done
+
+    log "${MAGENTA}Installing Themes...${NC}"
+    copy_dir_contents "$SOURCE_DIR/themes" "$waybar_dir/themes"
 
     log "${MAGENTA}Installing Mako and Wofi...${NC}"
     copy_dir_contents "$SOURCE_DIR/configs/mako" "$mako_dir"
@@ -447,6 +450,18 @@ action_wallpaper_changer() {
     return 0
 }
 
+action_theme_selector() {
+    local theme_script="$SOURCE_DIR/scripts/theme-selector.sh"
+    if [ -f "$theme_script" ]; then
+        bash "$theme_script"
+    elif [ -x "$HOME/.config/waybar/theme-selector.sh" ]; then
+        "$HOME/.config/waybar/theme-selector.sh"
+    else
+        warn "Theme selector script not found."
+    fi
+    return 0
+}
+
 action_exit() {
     if [ -t 1 ]; then clear; fi
     log "Exiting..."
@@ -461,6 +476,7 @@ interactive_menu() {
         [4]="🔍  Check Dependencies"
         [5]="🔄  Apply Changes Now"
         [6]="🖼️   Update Wallpaper"
+        [7]="🎨  Select Theme"
         [0]="✘   Exit"
     )
 
@@ -471,9 +487,10 @@ interactive_menu() {
         [4]="action_check_deps"
         [5]="action_apply_changes"
         [6]="action_wallpaper_changer"
+        [7]="action_theme_selector"
         [0]="action_exit"
     )
-    local order=(1 2 3 4 5 6 0)
+    local order=(1 2 3 4 5 6 7 0)
     
     menu "" labels actions order
 }

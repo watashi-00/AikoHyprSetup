@@ -1,0 +1,52 @@
+/*
+ @name: Cyber Blue
+ @author: Aiko
+ @hypr-active-border: rgba(00ffffff) rgba(0000ffff) 45deg
+ @hypr-inactive-border: rgba(001133aa)
+ @hypr-gaps-in: 4
+ @hypr-gaps-out: 8
+ @hypr-rounding: 0
+ @hypr-active-opacity: 1.0
+ @hypr-inactive-opacity: 0.8
+*/
+
+* {
+    font-family: "JetBrainsMono Nerd Font", sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: #b3f2ff;
+}
+
+window#waybar {
+    background: rgba(0, 5, 15, 0.95);
+    border-radius: 0;
+    border: 1px solid rgba(0, 255, 255, 0.4);
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
+    padding: 0 10px;
+}
+
+window#waybar.top .modules-left,
+window#waybar.top .modules-right {
+    background: rgba(0, 10, 20, 0.9);
+    border-radius: 0;
+    border: 1px solid rgba(0, 255, 255, 0.3);
+}
+
+#workspaces button.active {
+    color: #000000;
+    background-color: #00ffff;
+}
+
+#custom-spotify {
+    color: #00ffff;
+    min-width: 160px;
+}
+
+#cava {
+    color: #00ffff;
+}
+
+image#album-art {
+    border: 1px solid rgba(0, 255, 255, 0.5);
+    border-radius: 0;
+}
