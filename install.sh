@@ -106,7 +106,7 @@ packages_for_pm() {
                 pipewire pipewire-pulse wireplumber pavucontrol wl-clipboard \
                 cliphist libnotify network-manager-applet grim slurp curl \
                 hyprpicker swappy xdg-utils bluez ttf-font-awesome \
-                ttf-jetbrains-mono-nerd polkit-kde-agent zenity
+                ttf-jetbrains-mono-nerd polkit-kde-agent zenity gthumb imagemagick
             ;;
         apt)
             printf '%s\n' \
@@ -114,7 +114,7 @@ packages_for_pm() {
                 pipewire pipewire-pulse wireplumber pavucontrol wl-clipboard \
                 cliphist libnotify-bin network-manager-gnome grim slurp curl \
                 hyprpicker swappy xdg-utils bluez fonts-font-awesome \
-                fonts-jetbrains-mono polkit-kde-agent-1 zenity
+                fonts-jetbrains-mono polkit-kde-agent-1 zenity gthumb imagemagick
             ;;
         dnf)
             printf '%s\n' \
@@ -122,7 +122,7 @@ packages_for_pm() {
                 pipewire pipewire-pulseaudio wireplumber pavucontrol wl-clipboard \
                 cliphist libnotify NetworkManager-applet grim slurp curl \
                 hyprpicker swappy xdg-utils bluez fontawesome-fonts \
-                jetbrains-mono-fonts polkit-kde zenity
+                jetbrains-mono-fonts polkit-kde zenity gthumb ImageMagick
             ;;
         zypper)
             printf '%s\n' \
@@ -130,7 +130,7 @@ packages_for_pm() {
                 pipewire pipewire-pulseaudio wireplumber pavucontrol wl-clipboard \
                 cliphist libnotify-tools NetworkManager-applet grim slurp curl \
                 hyprpicker swappy xdg-utils bluez fontawesome-fonts \
-                jetbrains-mono-fonts polkit-kde-agent-6 zenity
+                jetbrains-mono-fonts polkit-kde-agent-6 zenity gthumb ImageMagick
             ;;
         apk)
             printf '%s\n' \
@@ -138,7 +138,7 @@ packages_for_pm() {
                 pipewire pipewire-pulse wireplumber pavucontrol wl-clipboard \
                 cliphist libnotify network-manager-applet grim slurp curl \
                 hyprpicker swappy xdg-utils bluez fontawesome-fonts \
-                ttf-jetbrains-mono polkit-kde-agent zenity
+                ttf-jetbrains-mono polkit-kde-agent zenity gthumb imagemagick
             ;;
     esac
 }
@@ -306,10 +306,13 @@ install_configs() {
 }
 
 post_install_checks() {
-    required_bins=(hyprland waybar wofi mako hyprpaper kitty jq playerctl pactl wpctl wl-copy wl-paste cliphist notify-send grim slurp curl)
-    optional_bins=(hyprpicker swappy nm-applet bluetoothctl pavucontrol cava zenity gthumb magick)
+    required_bins=(
+        hyprland waybar wofi mako hyprpaper kitty jq playerctl pactl wpctl 
+        wl-copy wl-paste cliphist notify-send grim slurp curl
+        hyprpicker swappy nm-applet bluetoothctl pavucontrol cava zenity 
+        gthumb magick
+    )
     missing_required=()
-    missing_optional=()
 
     printf "\n${BOLD}--- Binary Check ---${NC}\n"
     for bin in "${required_bins[@]}"; do
@@ -318,15 +321,6 @@ post_install_checks() {
         else
             printf "  ${RED}✘${NC} %-15s ${RED}[MISSING]${NC}\n" "$bin"
             missing_required+=("$bin")
-        fi
-    done
-
-    for bin in "${optional_bins[@]}"; do
-        if have "$bin"; then
-            printf "  ${CYAN}ℹ${NC} %-15s ${GREEN}[OK]${NC}\n" "$bin"
-        else
-            printf "  ${YELLOW}⚠${NC} %-15s ${YELLOW}[OPTIONAL MISSING]${NC}\n" "$bin"
-            missing_optional+=("$bin")
         fi
     done
 
@@ -504,12 +498,6 @@ if [ "$#" -gt 0 ]; then
     done
     [ "$INSTALL_PACKAGES" -eq 1 ] && install_packages
     install_configs
-    post_install_checks
-    show_summary
-else
-    interactive_menu
-fi
-nfigs
     post_install_checks
     show_summary
 else
