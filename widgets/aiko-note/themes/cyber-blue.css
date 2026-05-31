@@ -1,0 +1,14 @@
+/*
+ @name: Cyber Blue (Note Widget)
+ @bg: #010410
+ @fg: #00ffff
+ @border: #00ffff
+ @accent: #0080a0
+*/
+
+.note-window {
+    background-color: #010410;
+    color: #00ffff;
+    border: 2px solid #00ffff;
+    border-radius: 0px;
+}
