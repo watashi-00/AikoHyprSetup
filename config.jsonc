@@ -1,7 +1,7 @@
 {
     "layer": "top",
     "position": "top",
-    "height": 42,
+    "height": 52,
     "spacing": 8,
     "margin-top": 8,
     "margin-left": 18,
@@ -29,7 +29,7 @@
     "modules-right": ["custom/audio-output", "custom/audio-input", "bluetooth", "network", "battery", "clock", "custom/power"],
 
     "hyprland/workspaces": {
-        "format": "{icon}<sup>{count}</sup>",
+        "format": "{icon}",
         "on-click": "activate",
         "all-outputs": false,
         "persistent-workspaces": {
