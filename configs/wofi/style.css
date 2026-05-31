@@ -14,14 +14,14 @@ window {
 #input {
     color: #e6e1ea; /* @theme:wofi_text */
     background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(245, 185, 212, 0.2); /* @theme:wofi_border */
+    border: 1px solid rgba(245, 185, 212, 0.25); /* @theme:wofi_border */
     border-radius: 8px;
     padding: 10px 12px;
     margin-bottom: 12px;
 }
 
 #input:focus {
-    border-color: rgba(245, 185, 212, 0.65); /* @theme:wofi_border */
+    border: 1px solid rgba(245, 185, 212, 0.25); /* @theme:wofi_border */
 }
 
 #inner-box,
@@ -46,12 +46,12 @@ entry {
 
 entry:selected {
     background-color: rgba(99, 72, 91, 0.85); /* @theme:wofi_accent */
-    color: #ffffff; /* @theme:wofi_text */
-    border: 1px solid rgba(245, 185, 212, 0.35); /* @theme:wofi_border */
+    color: #e6e1ea; /* @theme:wofi_text */
+    border: 1px solid rgba(245, 185, 212, 0.25); /* @theme:wofi_border */
 }
 
 #text:selected {
-    color: #ffffff; /* @theme:wofi_text */
+    color: #e6e1ea; /* @theme:wofi_text */
 }
 
 label {
