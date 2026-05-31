@@ -2,7 +2,7 @@
 Name=Aiko Themes
 Comment=Select global theme for AikoHyprSetup
 Exec=aiko --theme
-Icon=preferences-desktop-theme
+Icon=$HOME/.config/waybar/assets/aiko-icon.svg
 Terminal=false
 Type=Application
 Categories=Settings;DesktopSettings;

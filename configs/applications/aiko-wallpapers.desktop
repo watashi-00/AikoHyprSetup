@@ -2,7 +2,7 @@
 Name=Aiko Wallpapers
 Comment=Change desktop wallpaper
 Exec=aiko --wallpaper
-Icon=background
+Icon=$HOME/.config/waybar/assets/aiko-icon.svg
 Terminal=false
 Type=Application
 Categories=Settings;DesktopSettings;
