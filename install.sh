@@ -427,15 +427,16 @@ action_apply_changes() {
 
 action_wallpaper_changer() {
     local wp_script="$SOURCE_DIR/wallpaper.sh"
-    if [ ! -x "$wp_script" ]; then
-        wp_script="$HOME/.config/waybar/wallpaper.sh"
-    fi
-
-    if [ -x "$wp_script" ]; then
-        "$wp_script" select
+    
+    if [ -f "$wp_script" ]; then
+        log "Using local wallpaper script..."
+        bash "$wp_script" select
+        success "Wallpaper process completed!"
+    elif [ -x "$HOME/.config/waybar/wallpaper.sh" ]; then
+        "$HOME/.config/waybar/wallpaper.sh" select
         success "Wallpaper process completed!"
     else
-        warn "Wallpaper script not found."
+        warn "Wallpaper script not found. Please install configurations first."
     fi
     return 0
 }
