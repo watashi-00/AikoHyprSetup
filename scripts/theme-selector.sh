@@ -105,10 +105,11 @@ if command -v hyprctl >/dev/null 2>&1; then
 fi
 
 if [ -x "$REPO_DIR/scripts/restart-waybar.sh" ]; then
-    "$REPO_DIR/scripts/restart-waybar.sh"
+    nohup "$REPO_DIR/scripts/restart-waybar.sh" >/dev/null 2>&1 &
 else
     pkill waybar || true
-    waybar &
+    sleep 0.5
+    nohup waybar >/dev/null 2>&1 &
 fi
 
 log "Theme applied successfully!"
