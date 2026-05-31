@@ -306,6 +306,9 @@ install_configs() {
     copy_dir_contents "$SOURCE_DIR/configs/mako" "$mako_dir"
     copy_dir_contents "$SOURCE_DIR/configs/wofi" "$wofi_dir"
 
+    log "${MAGENTA}Installing Widgets...${NC}"
+    copy_dir_contents "$SOURCE_DIR/widgets" "$waybar_dir/widgets"
+
     if [ "$INSTALL_HYPR" -eq 1 ] && [ -f "$SOURCE_DIR/configs/hypr/hyprland.conf" ]; then
         log "${MAGENTA}Installing Hyprland config...${NC}"
         copy_file "$SOURCE_DIR/configs/hypr/hyprland.conf" "$hypr_dir/hyprland.conf"
