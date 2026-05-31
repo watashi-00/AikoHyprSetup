@@ -93,7 +93,7 @@
 
     "custom/power": {
         "format": "<span color='#ff8fbd'>\uf011</span>",
-        "on-click": "hyprshutdown",
+        "on-click": "$HOME/.config/waybar/power-menu.sh",
         "tooltip": false
     },
 

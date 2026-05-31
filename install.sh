@@ -273,7 +273,7 @@ install_configs() {
         style.css audio-input.sh audio-output.sh clipboard-history.sh
         clipboard-listener.sh launcher.sh minimize.sh restart-waybar.sh
         screenshot.sh spotify-art.sh spotify-info.sh spotify-playstate.sh
-        wallpaper.sh
+        wallpaper.sh power-menu.sh
     )
 
     log "${MAGENTA}Installing Waybar files...${NC}"
@@ -301,7 +301,8 @@ install_configs() {
         "$waybar_dir/launcher.sh" "$waybar_dir/minimize.sh" \
         "$waybar_dir/restart-waybar.sh" "$waybar_dir/screenshot.sh" \
         "$waybar_dir/spotify-art.sh" "$waybar_dir/spotify-info.sh" \
-        "$waybar_dir/spotify-playstate.sh" "$waybar_dir/wallpaper.sh"
+        "$waybar_dir/spotify-playstate.sh" "$waybar_dir/wallpaper.sh" \
+        "$waybar_dir/power-menu.sh"
 }
 
 post_install_checks() {
