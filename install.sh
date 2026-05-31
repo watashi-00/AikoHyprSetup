@@ -426,11 +426,16 @@ action_apply_changes() {
 }
 
 action_wallpaper_changer() {
-    if [ -x "$HOME/.config/waybar/wallpaper.sh" ]; then
-        "$HOME/.config/waybar/wallpaper.sh" select
+    local wp_script="$SOURCE_DIR/wallpaper.sh"
+    if [ ! -x "$wp_script" ]; then
+        wp_script="$HOME/.config/waybar/wallpaper.sh"
+    fi
+
+    if [ -x "$wp_script" ]; then
+        "$wp_script" select
         success "Wallpaper process completed!"
     else
-        warn "Wallpaper script not found at ~/.config/waybar/wallpaper.sh"
+        warn "Wallpaper script not found."
     fi
     return 0
 }
@@ -448,9 +453,10 @@ interactive_menu() {
         [3]="🎨  Copy Configurations Only"
         [4]="🔍  Check Dependencies"
         [5]="🔄  Apply Changes Now"
-        [6]="🖼️   Update Wallpaper (Optional)"
+        [6]="🖼️   Update Wallpaper"
         [0]="✘   Exit"
     )
+
     declare -A actions=(
         [1]="action_full_install"
         [2]="action_install_packages"
