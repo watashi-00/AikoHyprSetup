@@ -34,13 +34,28 @@ mkdir -p "$BUILD_DIR/configs"
 mkdir -p "$BUILD_DIR/widgets"
 
 # 2.5 Build Python Widgets
-if command -v pyinstaller >/dev/null 2>&1; then
-    log "PyInstaller detected. Compiling Python widgets..."
+# Try to find pyinstaller (via uv or global)
+PYINSTALLER_CMD=""
+if command -v uv >/dev/null 2>&1; then
+    log "uv detected. Checking for PyInstaller..."
+    # Check if pyinstaller tool is installed in uv
+    if uv tool list | grep -q "pyinstaller"; then
+        PYINSTALLER_CMD="uv tool run pyinstaller"
+    else
+        log "PyInstaller not found in uv tools. Trying to run via 'uv run'..."
+        PYINSTALLER_CMD="uv run pyinstaller"
+    fi
+elif command -v pyinstaller >/dev/null 2>&1; then
+    PYINSTALLER_CMD="pyinstaller"
+fi
+
+if [ -n "$PYINSTALLER_CMD" ]; then
+    log "Compiling Python widgets with: $PYINSTALLER_CMD"
     
     # Aiko-Note
     if [ -f "widgets/aiko-note/aiko-note.py" ]; then
         log "Compiling Aiko-Note..."
-        pyinstaller --noconfirm --onefile --windowed \
+        $PYINSTALLER_CMD --noconfirm --onefile --windowed \
             --name "aiko-note-bin" \
             --distpath "$BUILD_DIR/widgets/aiko-note" \
             --workpath "/tmp/pyinstaller-build" \
