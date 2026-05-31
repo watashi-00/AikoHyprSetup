@@ -364,7 +364,7 @@ ${MAGENTA}${BOLD}
   ██║██║ ╚████║███████║   ██║   ██║  ██║███████╗███████╗███████╗██║  ██║
   ╚═╝╚═╝  ╚═══╝╚══════╝   ╚═╝   ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝
 ${NC}
-             ${CYAN}Dotfiles Installer (Hyprland + Waybar)${NC}
+             ${CYAN}AikoHyprSetup (Hyprland + Waybar)${NC}
 EOF
     echo
 }

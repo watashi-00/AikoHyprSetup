@@ -1,6 +1,7 @@
-# Hyprland & Waybar Pink Anime Setup
+# AikoHyprSetup
 
-This repository contains a complete and aesthetic configuration for Hyprland and Waybar, focusing on usability and a "pink anime" visual style. It includes automation scripts, a universal installer, and support for multiple modules.
+A highly aesthetic Pink Anime configuration for Hyprland and Waybar, featuring interactive automation scripts and a seamless user experience.
+
 
 ## 🛠️ Structure and Locations
 Repo Path: `./` | System Path: `~/.config/waybar/`

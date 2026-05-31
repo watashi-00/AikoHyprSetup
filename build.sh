@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # --- Settings ---
-PROJECT_NAME="waybar-hyprland-setup"
+PROJECT_NAME="AikoHyprSetup"
 BUILD_DIR="dist"
 OUTPUT_FILE="${PROJECT_NAME}.tar.gz"
 
