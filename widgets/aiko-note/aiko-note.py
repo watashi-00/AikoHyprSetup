@@ -14,7 +14,7 @@ class AikoNote(Gtk.Window):
         
         self.set_type_hint(Gdk.WindowTypeHint.DIALOG)
         self.set_decorated(False)
-        self.set_resizable(False)
+        self.set_resizable(True)
         self.set_default_size(350, 200)
         self.set_keep_above(True)
         self.set_position(Gtk.WindowPosition.CENTER)
