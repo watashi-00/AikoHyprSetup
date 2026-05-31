@@ -154,7 +154,10 @@ done < <(grep "@widget-" "$selected_file")
 # --- 4. Sync to ~/.config ---
 mkdir -p "$HOME/.config/waybar" "$HOME/.config/hypr" "$HOME/.config/wofi" "$HOME/.config/mako"
 
-cp "$WAYBAR_STYLE" "$HOME/.config/waybar/style.css"
+# Only copy if the source is different from the destination
+if [ "$(realpath -m "$WAYBAR_STYLE")" != "$(realpath -m "$HOME/.config/waybar/style.css")" ]; then
+    cp "$WAYBAR_STYLE" "$HOME/.config/waybar/style.css"
+fi
 cp "$HYPR_CONF" "$HOME/.config/hypr/hyprland.conf"
 cp "$WOFI_STYLE" "$HOME/.config/wofi/style.css"
 cp "$MAKO_CONF" "$HOME/.config/mako/config"
@@ -162,7 +165,10 @@ cp "$MAKO_CONF" "$HOME/.config/mako/config"
 # Sync widgets
 if [ -d "$REPO_DIR/widgets" ]; then
     mkdir -p "$HOME/.config/waybar/widgets"
-    cp -a "$REPO_DIR/widgets/." "$HOME/.config/waybar/widgets/"
+    # Only copy if we are not already in the config directory
+    if [ "$(realpath -m "$REPO_DIR/widgets")" != "$(realpath -m "$HOME/.config/waybar/widgets")" ]; then
+        cp -a "$REPO_DIR/widgets/." "$HOME/.config/waybar/widgets/"
+    fi
 fi
 
 # --- 5. Refresh ---

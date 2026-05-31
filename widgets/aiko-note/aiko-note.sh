@@ -9,4 +9,15 @@ touch "$NOTES_FILE"
 # In a real implementation, this could be a GTK app or a specialized wofi setup
 # We'll use kitty with a specific class for Hyprland rules
 
-kitty --class aiko-note -e nvim "$NOTES_FILE"
+EDITOR_BIN="nvim"
+if ! command -v nvim >/dev/null 2>&1; then
+    if command -v nano >/dev/null 2>&1; then
+        EDITOR_BIN="nano"
+    elif command -v vi >/dev/null 2>&1; then
+        EDITOR_BIN="vi"
+    else
+        EDITOR_BIN="vim"
+    fi
+fi
+
+kitty --class aiko-note -e "$EDITOR_BIN" "$NOTES_FILE"

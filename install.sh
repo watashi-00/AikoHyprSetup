@@ -299,6 +299,10 @@ install_configs() {
         copy_file "$SOURCE_DIR/scripts/$file" "$waybar_dir/$file"
     done
 
+    log "${MAGENTA}Installing Installer itself...${NC}"
+    copy_file "$SOURCE_DIR/install.sh" "$waybar_dir/install.sh"
+    copy_dir_contents "$SOURCE_DIR/scripts" "$waybar_dir/scripts"
+
     log "${MAGENTA}Installing Themes...${NC}"
     copy_dir_contents "$SOURCE_DIR/themes" "$waybar_dir/themes"
 
