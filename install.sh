@@ -425,6 +425,16 @@ action_apply_changes() {
     return 0
 }
 
+action_wallpaper_changer() {
+    if [ -x "$HOME/.config/waybar/wallpaper.sh" ]; then
+        "$HOME/.config/waybar/wallpaper.sh" apply
+        success "Wallpaper updated!"
+    else
+        warn "Wallpaper script not found at ~/.config/waybar/wallpaper.sh"
+    fi
+    return 0
+}
+
 action_exit() {
     if [ -t 1 ]; then clear; fi
     log "Exiting..."
@@ -433,22 +443,24 @@ action_exit() {
 
 interactive_menu() {
     declare -A labels=(
-        [0]="🚀  Full Installation (Recommended)"
-        [1]="📦  Install Packages Only"
-        [2]="🎨  Copy Configurations Only"
-        [3]="🔍  Check Dependencies"
-        [4]="🔄  Apply Changes Now"
-        [5]="✘   Exit"
+        [1]="🚀  Full Installation (Recommended)"
+        [2]="📦  Install Packages Only"
+        [3]="🎨  Copy Configurations Only"
+        [4]="🔍  Check Dependencies"
+        [5]="🔄  Apply Changes Now"
+        [6]="🖼️   Update Wallpaper (Optional)"
+        [0]="✘   Exit"
     )
     declare -A actions=(
-        [0]="action_full_install"
-        [1]="action_install_packages"
-        [2]="action_install_configs"
-        [3]="action_check_deps"
-        [4]="action_apply_changes"
-        [5]="action_exit"
+        [1]="action_full_install"
+        [2]="action_install_packages"
+        [3]="action_install_configs"
+        [4]="action_check_deps"
+        [5]="action_apply_changes"
+        [6]="action_wallpaper_changer"
+        [0]="action_exit"
     )
-    local order=(0 1 2 3 4 5)
+    local order=(1 2 3 4 5 6 0)
     
     menu "" labels actions order
 }
