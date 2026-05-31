@@ -8,11 +8,11 @@
  @hypr-rounding: 15
  @hypr-active-opacity: 1.0
  @hypr-inactive-opacity: 0.9
- @wofi-bg: rgba(32, 33, 41, 0.95)
+ @wofi-bg: rgba(30, 32, 35, 0.95)
  @wofi-border: rgba(245, 185, 212, 0.25)
  @wofi-text: #e6e1ea
  @wofi-accent: rgba(99, 72, 91, 0.85)
- @mako-bg: #2F2F3F
+ @mako-bg: #1E2023
  @mako-text: #f4e8f7
  @mako-border: #f5b9d4
  @mako-rounding: 12
@@ -27,7 +27,7 @@
 }
 
 window#waybar {
-    background: rgba(26, 22, 34, 0.95);
+    background: rgba(30, 32, 35, 0.95);
     border-radius: 16px;
     border: 1px solid rgba(255, 134, 185, 0.28);
     box-shadow: 0 8px 28px rgba(13, 8, 18, 0.55);
@@ -75,7 +75,7 @@ window#waybar.top {
 
 window#waybar.top .modules-left,
 window#waybar.top .modules-right {
-    background: rgba(26, 22, 34, 0.95);
+    background: rgba(30, 32, 35, 0.95);
     border-radius: 15px;
     border: 1px solid rgba(255, 134, 185, 0.26);
     box-shadow: 0 8px 26px rgba(13, 8, 18, 0.55);
@@ -98,14 +98,14 @@ window#waybar.top {
 
 window#waybar.bottom {
     min-height: 38px;
-    background: rgba(26, 22, 34, 0.95);
+    background: rgba(30, 32, 35, 0.95);
     border-radius: 15px;
     border: 1px solid rgba(255, 134, 185, 0.24);
 }
 
 window#waybar.left {
     min-width: 70px;
-    background: rgba(26, 22, 34, 0.95);
+    background: rgba(30, 32, 35, 0.95);
     border-radius: 18px;
     border: 1px solid rgba(255, 134, 185, 0.24);
     padding: 9px 5px;
