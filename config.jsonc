@@ -1,9 +1,9 @@
 {
     "layer": "top",
     "position": "top",
-    "height": 54,
+    "height": 42,
     "spacing": 8,
-    "margin-top": 12,
+    "margin-top": 8,
     "margin-left": 18,
     "margin-right": 18,
 
@@ -51,14 +51,14 @@
     },
 
     "custom/audio-output": {
-        "format": "<span color='#f5c2e7'>\uf028</span> {}",
+        "format": "<span color='#ff8fbd'>\uf028</span> {}",
         "interval": 1,
         "exec": "$HOME/.config/waybar/audio-output.sh",
         "on-click": "pavucontrol"
     },
 
     "custom/audio-input": {
-        "format": "<span color='#f5c2e7'>\uf130</span> {}",
+        "format": "<span color='#ff8fbd'>\uf130</span> {}",
         "interval": 1,
         "exec": "$HOME/.config/waybar/audio-input.sh",
         "on-click": "pavucontrol -t 4",
@@ -66,8 +66,8 @@
     },
 
     "bluetooth": {
-        "format": "<span color='#f5c2e7'>\uf294</span>",
-        "format-connected": "<span color='#f5c2e7'>\uf294</span> {device_alias}",
+        "format": "<span color='#ff8fbd'>\uf294</span>",
+        "format-connected": "<span color='#ff8fbd'>\uf294</span> {device_alias}",
         "tooltip-format": "{controller_alias}\t{controller_address}",
         "tooltip-format-connected": "{controller_alias}\t{controller_address}\n\n{device_enumerate}",
         "tooltip-format-enumerate-connected": "{device_alias}\t{device_address}",
@@ -76,13 +76,13 @@
 
 
     "network": {
-        "format-wifi": "<span color='#f5c2e7'>\uf1eb</span>  {essid}",
-        "format-ethernet": "<span color='#f5c2e7'>\uf796</span>  Conectado",
-        "format-disconnected": "<span color='#f5c2e7'>\u26a0</span>  Desconectado"
+        "format-wifi": "<span color='#ff8fbd'>\uf1eb</span>  {essid}",
+        "format-ethernet": "<span color='#ff8fbd'>\uf796</span>  Conectado",
+        "format-disconnected": "<span color='#ff8fbd'>\u26a0</span>  Desconectado"
     },
 
     "battery": {
-        "format": "<span color='#f5c2e7'>{icon}</span>  {capacity}%",
+        "format": "<span color='#ff8fbd'>{icon}</span>  {capacity}%",
         "format-icons": ["\uf244", "\uf243", "\uf242", "\uf241", "\uf240"]
     },
 
@@ -92,7 +92,7 @@
     },
 
     "custom/power": {
-        "format": "<span color='#f5c2e7'>\uf011</span>",
+        "format": "<span color='#ff8fbd'>\uf011</span>",
         "on-click": "hyprshutdown",
         "tooltip": false
     },
@@ -103,7 +103,7 @@
 
     "image#album-art": {
         "exec": "bash $HOME/.config/waybar/spotify-art.sh",
-        "size": 52,
+        "size": 32,
         "interval": 2,
         "tooltip": false
     },
@@ -114,11 +114,11 @@
         "interval": 2,
         "exec": "playerctl metadata --format '{{artist}} - {{title}}' 2> /dev/null",
         "on-click": "playerctl play-pause",
-        "max-length": 40
+        "max-length": 34
     },
 
     "custom/spotify-prev": {
-        "format": "<span color='#f5c2e7'>\uf048</span>",
+        "format": "<span color='#ff8fbd'>\uf048</span>",
         "on-click": "playerctl previous",
         "tooltip": false
     },
@@ -132,7 +132,7 @@
     },
 
     "custom/spotify-next": {
-        "format": "<span color='#f5c2e7'>\uf051</span>",
+        "format": "<span color='#ff8fbd'>\uf051</span>",
         "on-click": "playerctl next",
         "tooltip": false
     },

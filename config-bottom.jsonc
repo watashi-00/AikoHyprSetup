@@ -1,7 +1,7 @@
 {
     "layer": "top",
     "position": "bottom",
-    "height": 40,
+    "height": 38,
     "width": 900,
     "spacing": 8,
     "margin-bottom": 10,
@@ -28,7 +28,7 @@
         "tooltip-format": "<big>{:%A, %d %B}</big>"
     },
     "battery": {
-        "format": "<span color='#f5c2e7'>{icon}</span> {capacity}%",
+        "format": "<span color='#ff8fbd'>{icon}</span> {capacity}%",
         "format-icons": ["\uf244", "\uf243", "\uf242", "\uf241", "\uf240"]
     }
 }
