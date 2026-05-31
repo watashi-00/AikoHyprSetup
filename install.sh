@@ -306,7 +306,7 @@ install_configs() {
 
 post_install_checks() {
     required_bins=(hyprland waybar wofi mako hyprpaper kitty jq playerctl pactl wpctl wl-copy wl-paste cliphist notify-send grim slurp curl)
-    optional_bins=(hyprpicker swappy nm-applet bluetoothctl pavucontrol cava zenity)
+    optional_bins=(hyprpicker swappy nm-applet bluetoothctl pavucontrol cava zenity gthumb magick)
     missing_required=()
     missing_optional=()
 
@@ -503,6 +503,12 @@ if [ "$#" -gt 0 ]; then
     done
     [ "$INSTALL_PACKAGES" -eq 1 ] && install_packages
     install_configs
+    post_install_checks
+    show_summary
+else
+    interactive_menu
+fi
+nfigs
     post_install_checks
     show_summary
 else

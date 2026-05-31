@@ -141,6 +141,44 @@ start_mpvpaper() {
     fi
 }
 
+crop_image() {
+    local input="$1"
+    local monitor_name="$2"
+    
+    # We only crop static images
+    if is_animated_file "$input"; then
+        echo "$input"
+        return 0
+    fi
+
+    if ! zenity --question --title="Crop Wallpaper?" --text="Would you like to crop the image to 16:9 for $monitor_name?\n(Highly recommended for perfect fit)" --width=300 2>/dev/null; then
+        echo "$input"
+        return 0
+    fi
+
+    local output_dir="$WAYBAR_DIR/wallpapers"
+    mkdir -p "$output_dir"
+    local output="$output_dir/cropped_$(date +%s).png"
+
+    if have gthumb; then
+        log "Opening gThumb for cropping..."
+        notify-send "Wallpaper Tool" "Use the crop tool with 16:9 ratio and Save As into: $output" -i gthumb
+        # We copy to a temp file first to avoid modifying original
+        cp "$input" "$output"
+        gthumb "$output"
+        # Since gthumb is a full app, we assume user saved it correctly
+        echo "$output"
+    elif have swappy; then
+        log "Opening Swappy for cropping..."
+        notify-send "Wallpaper Tool" "Crop and Save to apply changes." -i swappy
+        swappy -f "$input" -o "$output"
+        echo "$output"
+    else
+        warn "No cropping tool found (gthumb or swappy). Using original."
+        echo "$input"
+    fi
+}
+
 select_wallpaper() {
     if ! have zenity; then
         die "zenity is required for graphical file selection. Please install it."
@@ -179,6 +217,9 @@ select_wallpaper() {
 
     if [ -n "$selected_file" ]; then
         log "Selected for $choice: $selected_file"
+
+        # Apply cropping step
+        selected_file=$(crop_image "$selected_file" "$choice")
         
         # Update STATE_FILE
         if [ "$choice" = "ALL" ]; then
