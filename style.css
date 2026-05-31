@@ -119,15 +119,22 @@ window#waybar.left {
     border-color: #ffc2dc;
 }
 
-#custom-spotify {
+#spotify-info {
+    padding: 0;
+    margin: 0;
+}
+
+#custom-spotify, #custom-spotify label {
     color: #ffc2dc;
     padding: 0;
+    margin: 0;
     min-width: 210px;
+    text-align: left;
 }
 
 #spotify-buttons {
     min-width: 200px;
-    margin-left: 5px;
+    margin: 0 0 0 5px;
     padding: 0;
 }
 
