@@ -92,7 +92,7 @@ window#waybar.left {
 
 #workspaces {
     min-width: 226px;
-    margin-right: 7px;
+    margin-right: 60px;
 }
 
 #workspaces button {
