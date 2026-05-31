@@ -113,7 +113,8 @@ packages_for_pm() {
                 pipewire pipewire-pulse wireplumber pavucontrol wl-clipboard \
                 cliphist libnotify network-manager-applet grim slurp curl \
                 hyprpicker swappy xdg-utils bluez ttf-font-awesome \
-                ttf-jetbrains-mono-nerd polkit-kde-agent zenity gthumb imagemagick
+                ttf-jetbrains-mono-nerd polkit-kde-agent zenity gthumb imagemagick \
+                python-gobject
             ;;
         apt)
             printf '%s\n' \
@@ -121,7 +122,8 @@ packages_for_pm() {
                 pipewire pipewire-pulse wireplumber pavucontrol wl-clipboard \
                 cliphist libnotify-bin network-manager-gnome grim slurp curl \
                 hyprpicker swappy xdg-utils bluez fonts-font-awesome \
-                fonts-jetbrains-mono polkit-kde-agent-1 zenity gthumb imagemagick
+                fonts-jetbrains-mono polkit-kde-agent-1 zenity gthumb imagemagick \
+                python3-gi
             ;;
         dnf)
             printf '%s\n' \
@@ -129,7 +131,8 @@ packages_for_pm() {
                 pipewire pipewire-pulseaudio wireplumber pavucontrol wl-clipboard \
                 cliphist libnotify NetworkManager-applet grim slurp curl \
                 hyprpicker swappy xdg-utils bluez fontawesome-fonts \
-                jetbrains-mono-fonts polkit-kde zenity gthumb ImageMagick
+                jetbrains-mono-fonts polkit-kde zenity gthumb ImageMagick \
+                python3-gobject
             ;;
         zypper)
             printf '%s\n' \
@@ -137,7 +140,8 @@ packages_for_pm() {
                 pipewire pipewire-pulseaudio wireplumber pavucontrol wl-clipboard \
                 cliphist libnotify-tools NetworkManager-applet grim slurp curl \
                 hyprpicker swappy xdg-utils bluez fontawesome-fonts \
-                jetbrains-mono-fonts polkit-kde-agent-6 zenity gthumb ImageMagick
+                jetbrains-mono-fonts polkit-kde-agent-6 zenity gthumb ImageMagick \
+                python3-gobject
             ;;
         apk)
             printf '%s\n' \
@@ -145,7 +149,8 @@ packages_for_pm() {
                 pipewire pipewire-pulse wireplumber pavucontrol wl-clipboard \
                 cliphist libnotify network-manager-applet grim slurp curl \
                 hyprpicker swappy xdg-utils bluez fontawesome-fonts \
-                ttf-jetbrains-mono polkit-kde-agent zenity gthumb imagemagick
+                ttf-jetbrains-mono polkit-kde-agent zenity gthumb imagemagick \
+                py3-gobject3
             ;;
     esac
 }

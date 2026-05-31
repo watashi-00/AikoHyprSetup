@@ -1,23 +1,17 @@
 #!/usr/bin/env bash
-# aiko-note.sh - A simple floating note widget
+# aiko-note.sh - Launcher for the GTK Aiko-Note widget
 
-NOTES_FILE="$HOME/.cache/aiko-note.txt"
-mkdir -p "$(dirname "$NOTES_FILE")"
-touch "$NOTES_FILE"
+SCRIPT_DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
 
-# For now, let's use a floating terminal with a text editor
-# In a real implementation, this could be a GTK app or a specialized wofi setup
-# We'll use kitty with a specific class for Hyprland rules
-
-EDITOR_BIN="nvim"
-if ! command -v nvim >/dev/null 2>&1; then
-    if command -v nano >/dev/null 2>&1; then
-        EDITOR_BIN="nano"
-    elif command -v vi >/dev/null 2>&1; then
-        EDITOR_BIN="vi"
-    else
-        EDITOR_BIN="vim"
-    fi
+# Check if python3-gobject is installed
+if ! python3 -c "import gi; gi.require_version('Gtk', '3.0')" >/dev/null 2>&1; then
+    notify-send "AikoHyprSetup" "Error: python3-gi (PyGObject) is required for the Notes widget."
+    
+    # Fallback to the old terminal method if GTK is missing
+    NOTES_FILE="$HOME/.cache/aiko-note.txt"
+    kitty --class aiko-note -e nvim "$NOTES_FILE"
+    exit 1
 fi
 
-kitty --class aiko-note -e "$EDITOR_BIN" "$NOTES_FILE"
+# Run the python GTK widget
+python3 "$SCRIPT_DIR/aiko-note.py"

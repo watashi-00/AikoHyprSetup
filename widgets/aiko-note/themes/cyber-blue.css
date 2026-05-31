@@ -1,14 +1,34 @@
 /*
  @name: Cyber Blue (Note Widget)
- @bg: #010410
- @fg: #00ffff
- @border: #00ffff
- @accent: #0080a0
 */
 
-.note-window {
-    background-color: #010410;
-    color: #00ffff;
+#aiko-note-window {
+    background-color: rgba(1, 4, 16, 0.98);
     border: 2px solid #00ffff;
     border-radius: 0px;
+}
+
+#note-title {
+    color: #00ffff;
+    font-family: "JetBrainsMono Nerd Font", sans-serif;
+    font-size: 18px;
+    font-weight: 900;
+    text-shadow: 0 0 10px #00ffff;
+}
+
+#note-content {
+    background-color: transparent;
+    color: #00ffff;
+    font-family: "JetBrainsMono Nerd Font", sans-serif;
+}
+
+#note-content text {
+    background-color: transparent;
+}
+
+#note-cat-icon {
+    color: #00ffff;
+    font-size: 60px;
+    opacity: 0.3;
+    text-shadow: 0 0 15px #00ffff;
 }

@@ -1,14 +1,35 @@
 /*
  @name: Pink Anime (Note Widget)
- @bg: #1a1622
- @fg: #ffd7e8
- @border: #ff8fbd
- @accent: #f5c2e7
 */
 
-.note-window {
-    background-color: #1a1622;
-    color: #ffd7e8;
+#aiko-note-window {
+    background-color: rgba(26, 22, 34, 0.95);
     border: 2px solid #ff8fbd;
-    border-radius: 15px;
+    border-radius: 20px;
+}
+
+#note-title {
+    color: #ff8fbd;
+    font-family: "JetBrainsMono Nerd Font", "Font Awesome 6 Free", sans-serif;
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+#note-content {
+    background-color: transparent;
+    color: #ffd7e8;
+    font-family: "JetBrainsMono Nerd Font", sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+#note-content text {
+    background-color: transparent;
+}
+
+#note-cat-icon {
+    color: #ff8fbd;
+    font-size: 60px;
+    opacity: 0.5;
 }
