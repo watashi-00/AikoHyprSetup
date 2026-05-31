@@ -154,9 +154,7 @@ window#waybar.left {
     letter-spacing: 0;
 }
 
-#custom-spotify-prev, #custom-spotify-play, #custom-spotify-next,
-#custom-audio-output, #custom-audio-input, #bluetooth,
-#network, #battery, #clock, #custom-power {
+#custom-spotify-prev, #custom-spotify-play, #custom-spotify-next {
     color: #ffc1db;
     background: transparent;
     padding: 5px 5px;
@@ -167,6 +165,18 @@ window#waybar.left {
     font-size: 16px;
 }
 
+#custom-audio-output, #custom-audio-input, #bluetooth,
+#network, #battery, #clock, #custom-power {
+    color: #ffc1db;
+    background: transparent;
+    padding: 5px 5px;
+    margin: 0 1px;
+    border-radius: 11px;
+    border: none;
+    transition: all 0.16s ease;
+    font-size: 13px;
+}
+
 #custom-spotify-prev:hover, #custom-spotify-play:hover, #custom-spotify-next:hover,
 #custom-audio-output:hover, #custom-audio-input:hover, #bluetooth:hover,
 #network:hover, #battery:hover, #clock:hover, #custom-power:hover {
@@ -175,7 +185,7 @@ window#waybar.left {
 }
 
 #custom-power {
-    font-size: 15px;
+    font-size: 13px;
     padding-left: 7px;
     padding-right: 7px;
 }
