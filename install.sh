@@ -357,6 +357,18 @@ install_configs() {
     copy_dir_contents "$SOURCE_DIR/configs/fastfetch" "$HOME/.config/fastfetch"
     patch_installed_paths "$HOME/.config/fastfetch/config.jsonc"
 
+    # Add fastfetch to .bashrc if not present
+    if [ -f "$HOME/.bashrc" ] && ! grep -q "fastfetch" "$HOME/.bashrc"; then
+        log "Adding fastfetch to .bashrc..."
+        cat << 'EOF' >> "$HOME/.bashrc"
+
+# Auto-run fastfetch for AikoHyprSetup
+if [[ $- == *i* ]] && command -v fastfetch >/dev/null 2>&1; then
+    fastfetch
+fi
+EOF
+    fi
+
     log "${MAGENTA}Adjusting permissions...${NC}"
     run chmod +x "$waybar_dir"/*.sh
 }
