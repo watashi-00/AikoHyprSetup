@@ -9,8 +9,14 @@
     "margin-right": 10,
 
     "modules-left": [],
-    "modules-center": ["custom/launcher-terminal", "custom/launcher-browser", "custom/launcher-files", "custom/launcher-code", "custom/launcher-settings", "custom/launcher-menu"],
+    "modules-center": ["image#kitty-icon", "custom/launcher-browser", "custom/launcher-files", "custom/launcher-code", "custom/launcher-settings", "custom/launcher-menu"],
     "modules-right": [],
+
+    "image#kitty-icon": {
+        "path": "$HOME/.config/waybar/assets/kitty-icon.svg",
+        "size": 32,
+        "on-click": "kitty"
+    },
 
     "custom/launcher-terminal": {
         "format": "",
