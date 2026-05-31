@@ -2,14 +2,15 @@
 # aiko - Global CLI for AikoHyprSetup management
 
 VERSION="1.0.0"
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Get the real directory of the script, resolving symlinks
+SCRIPT_DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
 
 # Resolve the project root directory
 if [ -f "$SCRIPT_DIR/../aiko-ideas.md" ]; then
     # Case: Running from the repository (scripts/ folder)
     PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 else
-    # Case: Running from $HOME/.config/waybar (flat or nested installation)
+    # Case: Running from $HOME/.config/waybar
     if [[ "$SCRIPT_DIR" == */scripts ]]; then
         PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
     else
