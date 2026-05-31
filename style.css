@@ -164,6 +164,7 @@ window#waybar.left {
     border-radius: 11px;
     border: none;
     transition: all 0.16s ease;
+    font-size: 16px;
 }
 
 #custom-spotify-prev:hover, #custom-spotify-play:hover, #custom-spotify-next:hover,

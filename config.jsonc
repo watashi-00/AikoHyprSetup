@@ -103,7 +103,7 @@
 
     "image#album-art": {
         "exec": "bash $HOME/.config/waybar/spotify-art.sh",
-        "size": 32,
+        "size": 44,
         "interval": 2,
         "tooltip": false
     },
