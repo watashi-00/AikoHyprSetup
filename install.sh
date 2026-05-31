@@ -32,11 +32,11 @@ SEARCH="🔍"
 RELOAD="🔄"
 
 # --- Load Modular Menu ---
-if [ -f "$SOURCE_DIR/menu.sh" ]; then
+if [ -f "$SOURCE_DIR/scripts/menu.sh" ]; then
     # shellcheck disable=SC1091
-    source "$SOURCE_DIR/menu.sh"
+    source "$SOURCE_DIR/scripts/menu.sh"
 else
-    echo "Error: menu.sh not found in $SOURCE_DIR"
+    echo "Error: menu.sh not found in $SOURCE_DIR/scripts"
     exit 1
 fi
 
@@ -257,8 +257,8 @@ patch_installed_paths() {
     [ -f "$file" ] || return 0
     run sed -i \
         -e "s#/home/watashi#$HOME#g" \
-        -e 's#~/.config/hypr/launcher.sh#~/.config/waybar/launcher.sh#g' \
-        -e 's#~/.config/hypr/clipboard-history.sh#~/.config/waybar/clipboard-history.sh#g' \
+        -e "s#~/.config/hypr/launcher.sh#~/.config/waybar/launcher.sh#g" \
+        -e "s#~/.config/hypr/clipboard-history.sh#~/.config/waybar/clipboard-history.sh#g" \
         "$file"
 }
 
@@ -270,24 +270,33 @@ install_configs() {
 
     waybar_files=(
         config.jsonc config-bottom.jsonc config-left.jsonc config-screenshot.jsonc
-        style.css audio-input.sh audio-output.sh clipboard-history.sh
-        clipboard-listener.sh launcher.sh minimize.sh restart-waybar.sh
+        style.css
+    )
+
+    scripts=(
+        audio-input.sh audio-output.sh clipboard-history.sh
+        clipboard-listener.sh launcher.sh menu.sh minimize.sh restart-waybar.sh
         screenshot.sh spotify-art.sh spotify-info.sh spotify-playstate.sh
         wallpaper.sh power-menu.sh
     )
 
-    log "${MAGENTA}Installing Waybar files...${NC}"
+    log "${MAGENTA}Installing Waybar configs...${NC}"
     for file in "${waybar_files[@]}"; do
-        copy_file "$SOURCE_DIR/$file" "$waybar_dir/$file"
+        copy_file "$SOURCE_DIR/waybar/$file" "$waybar_dir/$file"
+    done
+
+    log "${MAGENTA}Installing helper scripts...${NC}"
+    for file in "${scripts[@]}"; do
+        copy_file "$SOURCE_DIR/scripts/$file" "$waybar_dir/$file"
     done
 
     log "${MAGENTA}Installing Mako and Wofi...${NC}"
-    copy_dir_contents "$SOURCE_DIR/mako-config" "$mako_dir"
-    copy_dir_contents "$SOURCE_DIR/wofi-config" "$wofi_dir"
+    copy_dir_contents "$SOURCE_DIR/configs/mako" "$mako_dir"
+    copy_dir_contents "$SOURCE_DIR/configs/wofi" "$wofi_dir"
 
-    if [ "$INSTALL_HYPR" -eq 1 ] && [ -f "$SOURCE_DIR/hypr-config/hyprland.conf" ]; then
+    if [ "$INSTALL_HYPR" -eq 1 ] && [ -f "$SOURCE_DIR/configs/hypr/hyprland.conf" ]; then
         log "${MAGENTA}Installing Hyprland config...${NC}"
-        copy_file "$SOURCE_DIR/hypr-config/hyprland.conf" "$hypr_dir/hyprland.conf"
+        copy_file "$SOURCE_DIR/configs/hypr/hyprland.conf" "$hypr_dir/hyprland.conf"
         patch_installed_paths "$hypr_dir/hyprland.conf"
     fi
 
@@ -295,14 +304,7 @@ install_configs() {
     patch_installed_paths "$waybar_dir/config-left.jsonc"
 
     log "${MAGENTA}Adjusting permissions...${NC}"
-    run chmod +x \
-        "$waybar_dir/audio-input.sh" "$waybar_dir/audio-output.sh" \
-        "$waybar_dir/clipboard-history.sh" "$waybar_dir/clipboard-listener.sh" \
-        "$waybar_dir/launcher.sh" "$waybar_dir/minimize.sh" \
-        "$waybar_dir/restart-waybar.sh" "$waybar_dir/screenshot.sh" \
-        "$waybar_dir/spotify-art.sh" "$waybar_dir/spotify-info.sh" \
-        "$waybar_dir/spotify-playstate.sh" "$waybar_dir/wallpaper.sh" \
-        "$waybar_dir/power-menu.sh"
+    run chmod +x "$waybar_dir"/*.sh
 }
 
 post_install_checks() {
@@ -421,7 +423,7 @@ action_apply_changes() {
 }
 
 action_wallpaper_changer() {
-    local wp_script="$SOURCE_DIR/wallpaper.sh"
+    local wp_script="$SOURCE_DIR/scripts/wallpaper.sh"
     
     if [ -f "$wp_script" ]; then
         log "Using local wallpaper script..."
