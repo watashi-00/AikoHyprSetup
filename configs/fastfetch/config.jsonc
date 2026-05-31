@@ -12,12 +12,13 @@
     },
     "display": {
         "separator": " ➜  ",
+        "fixedSize": true,
+        "key": {
+            "width": 15
+        },
         "color": {
             "keys": "magenta",
             "title": "magenta"
-        },
-        "key": {
-            "type": "both"
         }
     },
     "modules": [
