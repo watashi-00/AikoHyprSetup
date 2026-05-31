@@ -122,7 +122,25 @@ window#waybar.left {
 #custom-spotify {
     color: #ffc2dc;
     padding: 0 5px;
+    min-width: 200px;
+    max-width: 200px;
 }
+
+#spotify-buttons {
+    min-width: 200px;
+    max-width: 200px;
+    margin: 0;
+    padding: 0;
+}
+
+#custom-spotify-prev, #custom-spotify-play, #custom-spotify-next {
+    min-width: 30px; /* Fixed width for better centering */
+}
+
+/* Push buttons to 0px, 100px (center), 200px (end) using margins if space-between is limited */
+#custom-spotify-prev { margin-right: auto; }
+#custom-spotify-play { margin: 0 auto; }
+#custom-spotify-next { margin-left: auto; }
 
 #cava {
     color: #ff86b9;
