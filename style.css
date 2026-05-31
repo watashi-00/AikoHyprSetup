@@ -181,12 +181,13 @@ window#waybar.left {
 }
 
 image#album-art {
-    min-width: 30px;
-    min-height: 30px;
-    margin: 0 8px 0 92px;
+    min-width: 42px;
+    min-height: 42px;
+    margin: 0 8px 0 50px;
     border-radius: 9px;
     border: 1px solid rgba(255, 134, 185, 0.28);
 }
+
 
 #tray {
     padding: 0 6px;
