@@ -117,6 +117,26 @@ sed -i "s/.*@theme:mako_text.*/text-color=$m_text # @theme:mako_text/" "$MAKO_CO
 sed -i "s/.*@theme:mako_border.*/border-color=$m_border # @theme:mako_border/" "$MAKO_CONF"
 sed -i "s/.*@theme:mako_rounding.*/border-radius=$m_rounding # @theme:mako_rounding/" "$MAKO_CONF"
 
+# --- 3.5 Apply Widget Themes ---
+log "Updating widgets..."
+while read -r line; do
+    var_part=$(echo "$line" | cut -d':' -f1 | tr -d '[:space:]*')
+    widget_name=${var_part#@widget-}
+    theme_file=$(echo "$line" | cut -d':' -f2- | sed 's/^ //;s/[[:space:]]*$//')
+
+    if [ -n "$widget_name" ] && [ -n "$theme_file" ]; then
+        widget_dir="$REPO_DIR/widgets/$widget_name"
+        if [ -d "$widget_dir" ]; then
+            source_theme="$widget_dir/themes/$theme_file"
+            if [ -f "$source_theme" ]; then
+                log "Linking theme for $widget_name: $theme_file"
+                rm -f "$widget_dir/theme.css"
+                ln -s "$source_theme" "$widget_dir/theme.css"
+            fi
+        fi
+    fi
+done < <(grep "@widget-" "$selected_file")
+
 # --- 4. Sync to ~/.config ---
 mkdir -p "$HOME/.config/waybar" "$HOME/.config/hypr" "$HOME/.config/wofi" "$HOME/.config/mako"
 
@@ -124,6 +144,12 @@ cp "$WAYBAR_STYLE" "$HOME/.config/waybar/style.css"
 cp "$HYPR_CONF" "$HOME/.config/hypr/hyprland.conf"
 cp "$WOFI_STYLE" "$HOME/.config/wofi/style.css"
 cp "$MAKO_CONF" "$HOME/.config/mako/config"
+
+# Sync widgets
+if [ -d "$REPO_DIR/widgets" ]; then
+    mkdir -p "$HOME/.config/waybar/widgets"
+    cp -a "$REPO_DIR/widgets/." "$HOME/.config/waybar/widgets/"
+fi
 
 # --- 5. Refresh ---
 if command -v hyprctl >/dev/null 2>&1; then
