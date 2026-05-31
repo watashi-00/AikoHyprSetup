@@ -2,12 +2,26 @@
 set -euo pipefail
 
 # --- Paths ---
-REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-THEMES_DIR="$REPO_DIR/themes"
-WAYBAR_STYLE="$REPO_DIR/waybar/style.css"
-HYPR_CONF="$REPO_DIR/configs/hypr/hyprland.conf"
-WOFI_STYLE="$REPO_DIR/configs/wofi/style.css"
-MAKO_CONF="$REPO_DIR/configs/mako/config"
+# Get the real directory of the script, resolving symlinks
+SCRIPT_DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
+
+if [ -d "$SCRIPT_DIR/../themes" ]; then
+    # Case: Running from the repository (scripts/ folder)
+    REPO_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+    THEMES_DIR="$REPO_DIR/themes"
+    WAYBAR_STYLE="$REPO_DIR/waybar/style.css"
+    HYPR_CONF="$REPO_DIR/configs/hypr/hyprland.conf"
+    WOFI_STYLE="$REPO_DIR/configs/wofi/style.css"
+    MAKO_CONF="$REPO_DIR/configs/mako/config"
+else
+    # Case: Running from ~/.config/waybar (flat installation)
+    REPO_DIR="$SCRIPT_DIR"
+    THEMES_DIR="$REPO_DIR/themes"
+    WAYBAR_STYLE="$REPO_DIR/style.css"
+    HYPR_CONF="$HOME/.config/hypr/hyprland.conf"
+    WOFI_STYLE="$HOME/.config/wofi/style.css"
+    MAKO_CONF="$HOME/.config/mako/config"
+fi
 
 # --- Utils ---
 log() {
