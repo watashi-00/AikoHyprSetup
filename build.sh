@@ -86,6 +86,8 @@ cp -r configs/hypr "$BUILD_DIR/configs/"
 cp -r configs/mako "$BUILD_DIR/configs/"
 cp -r configs/wofi "$BUILD_DIR/configs/"
 cp -r configs/applications "$BUILD_DIR/configs/"
+cp -r configs/kitty "$BUILD_DIR/configs/"
+cp -r configs/fastfetch "$BUILD_DIR/configs/"
 
 # Widgets (Copying everything, excluding python files if binaries exist)
 cp -r widgets/* "$BUILD_DIR/widgets/"

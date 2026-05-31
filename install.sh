@@ -351,6 +351,12 @@ install_configs() {
     mkdir -p "$app_dir"
     copy_dir_contents "$SOURCE_DIR/configs/applications" "$app_dir"
 
+    log "${MAGENTA}Installing Kitty and Fastfetch configs...${NC}"
+    mkdir -p "$HOME/.config/kitty" "$HOME/.config/fastfetch"
+    copy_dir_contents "$SOURCE_DIR/configs/kitty" "$HOME/.config/kitty"
+    copy_dir_contents "$SOURCE_DIR/configs/fastfetch" "$HOME/.config/fastfetch"
+    patch_installed_paths "$HOME/.config/fastfetch/config.jsonc"
+
     log "${MAGENTA}Adjusting permissions...${NC}"
     run chmod +x "$waybar_dir"/*.sh
 }
