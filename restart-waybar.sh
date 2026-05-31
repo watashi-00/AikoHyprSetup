@@ -3,6 +3,11 @@
 # Mata todas as instâncias do Waybar que estiverem rodando
 killall waybar || true
 
+# Aplica wallpaper (estático ou animado)
+if [ -x ~/.config/waybar/wallpaper.sh ]; then
+    ~/.config/waybar/wallpaper.sh apply
+fi
+
 # Aguarda um pequeno momento para garantir que os processos fecharam
 sleep 0.5
 
