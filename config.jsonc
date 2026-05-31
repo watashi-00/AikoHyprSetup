@@ -114,7 +114,7 @@
         "interval": 2,
         "exec": "playerctl metadata --format '{{artist}} - {{title}}' 2> /dev/null",
         "on-click": "playerctl play-pause",
-        "max-length": 20
+        "max-length": 18
     },
 
     "custom/spotify-prev": {

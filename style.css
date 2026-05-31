@@ -128,15 +128,11 @@ window#waybar.left {
     color: #ffc2dc;
     padding: 0;
     margin: 0;
-    min-width: 210px;
-}
-
-#custom-spotify label {
-    margin-right: auto;
+    min-width: 160px;
 }
 
 #spotify-buttons {
-    min-width: 200px;
+    min-width: 150px;
     margin: 0 0 0 5px;
     padding: 0;
 }
@@ -145,9 +141,9 @@ window#waybar.left {
     min-width: 30px; /* Fixed width for better centering */
 }
 
-/* Spacing for 200px width: 30px(button) + 55px(gap) + 30px(button) + 55px(gap) + 30px(button) = 200px */
+/* Spacing for 150px width: 30px(button) + 30px(gap) + 30px(button) + 30px(gap) + 30px(button) = 150px */
 #custom-spotify-prev { margin: 0; }
-#custom-spotify-play { margin: 0 55px; }
+#custom-spotify-play { margin: 0 30px; }
 #custom-spotify-next { margin: 0; }
 
 #cava {
