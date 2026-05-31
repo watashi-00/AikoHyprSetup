@@ -3,58 +3,187 @@
  @author: Aiko
  @hypr-active-border: rgba(00ffffff) rgba(0000ffff) 45deg
  @hypr-inactive-border: rgba(001133aa)
- @hypr-gaps-in: 4
- @hypr-gaps-out: 8
+ @hypr-gaps-in: 2
+ @hypr-gaps-out: 5
  @hypr-rounding: 0
  @hypr-active-opacity: 1.0
  @hypr-inactive-opacity: 0.8
- @wofi-bg: rgba(0, 5, 15, 0.95)
- @wofi-border: rgba(0, 255, 255, 0.4)
- @wofi-text: #b3f2ff
- @wofi-accent: rgba(0, 40, 80, 0.9)
- @mako-bg: #00050f
- @mako-text: #b3f2ff
+ @wofi-bg: rgba(2, 4, 15, 0.98)
+ @wofi-border: rgba(0, 255, 255, 0.5)
+ @wofi-text: #00ffff
+ @wofi-accent: rgba(0, 80, 160, 0.9)
+ @mako-bg: #010410
+ @mako-text: #00ffff
  @mako-border: #00ffff
  @mako-rounding: 0
 */
 
 * {
     font-family: "JetBrainsMono Nerd Font", sans-serif;
-    font-size: 12px;
-    font-weight: 700;
-    color: #b3f2ff;
+    font-size: 13px;
+    font-weight: 800;
+    color: #00ffff;
 }
 
 window#waybar {
-    background: rgba(0, 5, 15, 0.95);
+    background: rgba(2, 4, 15, 0.95);
     border-radius: 0;
-    border: 1px solid rgba(0, 255, 255, 0.4);
-    box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
-    padding: 0 10px;
+    border-bottom: 2px solid #00ffff;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.15);
+    padding: 0;
+}
+
+window#waybar.screenshot {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+#screenshot-tools {
+    background: #010410;
+    border: 1px solid #00ffff;
+    border-radius: 0;
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
+}
+
+#custom-area, #custom-full, #custom-picker, #custom-edit, #custom-close {
+    color: #00ffff;
+    padding: 5px 20px;
+    font-size: 18px;
+}
+
+#custom-area:hover, #custom-full:hover, #custom-picker:hover, #custom-edit:hover {
+    background: rgba(0, 255, 255, 0.2);
+    color: #ffffff;
+}
+
+#custom-close {
+    color: #ff0033;
+}
+
+window#waybar.top {
+    background: transparent;
 }
 
 window#waybar.top .modules-left,
 window#waybar.top .modules-right {
-    background: rgba(0, 10, 20, 0.9);
+    background: #010410;
     border-radius: 0;
-    border: 1px solid rgba(0, 255, 255, 0.3);
+    border: 1px solid #00ffff;
+    box-shadow: inset 0 0 10px rgba(0, 255, 255, 0.2);
+}
+
+window#waybar.top .modules-left {
+    padding: 2px 10px;
+    min-width: 800px;
+}
+
+window#waybar.bottom {
+    background: #010410;
+    border-radius: 0;
+    border: 2px solid #00ffff;
+}
+
+window#waybar.left {
+    background: #010410;
+    border-radius: 0;
+    border-right: 2px solid #00ffff;
+}
+
+#workspaces {
+    min-width: 200px;
+}
+
+#workspaces button {
+    background: transparent;
+    color: #005577;
+    border-radius: 0;
+    border: 1px solid #004466;
+    margin: 2px;
+}
+
+#workspaces button:hover {
+    background: rgba(0, 255, 255, 0.1);
+    color: #00ffff;
 }
 
 #workspaces button.active {
     color: #000000;
     background-color: #00ffff;
+    box-shadow: 0 0 12px #00ffff;
 }
 
-#custom-spotify {
+#spotify-info {
+    padding: 0;
+    margin: 0;
+}
+
+#custom-spotify, #custom-spotify label {
     color: #00ffff;
     min-width: 160px;
+    text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+}
+
+#spotify-buttons {
+    min-width: 150px;
+    margin-left: 5px;
+}
+
+#custom-spotify-prev, #custom-spotify-play, #custom-spotify-next {
+    color: #00ffff;
+    font-size: 18px;
+}
+
+#custom-spotify-play:hover {
+    color: #ffffff;
+    text-shadow: 0 0 10px #00ffff;
 }
 
 #cava {
     color: #00ffff;
+    margin-left: 40px;
+}
+
+#custom-audio-output, #custom-audio-input, #bluetooth,
+#network, #battery, #clock, #custom-power {
+    color: #00ffff;
+    padding: 0 10px;
+    font-size: 14px;
+}
+
+#custom-power {
+    color: #ff0033;
+    font-weight: 900;
 }
 
 image#album-art {
-    border: 1px solid rgba(0, 255, 255, 0.5);
+    min-width: 44px;
+    min-height: 44px;
+    margin-left: 50px;
     border-radius: 0;
+    border: 2px solid #00ffff;
+    filter: grayscale(100%) brightness(1.2);
+}
+
+#taskbar button {
+    border-radius: 0;
+    border: 1px solid #004466;
+    margin: 0 4px;
+}
+
+#taskbar button.active {
+    background: rgba(0, 255, 255, 0.3);
+    border: 1px solid #00ffff;
+    box-shadow: 0 0 8px #00ffff;
+}
+
+#custom-launcher-terminal, #custom-launcher-browser, #custom-launcher-files,
+#custom-launcher-code, #custom-launcher-settings, #custom-launcher-menu {
+    color: #00ffff;
+    border-radius: 0;
+}
+
+#custom-launcher-menu {
+    color: #00ffff;
+    text-shadow: 0 0 10px #00ffff;
 }
