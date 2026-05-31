@@ -5,11 +5,16 @@ VERSION="1.0.0"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Resolve the project root directory
-if [ -f "$SCRIPT_DIR/../waybar/config.jsonc" ]; then
+if [ -f "$SCRIPT_DIR/../aiko-ideas.md" ]; then
+    # Case: Running from the repository (scripts/ folder)
     PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 else
-    # Fallback for installed state
-    PROJECT_ROOT="$HOME/.config/waybar"
+    # Case: Running from ~/.config/waybar (flat or nested installation)
+    if [[ "$SCRIPT_DIR" == */scripts ]]; then
+        PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+    else
+        PROJECT_ROOT="$SCRIPT_DIR"
+    fi
 fi
 
 show_help() {
