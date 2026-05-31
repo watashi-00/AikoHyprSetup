@@ -129,7 +129,10 @@ window#waybar.left {
     padding: 0;
     margin: 0;
     min-width: 210px;
-    text-align: left;
+}
+
+#custom-spotify label {
+    margin-right: auto;
 }
 
 #spotify-buttons {
