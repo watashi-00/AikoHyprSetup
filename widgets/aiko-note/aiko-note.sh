@@ -3,15 +3,20 @@
 
 SCRIPT_DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
 
-# Check if python3-gobject is installed
-if ! python3 -c "import gi; gi.require_version('Gtk', '3.0')" >/dev/null 2>&1; then
-    notify-send "AikoHyprSetup" "Error: python3-gi (PyGObject) is required for the Notes widget."
-    
-    # Fallback to the old terminal method if GTK is missing
-    NOTES_FILE="$HOME/.cache/aiko-note.txt"
-    kitty --class aiko-note -e nvim "$NOTES_FILE"
-    exit 1
+# Priority 1: Run the compiled binary (from build.sh)
+if [ -f "$SCRIPT_DIR/aiko-note-bin" ]; then
+    "$SCRIPT_DIR/aiko-note-bin"
+    exit 0
 fi
 
-# Run the python GTK widget
-python3 "$SCRIPT_DIR/aiko-note.py"
+# Priority 2: Fallback to Python GTK widget
+if python3 -c "import gi; gi.require_version('Gtk', '3.0')" >/dev/null 2>&1; then
+    python3 "$SCRIPT_DIR/aiko-note.py"
+    exit 0
+fi
+
+# Priority 3: Final fallback to Terminal/Nvim if GTK is missing
+notify-send "AikoHyprSetup" "PyGObject not found. Falling back to terminal editor."
+NOTES_FILE="$HOME/.cache/aiko-note.txt"
+kitty --class aiko-note -e nvim "$NOTES_FILE"
+

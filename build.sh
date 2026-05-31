@@ -31,6 +31,28 @@ log "Preparing build directory..."
 mkdir -p "$BUILD_DIR/waybar"
 mkdir -p "$BUILD_DIR/scripts"
 mkdir -p "$BUILD_DIR/configs"
+mkdir -p "$BUILD_DIR/widgets"
+
+# 2.5 Build Python Widgets
+if command -v pyinstaller >/dev/null 2>&1; then
+    log "PyInstaller detected. Compiling Python widgets..."
+    
+    # Aiko-Note
+    if [ -f "widgets/aiko-note/aiko-note.py" ]; then
+        log "Compiling Aiko-Note..."
+        pyinstaller --noconfirm --onefile --windowed \
+            --name "aiko-note-bin" \
+            --distpath "$BUILD_DIR/widgets/aiko-note" \
+            --workpath "/tmp/pyinstaller-build" \
+            --specpath "/tmp/pyinstaller-specs" \
+            "widgets/aiko-note/aiko-note.py"
+        
+        # Clean up temporary build files
+        rm -rf "/tmp/pyinstaller-build" "/tmp/pyinstaller-specs"
+    fi
+else
+    log "${YELLOW}[!] PyInstaller not found. Skipping widget compilation. Python will be required to run them.${NC}"
+fi
 
 # 3. Copy essential files
 log "Copying essential files..."
@@ -46,6 +68,10 @@ cp scripts/* "$BUILD_DIR/scripts/"
 
 # System configs
 cp -r configs/* "$BUILD_DIR/configs/"
+
+# Widgets (Copying everything, excluding python files if binaries exist)
+cp -r widgets/* "$BUILD_DIR/widgets/"
+find "$BUILD_DIR/widgets" -name "__pycache__" -type d -exec rm -rf {} +
 
 # 4. Create package
 log "Compressing files into ${OUTPUT_FILE}..."
