@@ -238,7 +238,14 @@ copy_file() {
         if [ "$src_real" = "$dest_real" ]; then
             return 0
         fi
-        backup_path "$dest"
+        
+        # Prevent backups for .desktop files to avoid duplication in launchers
+        if [[ "$dest" == *.desktop ]]; then
+            log "Updating: ${WHITE}$(basename "$src")${NC}"
+            run rm -f "$dest"
+        else
+            backup_path "$dest"
+        fi
     fi
 
     log "Copying: ${WHITE}$(basename "$src")${NC} -> ${WHITE}$dest${NC}"
