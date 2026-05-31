@@ -82,7 +82,10 @@ cp waybar/* "$BUILD_DIR/waybar/"
 cp scripts/* "$BUILD_DIR/scripts/"
 
 # System configs
-cp -r configs/* "$BUILD_DIR/configs/"
+cp -r configs/hypr "$BUILD_DIR/configs/"
+cp -r configs/mako "$BUILD_DIR/configs/"
+cp -r configs/wofi "$BUILD_DIR/configs/"
+cp -r configs/applications "$BUILD_DIR/configs/"
 
 # Widgets (Copying everything, excluding python files if binaries exist)
 cp -r widgets/* "$BUILD_DIR/widgets/"

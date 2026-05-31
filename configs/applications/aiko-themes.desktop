@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Aiko Themes
+Comment=Select global theme for AikoHyprSetup
+Exec=aiko --theme
+Icon=preferences-desktop-theme
+Terminal=false
+Type=Application
+Categories=Settings;DesktopSettings;
+Keywords=theme;aiko;style;

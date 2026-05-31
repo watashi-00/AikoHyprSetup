@@ -69,25 +69,14 @@ class AikoNote(Gtk.Window):
         main_vbox.pack_start(scrolled, True, True, 5)
 
         # Cat icon (Bottom Right Overlay)
-        # Using a custom SVG icon for better rendering control
         self.cat_image = Gtk.Image()
         self.cat_image.set_name("note-cat-icon")
         self.cat_image.set_halign(Gtk.Align.END)
         self.cat_image.set_valign(Gtk.Align.END)
-        self.cat_image.set_margin_end(-10) # Overlap slightly for aesthetic
-        self.cat_image.set_margin_bottom(-10)
+        self.cat_image.set_margin_end(-5)
+        self.cat_image.set_margin_bottom(-5)
         
-        # Load SVG
-        svg_path = self.get_asset_path("cat-icon.svg")
-        if svg_path:
-            # We use a Pixbuf to scale it properly
-            try:
-                from gi.repository import GdkPixbuf
-                pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(svg_path, 100, 100, True)
-                self.cat_image.set_from_pixbuf(pixbuf)
-            except Exception as e:
-                print(f"Failed to load SVG pixbuf: {e}")
-        
+        self.update_cat_icon()
         overlay.add_overlay(self.cat_image)
 
         # Event connections
@@ -101,6 +90,55 @@ class AikoNote(Gtk.Window):
             self.set_visual(visual)
 
         self.show_all()
+
+    def update_cat_icon(self):
+        svg_path = self.get_asset_path("cat-icon.svg")
+        if not svg_path: return
+
+        # Get accent color from CSS
+        context = self.cat_image.get_style_context()
+        found, color = context.lookup_color("accent_color")
+        if not found:
+            # Fallback to pink if not found in CSS
+            color = Gdk.RGBA()
+            color.parse("#ff8fbd")
+
+        hex_color = "#{:02x}{:02x}{:02x}".format(
+            int(color.red * 255),
+            int(color.green * 255),
+            int(color.blue * 255)
+        )
+
+        try:
+            with open(svg_path, "r") as f:
+                svg_data = f.read()
+            
+            # Robust coloring: Replace any hex color or 'currentColor'
+            import re
+            # Replace fill and stroke values
+            svg_data = re.sub(r'fill:#[0-9a-fA-F]{6}', f'fill:{hex_color}', svg_data)
+            svg_data = re.sub(r'stroke:#[0-9a-fA-F]{6}', f'stroke:{hex_color}', svg_data)
+            svg_data = re.sub(r'fill="#[0-9a-fA-F]{6}"', f'fill="{hex_color}"', svg_data)
+            svg_data = re.sub(r'stroke="#[0-9a-fA-F]{6}"', f'stroke="{hex_color}"', svg_data)
+            svg_data = svg_data.replace("currentColor", hex_color)
+            
+            from gi.repository import GdkPixbuf
+            loader = GdkPixbuf.PixbufLoader.new_with_type("svg")
+            loader.write(svg_data.encode('utf-8'))
+            loader.close()
+            
+            pixbuf = loader.get_pixbuf()
+            
+            # Scaling with fixed aspect ratio
+            # We target 150px height, calculating width to match
+            target_h = 150
+            aspect = pixbuf.get_width() / pixbuf.get_height()
+            target_w = int(target_h * aspect)
+            
+            scaled_pixbuf = pixbuf.scale_simple(target_w, target_h, GdkPixbuf.InterpType.BILINEAR)
+            self.cat_image.set_from_pixbuf(scaled_pixbuf)
+        except Exception as e:
+            print(f"Error coloring/scaling SVG: {e}")
 
     def get_asset_path(self, filename):
         # 1. Check local directory (dev)

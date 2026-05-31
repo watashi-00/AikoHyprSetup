@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Aiko Note
+Comment=Simple floating notes widget
+Exec=aiko --note
+Icon=sticky-notes
+Terminal=false
+Type=Application
+Categories=Utility;Office;
+Keywords=notes;aiko;widget;

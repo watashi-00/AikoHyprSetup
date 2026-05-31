@@ -333,11 +333,16 @@ install_configs() {
     log "${MAGENTA}Installing Assets...${NC}"
     copy_dir_contents "$SOURCE_DIR/assets" "$waybar_dir/assets"
 
+    log "${MAGENTA}Installing Hyprland config...${NC}"
     if [ "$INSTALL_HYPR" -eq 1 ] && [ -f "$SOURCE_DIR/configs/hypr/hyprland.conf" ]; then
-        log "${MAGENTA}Installing Hyprland config...${NC}"
         copy_file "$SOURCE_DIR/configs/hypr/hyprland.conf" "$hypr_dir/hyprland.conf"
         patch_installed_paths "$hypr_dir/hyprland.conf"
     fi
+
+    log "${MAGENTA}Installing Desktop Entries...${NC}"
+    local app_dir="$HOME/.local/share/applications"
+    mkdir -p "$app_dir"
+    copy_dir_contents "$SOURCE_DIR/configs/applications" "$app_dir"
 
     log "${MAGENTA}Adjusting permissions...${NC}"
     run chmod +x "$waybar_dir"/*.sh
