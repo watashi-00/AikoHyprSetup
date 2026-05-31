@@ -8,6 +8,14 @@
  @hypr-rounding: 0
  @hypr-active-opacity: 1.0
  @hypr-inactive-opacity: 0.8
+ @wofi-bg: rgba(0, 5, 15, 0.95)
+ @wofi-border: rgba(0, 255, 255, 0.4)
+ @wofi-text: #b3f2ff
+ @wofi-accent: rgba(0, 40, 80, 0.9)
+ @mako-bg: #00050f
+ @mako-text: #b3f2ff
+ @mako-border: #00ffff
+ @mako-rounding: 0
 */
 
 * {

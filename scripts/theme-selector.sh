@@ -6,7 +6,8 @@ REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 THEMES_DIR="$REPO_DIR/themes"
 WAYBAR_STYLE="$REPO_DIR/waybar/style.css"
 HYPR_CONF="$REPO_DIR/configs/hypr/hyprland.conf"
-INSTALLED_HYPR_CONF="$HOME/.config/hypr/hyprland.conf"
+WOFI_STYLE="$REPO_DIR/configs/wofi/style.css"
+MAKO_CONF="$REPO_DIR/configs/mako/config"
 
 # --- Utils ---
 log() {
@@ -29,7 +30,6 @@ if [ ${#themes[@]} -eq 0 ]; then
     exit 1
 fi
 
-# Build menu labels
 options=""
 for t in "${themes[@]}"; do
     name=$(grep "@name:" "$t" | cut -d':' -f2 | sed 's/^ //')
@@ -37,7 +37,6 @@ for t in "${themes[@]}"; do
     options+="$name\n"
 done
 
-# Use wofi if available
 if command -v wofi >/dev/null 2>&1; then
     selected_name=$(echo -e "$options" | wofi --dmenu --prompt "Select Theme" --width 300 --height 350)
 else
@@ -48,7 +47,6 @@ fi
 
 [ -z "$selected_name" ] && exit 0
 
-# Find the file matching selected name
 selected_file=""
 for t in "${themes[@]}"; do
     name=$(grep "@name:" "$t" | cut -d':' -f2 | sed 's/^ //')
@@ -66,42 +64,74 @@ fi
 
 log "Applying theme: $selected_name"
 
-# --- Apply Waybar Style ---
+# --- 1. Apply Waybar Style ---
 rm -f "$WAYBAR_STYLE"
 ln -s "$selected_file" "$WAYBAR_STYLE"
 
-# --- Extract & Apply Hyprland Variables ---
+# --- 2. Extract Variables ---
 get_var() {
-    grep "@hypr-$1:" "$selected_file" | cut -d':' -f2- | sed 's/^ //'
+    grep "@$1:" "$selected_file" | cut -d':' -f2- | sed 's/^ //'
 }
 
-gaps_in=$(get_var "gaps-in")
-gaps_out=$(get_var "gaps-out")
-active_border=$(get_var "active-border")
-inactive_border=$(get_var "inactive-border")
-rounding=$(get_var "rounding")
-active_opacity=$(get_var "active-opacity")
-inactive_opacity=$(get_var "inactive-opacity")
+# Hyprland
+h_active_border=$(get_var "hypr-active-border")
+h_inactive_border=$(get_var "hypr-inactive-border")
+h_gaps_in=$(get_var "hypr-gaps-in")
+h_gaps_out=$(get_var "hypr-gaps-out")
+h_rounding=$(get_var "hypr-rounding")
+h_active_opacity=$(get_var "hypr-active-opacity")
+h_inactive_opacity=$(get_var "hypr-inactive-opacity")
 
-# Patch local config using full-line replacement for safety
-sed -i "s/.*@theme:gaps_in.*/    gaps_in = $gaps_in # @theme:gaps_in/" "$HYPR_CONF"
-sed -i "s/.*@theme:gaps_out.*/    gaps_out = $gaps_out # @theme:gaps_out/" "$HYPR_CONF"
-sed -i "s/.*@theme:active_border.*/    col.active_border = $active_border # @theme:active_border/" "$HYPR_CONF"
-sed -i "s/.*@theme:inactive_border.*/    col.inactive_border = $inactive_border # @theme:inactive_border/" "$HYPR_CONF"
-sed -i "s/.*@theme:rounding.*/    rounding = $rounding # @theme:rounding/" "$HYPR_CONF"
-sed -i "s/.*@theme:active_opacity.*/    active_opacity = $active_opacity # @theme:active_opacity/" "$HYPR_CONF"
-sed -i "s/.*@theme:inactive_opacity.*/    inactive_opacity = $inactive_opacity # @theme:inactive_opacity/" "$HYPR_CONF"
+# Wofi
+w_bg=$(get_var "wofi-bg")
+w_border=$(get_var "wofi-border")
+w_text=$(get_var "wofi-text")
+w_accent=$(get_var "wofi-accent")
 
-# --- Sync to ~/.config ---
-mkdir -p "$HOME/.config/waybar"
-mkdir -p "$HOME/.config/hypr"
+# Mako
+m_bg=$(get_var "mako-bg")
+m_text=$(get_var "mako-text")
+m_border=$(get_var "mako-border")
+m_rounding=$(get_var "mako-rounding")
+
+# --- 3. Patch Configs ---
+
+# Hyprland
+sed -i "s/.*@theme:gaps_in.*/    gaps_in = $h_gaps_in # @theme:gaps_in/" "$HYPR_CONF"
+sed -i "s/.*@theme:gaps_out.*/    gaps_out = $h_gaps_out # @theme:gaps_out/" "$HYPR_CONF"
+sed -i "s/.*@theme:active_border.*/    col.active_border = $h_active_border # @theme:active_border/" "$HYPR_CONF"
+sed -i "s/.*@theme:inactive_border.*/    col.inactive_border = $h_inactive_border # @theme:inactive_border/" "$HYPR_CONF"
+sed -i "s/.*@theme:rounding.*/    rounding = $h_rounding # @theme:rounding/" "$HYPR_CONF"
+sed -i "s/.*@theme:active_opacity.*/    active_opacity = $h_active_opacity # @theme:active_opacity/" "$HYPR_CONF"
+sed -i "s/.*@theme:inactive_opacity.*/    inactive_opacity = $h_inactive_opacity # @theme:inactive_opacity/" "$HYPR_CONF"
+
+# Wofi (Note: using /* */ comments for CSS)
+sed -i "s|.*@theme:wofi_bg.*|    background: $w_bg; /* @theme:wofi_bg */|g" "$WOFI_STYLE"
+sed -i "s|.*@theme:wofi_border.*|    border: 1px solid $w_border; /* @theme:wofi_border */|g" "$WOFI_STYLE"
+sed -i "s|.*@theme:wofi_text.*|    color: $w_text; /* @theme:wofi_text */|g" "$WOFI_STYLE"
+sed -i "s|.*@theme:wofi_accent.*|    background-color: $w_accent; /* @theme:wofi_accent */|g" "$WOFI_STYLE"
+
+# Mako
+sed -i "s/.*@theme:mako_bg.*/background-color=$m_bg # @theme:mako_bg/" "$MAKO_CONF"
+sed -i "s/.*@theme:mako_text.*/text-color=$m_text # @theme:mako_text/" "$MAKO_CONF"
+sed -i "s/.*@theme:mako_border.*/border-color=$m_border # @theme:mako_border/" "$MAKO_CONF"
+sed -i "s/.*@theme:mako_rounding.*/border-radius=$m_rounding # @theme:mako_rounding/" "$MAKO_CONF"
+
+# --- 4. Sync to ~/.config ---
+mkdir -p "$HOME/.config/waybar" "$HOME/.config/hypr" "$HOME/.config/wofi" "$HOME/.config/mako"
 
 cp "$WAYBAR_STYLE" "$HOME/.config/waybar/style.css"
-cp "$HYPR_CONF" "$INSTALLED_HYPR_CONF"
+cp "$HYPR_CONF" "$HOME/.config/hypr/hyprland.conf"
+cp "$WOFI_STYLE" "$HOME/.config/wofi/style.css"
+cp "$MAKO_CONF" "$HOME/.config/mako/config"
 
-# --- Refresh Environment ---
+# --- 5. Refresh ---
 if command -v hyprctl >/dev/null 2>&1; then
     hyprctl reload >/dev/null 2>&1 || true
+fi
+
+if command -v makoctl >/dev/null 2>&1; then
+    makoctl reload >/dev/null 2>&1 || true
 fi
 
 if [ -x "$REPO_DIR/scripts/restart-waybar.sh" ]; then
@@ -112,4 +142,4 @@ else
     nohup waybar >/dev/null 2>&1 &
 fi
 
-log "Theme applied successfully!"
+log "Global theme applied successfully!"

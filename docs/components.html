@@ -170,13 +170,30 @@
             
             <div class="component-card">
                 <h3>Theme Markers</h3>
-                <p>Add these comments at the end of the line in <code>configs/hypr/hyprland.conf</code> to make them theme-able:</p>
+                <p>Add these comments at the end of the line in the respective config files to make them theme-able:</p>
+                
+                <h4>Hyprland (<code>configs/hypr/hyprland.conf</code>)</h4>
                 <ul>
                     <li><code># @theme:gaps_in</code>: Inner gaps between windows.</li>
                     <li><code># @theme:gaps_out</code>: Outer gaps (screen edge).</li>
                     <li><code># @theme:active_border</code>: Gradient for active windows.</li>
                     <li><code># @theme:rounding</code>: Corner radius.</li>
-                    <li><code># @theme:active_opacity</code>: Transparency for active window.</li>
+                </ul>
+
+                <h4>Wofi (<code>configs/wofi/style.css</code>)</h4>
+                <ul>
+                    <li><code>/* @theme:wofi_bg */</code>: Main window background.</li>
+                    <li><code>/* @theme:wofi_border */</code>: Border color and style.</li>
+                    <li><code>/* @theme:wofi_text */</code>: Default text color.</li>
+                    <li><code>/* @theme:wofi_accent */</code>: Highlight color for selected items.</li>
+                </ul>
+
+                <h4>Mako (<code>configs/mako/config</code>)</h4>
+                <ul>
+                    <li><code># @theme:mako_bg</code>: Notification background color.</li>
+                    <li><code># @theme:mako_text</code>: Notification text color.</li>
+                    <li><code># @theme:mako_border</code>: Notification border color.</li>
+                    <li><code># @theme:mako_rounding</code>: Corner radius for notifications.</li>
                 </ul>
             </div>
         </section>
