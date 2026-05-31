@@ -121,13 +121,13 @@ window#waybar.left {
 
 #custom-spotify {
     color: #ffc2dc;
-    padding: 0 5px;
-    min-width: 200px;
+    padding: 0;
+    min-width: 210px;
 }
 
 #spotify-buttons {
     min-width: 200px;
-    margin: 0;
+    margin-left: 5px;
     padding: 0;
 }
 
