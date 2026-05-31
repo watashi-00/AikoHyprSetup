@@ -69,13 +69,14 @@ class AikoNote(Gtk.Window):
         main_vbox.pack_start(scrolled, True, True, 5)
 
         # Cat icon (Bottom Right Overlay)
-        # Using a Nerd Font icon if possible, or just a placeholder
-        cat_label = Gtk.Label(label="") 
+        # Using a standard Nerd Font kitty icon (Unicode: \uf31b)
+        cat_label = Gtk.Label()
+        cat_label.set_markup('<span font="JetBrainsMono Nerd Font 32">\uf31b</span>')
         cat_label.set_name("note-cat-icon")
         cat_label.set_halign(Gtk.Align.END)
         cat_label.set_valign(Gtk.Align.END)
-        cat_label.set_margin_end(5)
-        cat_label.set_margin_bottom(5)
+        cat_label.set_margin_end(10)
+        cat_label.set_margin_bottom(10)
         overlay.add_overlay(cat_label)
 
         # Event connections
