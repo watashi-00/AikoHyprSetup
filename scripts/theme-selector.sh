@@ -158,13 +158,20 @@ done < <(grep "@widget-" "$selected_file")
 # --- 4. Sync to ~/.config ---
 mkdir -p "$HOME/.config/waybar" "$HOME/.config/hypr" "$HOME/.config/wofi" "$HOME/.config/mako"
 
-# Only copy if the source is different from the destination
-if [ "$(realpath -m "$WAYBAR_STYLE")" != "$(realpath -m "$HOME/.config/waybar/style.css")" ]; then
-    cp "$WAYBAR_STYLE" "$HOME/.config/waybar/style.css"
-fi
-cp "$HYPR_CONF" "$HOME/.config/hypr/hyprland.conf"
-cp "$WOFI_STYLE" "$HOME/.config/wofi/style.css"
-cp "$MAKO_CONF" "$HOME/.config/mako/config"
+# Helper to copy only if source and dest are different
+safe_cp() {
+    src="$1"
+    dest="$2"
+    [ -f "$src" ] || return 0
+    if [ "$(realpath -m "$src")" != "$(realpath -m "$dest")" ]; then
+        cp "$src" "$dest"
+    fi
+}
+
+safe_cp "$WAYBAR_STYLE" "$HOME/.config/waybar/style.css"
+safe_cp "$HYPR_CONF" "$HOME/.config/hypr/hyprland.conf"
+safe_cp "$WOFI_STYLE" "$HOME/.config/wofi/style.css"
+safe_cp "$MAKO_CONF" "$HOME/.config/mako/config"
 
 # Sync widgets
 if [ -d "$REPO_DIR/widgets" ]; then
