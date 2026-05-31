@@ -89,6 +89,13 @@ sudo_cmd() {
     fi
 }
 
+validate_sudo() {
+    if [ "$(id -u)" -ne 0 ]; then
+        log "Privileged access required. Please enter your password:"
+        sudo -v || die "Sudo authentication failed."
+    fi
+}
+
 pm_detect() {
     if have pacman; then echo pacman; return; fi
     if have apt-get; then echo apt; return; fi
@@ -163,6 +170,8 @@ install_packages() {
         warn "Package manager not supported. Skipping dependencies."
         return 0
     fi
+
+    validate_sudo
 
     log "Detected package manager: ${BOLD}$pm${NC}"
     if [ "$DRY_RUN" -eq 1 ]; then
