@@ -38,6 +38,7 @@ is_animated_file() {
 stop_running() {
     pkill -x hyprpaper 2>/dev/null || true
     pkill -x mpvpaper 2>/dev/null || true
+    sleep 0.2 # Give processes time to close
 }
 
 load_assignments() {
@@ -159,6 +160,12 @@ apply_wallpaper() {
         return 0
     fi
 
+    # Try live update if hyprpaper is running and we have static assignments
+    local can_live_update=0
+    if pgrep -x hyprpaper >/dev/null; then
+        can_live_update=1
+    fi
+
     stop_running
     write_hyprpaper_config
 
@@ -173,6 +180,17 @@ apply_wallpaper() {
         file="${entry#*|}"
         if is_animated_file "$file"; then
             start_mpvpaper "$monitor" "$file"
+        else
+            # If it was running, we can also try to force a reload via hyprctl
+            if [ "$can_live_update" -eq 1 ] && have hyprctl; then
+                (
+                    sleep 0.5 # Wait for new hyprpaper to be ready
+                    hyprctl hyprpaper unload all >/dev/null 2>&1 || true
+                    hyprctl hyprpaper preload "$file" >/dev/null 2>&1 || true
+                    [ "$monitor" = "ALL" ] && monitor=""
+                    hyprctl hyprpaper wallpaper "$monitor,$file" >/dev/null 2>&1 || true
+                ) &
+            fi
         fi
     done
 }
