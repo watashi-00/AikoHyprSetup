@@ -106,7 +106,7 @@ packages_for_pm() {
                 pipewire pipewire-pulse wireplumber pavucontrol wl-clipboard \
                 cliphist libnotify network-manager-applet grim slurp curl \
                 hyprpicker swappy xdg-utils bluez ttf-font-awesome \
-                ttf-jetbrains-mono-nerd polkit-kde-agent
+                ttf-jetbrains-mono-nerd polkit-kde-agent zenity
             ;;
         apt)
             printf '%s\n' \
@@ -114,7 +114,7 @@ packages_for_pm() {
                 pipewire pipewire-pulse wireplumber pavucontrol wl-clipboard \
                 cliphist libnotify-bin network-manager-gnome grim slurp curl \
                 hyprpicker swappy xdg-utils bluez fonts-font-awesome \
-                fonts-jetbrains-mono polkit-kde-agent-1
+                fonts-jetbrains-mono polkit-kde-agent-1 zenity
             ;;
         dnf)
             printf '%s\n' \
@@ -122,7 +122,7 @@ packages_for_pm() {
                 pipewire pipewire-pulseaudio wireplumber pavucontrol wl-clipboard \
                 cliphist libnotify NetworkManager-applet grim slurp curl \
                 hyprpicker swappy xdg-utils bluez fontawesome-fonts \
-                jetbrains-mono-fonts polkit-kde
+                jetbrains-mono-fonts polkit-kde zenity
             ;;
         zypper)
             printf '%s\n' \
@@ -130,7 +130,7 @@ packages_for_pm() {
                 pipewire pipewire-pulseaudio wireplumber pavucontrol wl-clipboard \
                 cliphist libnotify-tools NetworkManager-applet grim slurp curl \
                 hyprpicker swappy xdg-utils bluez fontawesome-fonts \
-                jetbrains-mono-fonts polkit-kde-agent-6
+                jetbrains-mono-fonts polkit-kde-agent-6 zenity
             ;;
         apk)
             printf '%s\n' \
@@ -138,7 +138,7 @@ packages_for_pm() {
                 pipewire pipewire-pulse wireplumber pavucontrol wl-clipboard \
                 cliphist libnotify network-manager-applet grim slurp curl \
                 hyprpicker swappy xdg-utils bluez fontawesome-fonts \
-                ttf-jetbrains-mono polkit-kde-agent
+                ttf-jetbrains-mono polkit-kde-agent zenity
             ;;
     esac
 }
@@ -306,7 +306,7 @@ install_configs() {
 
 post_install_checks() {
     required_bins=(hyprland waybar wofi mako hyprpaper kitty jq playerctl pactl wpctl wl-copy wl-paste cliphist notify-send grim slurp curl)
-    optional_bins=(hyprpicker swappy nm-applet bluetoothctl pavucontrol cava)
+    optional_bins=(hyprpicker swappy nm-applet bluetoothctl pavucontrol cava zenity)
     missing_required=()
     missing_optional=()
 
@@ -427,8 +427,8 @@ action_apply_changes() {
 
 action_wallpaper_changer() {
     if [ -x "$HOME/.config/waybar/wallpaper.sh" ]; then
-        "$HOME/.config/waybar/wallpaper.sh" apply
-        success "Wallpaper updated!"
+        "$HOME/.config/waybar/wallpaper.sh" select
+        success "Wallpaper process completed!"
     else
         warn "Wallpaper script not found at ~/.config/waybar/wallpaper.sh"
     fi

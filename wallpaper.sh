@@ -126,6 +126,25 @@ start_mpvpaper() {
     fi
 }
 
+select_wallpaper() {
+    if ! have zenity; then
+        die "zenity is required for graphical file selection. Please install it."
+    fi
+
+    local selected_file
+    selected_file=$(zenity --file-selection --title="Select Wallpaper" --file-filter="Images | *.jpg *.png *.webp *.jpeg *.gif *.mp4 *.webm")
+
+    if [ -n "$selected_file" ]; then
+        log "Selected: $selected_file"
+        # For simplicity, we apply to ALL monitors
+        mkdir -p "$(dirname "$STATE_FILE")"
+        echo "assignment=ALL|$selected_file" > "$STATE_FILE"
+        apply_wallpaper
+    else
+        log "No file selected."
+    fi
+}
+
 apply_wallpaper() {
     load_assignments
 
@@ -162,10 +181,13 @@ case "${1:-apply}" in
     apply|start)
         apply_wallpaper
         ;;
+    select)
+        select_wallpaper
+        ;;
     stop)
         stop_running
         ;;
     *)
-        die "Usage: $0 [apply|start|stop]"
+        die "Usage: $0 {apply|start|select|stop}"
         ;;
 esac
