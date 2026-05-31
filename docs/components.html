@@ -6,16 +6,17 @@
     <title>AikoHyprSetup - Component Documentation</title>
     <style>
         :root {
-            --bg: #1a1622;
-            --card-bg: #221c2b;
-            --accent: #ff8fbd;
-            --text: #ffd7e8;
-            --text-dim: #f0c2da;
-            --border: rgba(255, 134, 185, 0.28);
+            --bg: #0a0a0a;
+            --card-bg: #121212;
+            --accent: #ffffff;
+            --text: #e0e0e0;
+            --text-dim: #909090;
+            --border: rgba(255, 255, 255, 0.12);
+            --code-bg: #000000;
         }
 
         body {
-            font-family: 'JetBrainsMono Nerd Font', sans-serif;
+            font-family: 'JetBrainsMono Nerd Font', 'Inter', sans-serif;
             background-color: var(--bg);
             color: var(--text);
             line-height: 1.6;
@@ -35,63 +36,68 @@
             margin-bottom: 40px;
         }
 
-        h1 { color: var(--accent); font-size: 2.5em; margin-bottom: 10px; }
-        h2 { color: var(--accent); border-left: 4px solid var(--accent); padding-left: 15px; margin-top: 50px; }
+        h1 { color: var(--accent); font-size: 2.5em; margin-bottom: 10px; font-weight: 800; letter-spacing: -1px; }
+        h2 { color: var(--accent); border-left: 4px solid var(--accent); padding-left: 15px; margin-top: 50px; text-transform: uppercase; font-size: 1.2em; letter-spacing: 2px; }
 
         .component-card {
             background: var(--card-bg);
             border: 1px solid var(--border);
-            border-radius: 12px;
+            border-radius: 8px;
             padding: 25px;
             margin-bottom: 30px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 30px rgba(0,0,0,0.5);
         }
 
         .tag {
-            background: rgba(255, 134, 185, 0.15);
+            background: rgba(255, 255, 255, 0.08);
             color: var(--accent);
             padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 0.9em;
+            border-radius: 4px;
+            font-size: 0.85em;
             font-weight: bold;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         code {
-            background: #0d0812;
+            background: var(--code-bg);
             padding: 2px 6px;
             border-radius: 4px;
-            color: #ffc2dc;
+            color: #ffffff;
+            font-size: 0.9em;
         }
 
         pre {
-            background: #0d0812;
+            background: var(--code-bg);
             padding: 15px;
-            border-radius: 8px;
+            border-radius: 6px;
             overflow-x: auto;
-            border: 1px solid rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            color: #d0d0d0;
         }
 
         .preview {
             margin-top: 20px;
             padding: 20px;
-            background: rgba(0,0,0,0.2);
-            border-radius: 8px;
+            background: rgba(255,255,255,0.02);
+            border-radius: 6px;
             display: flex;
             align-items: center;
             gap: 15px;
+            border: 1px dashed var(--border);
         }
 
         .waybar-mock {
-            background: rgba(26, 22, 34, 0.88);
-            border-radius: 16px;
+            background: #111111;
+            border-radius: 4px;
             border: 1px solid var(--border);
-            padding: 10px 20px;
+            padding: 8px 16px;
             display: inline-flex;
             gap: 15px;
+            font-size: 0.9em;
         }
 
         .btn-mock {
-            color: var(--accent);
+            color: var(--text-dim);
             font-size: 1.2em;
         }
     </style>
