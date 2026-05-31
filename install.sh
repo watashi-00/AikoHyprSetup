@@ -330,6 +330,9 @@ install_configs() {
     copy_dir_contents "$SOURCE_DIR/widgets" "$waybar_dir/widgets"
     find "$waybar_dir/widgets" -type f \( -name "*.sh" -o -name "*.css" \) -exec sed -i "s#/home/watashi#$HOME#g;s#\$HOME#$HOME#g;s#~/.config#$HOME/.config#g" {} +
 
+    log "${MAGENTA}Installing Assets...${NC}"
+    copy_dir_contents "$SOURCE_DIR/assets" "$waybar_dir/assets"
+
     if [ "$INSTALL_HYPR" -eq 1 ] && [ -f "$SOURCE_DIR/configs/hypr/hyprland.conf" ]; then
         log "${MAGENTA}Installing Hyprland config...${NC}"
         copy_file "$SOURCE_DIR/configs/hypr/hyprland.conf" "$hypr_dir/hyprland.conf"

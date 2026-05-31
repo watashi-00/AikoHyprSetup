@@ -69,15 +69,26 @@ class AikoNote(Gtk.Window):
         main_vbox.pack_start(scrolled, True, True, 5)
 
         # Cat icon (Bottom Right Overlay)
-        # Using a standard Nerd Font kitty icon (Unicode: \uf31b)
-        cat_label = Gtk.Label()
-        cat_label.set_markup('<span font="JetBrainsMono Nerd Font 32">\uf31b</span>')
-        cat_label.set_name("note-cat-icon")
-        cat_label.set_halign(Gtk.Align.END)
-        cat_label.set_valign(Gtk.Align.END)
-        cat_label.set_margin_end(10)
-        cat_label.set_margin_bottom(10)
-        overlay.add_overlay(cat_label)
+        # Using a custom SVG icon for better rendering control
+        self.cat_image = Gtk.Image()
+        self.cat_image.set_name("note-cat-icon")
+        self.cat_image.set_halign(Gtk.Align.END)
+        self.cat_image.set_valign(Gtk.Align.END)
+        self.cat_image.set_margin_end(-10) # Overlap slightly for aesthetic
+        self.cat_image.set_margin_bottom(-10)
+        
+        # Load SVG
+        svg_path = self.get_asset_path("cat-icon.svg")
+        if svg_path:
+            # We use a Pixbuf to scale it properly
+            try:
+                from gi.repository import GdkPixbuf
+                pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(svg_path, 100, 100, True)
+                self.cat_image.set_from_pixbuf(pixbuf)
+            except Exception as e:
+                print(f"Failed to load SVG pixbuf: {e}")
+        
+        overlay.add_overlay(self.cat_image)
 
         # Event connections
         self.connect("destroy", Gtk.main_quit)
@@ -90,6 +101,21 @@ class AikoNote(Gtk.Window):
             self.set_visual(visual)
 
         self.show_all()
+
+    def get_asset_path(self, filename):
+        # 1. Check local directory (dev)
+        local_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "assets", filename)
+        if os.path.exists(local_path): return local_path
+        
+        # 2. Check installed path (scripts folder)
+        installed_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "assets", filename)
+        if os.path.exists(installed_path): return installed_path
+
+        # 3. Check flat installation path
+        flat_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets", filename)
+        if os.path.exists(flat_path): return flat_path
+        
+        return None
 
     def load_css(self):
         css_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "theme.css")
