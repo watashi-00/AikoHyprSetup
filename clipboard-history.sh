@@ -12,4 +12,4 @@ if [ ! -f "$WOFI_STYLE" ]; then
     WOFI_STYLE="$HOME/.config/waybar/wofi.css"
 fi
 
-cliphist list | wofi --dmenu --prompt "Área de Transferência" --style "$WOFI_STYLE" | cliphist decode | wl-copy
+cliphist list | wofi --dmenu --prompt "Clipboard" --style "$WOFI_STYLE" | cliphist decode | wl-copy

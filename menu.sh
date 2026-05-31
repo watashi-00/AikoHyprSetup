@@ -30,7 +30,7 @@ _menu_render() {
 
     _menu_clear
 
-    # Se existir uma função de header definida no script principal, chama ela
+    # If a header function exists in the main script, call it
     if declare -f print_header > /dev/null; then
         print_header
     fi
@@ -40,7 +40,7 @@ _menu_render() {
         printf "  ${CYAN}${BOLD}%d)${NC} %s\n" "$((index + 1))" "${labels_ref[$key]}"
     done
 
-    printf "\n${WHITE}Escolha uma opção e pressione [ENTER] (ou 'q' para sair): ${NC}"
+    printf "\n${WHITE}Choose an option and press [ENTER] (or 'q' to exit): ${NC}"
 }
 
 menu() {
@@ -76,11 +76,11 @@ menu() {
                     return 0
                 fi
                 
-                printf "\n${WHITE}Pressione qualquer tecla para voltar ao menu...${NC}"
+                printf "\n${WHITE}Press any key to return to the menu...${NC}"
                 read -rsn1
             fi
         else
-            printf "${RED}Opção inválida!${NC}\n"
+            printf "${RED}Invalid option!${NC}\n"
             sleep 1
         fi
     done

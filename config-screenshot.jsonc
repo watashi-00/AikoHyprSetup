@@ -26,26 +26,26 @@
     "custom/area": {
         "format": "",
         "on-click": "~/.config/waybar/screenshot.sh area",
-        "tooltip-format": "Capturar Área"
+        "tooltip-format": "Capture Area"
     },
     "custom/full": {
         "format": "",
         "on-click": "~/.config/waybar/screenshot.sh full",
-        "tooltip-format": "Tela Cheia"
+        "tooltip-format": "Full Screen"
     },
     "custom/picker": {
         "format": "",
         "on-click": "~/.config/waybar/screenshot.sh picker",
-        "tooltip-format": "Conta-gotas"
+        "tooltip-format": "Color Picker"
     },
     "custom/edit": {
         "format": "",
         "on-click": "~/.config/waybar/screenshot.sh edit",
-        "tooltip-format": "Editar Última"
+        "tooltip-format": "Edit Last"
     },
     "custom/close": {
         "format": "",
         "on-click": "pkill -f config-screenshot.jsonc",
-        "tooltip-format": "Fechar"
+        "tooltip-format": "Close"
     }
 }

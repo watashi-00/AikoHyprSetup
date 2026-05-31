@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# --- Configurações Iniciais ---
+# --- Initial Settings ---
 SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 INSTALL_PACKAGES=1
 INSTALL_HYPR=1
 FORCE=0
 DRY_RUN=0
 
-# --- Cores e Estilo ---
+# --- Colors and Style ---
 NC=$'\e[0m'
 BOLD=$'\e[1m'
 RED=$'\e[0;31m'
@@ -20,7 +20,7 @@ CYAN=$'\e[0;36m'
 WHITE=$'\e[1;37m'
 REVERSED=$(tput rev 2>/dev/null || echo $'\e[7m')
 
-# Ícones
+# Icons
 CHECK="✔"
 WARN="⚠"
 ERROR="✘"
@@ -31,21 +31,21 @@ CONFIG="🎨"
 SEARCH="🔍"
 RELOAD="🔄"
 
-# --- Carregar Menu Modular ---
+# --- Load Modular Menu ---
 if [ -f "$SOURCE_DIR/menu.sh" ]; then
     # shellcheck disable=SC1091
     source "$SOURCE_DIR/menu.sh"
 else
-    echo "Erro: menu.sh não encontrado em $SOURCE_DIR"
+    echo "Error: menu.sh not found in $SOURCE_DIR"
     exit 1
 fi
 
-# --- Variáveis de Resumo ---
+# --- Summary Variables ---
 INSTALLED_PKGS=0
 COPIED_FILES=0
 BACKUPS_CREATED=0
 
-# --- Funções de Log ---
+# --- Log Functions ---
 log() {
     printf "${BLUE}[install]${NC} %s\n" "$*"
 }
@@ -67,7 +67,7 @@ die() {
     exit 1
 }
 
-# --- Lógica Interna ---
+# --- Internal Logic ---
 
 run() {
     if [ "$DRY_RUN" -eq 1 ]; then
@@ -160,18 +160,18 @@ install_one_package() {
 install_packages() {
     pm="$(pm_detect)"
     if [ "$pm" = unknown ]; then
-        warn "Gerenciador de pacotes nao suportado. Pulei dependencias."
+        warn "Package manager not supported. Skipping dependencies."
         return 0
     fi
 
-    log "Gerenciador detectado: ${BOLD}$pm${NC}"
+    log "Detected package manager: ${BOLD}$pm${NC}"
     if [ "$DRY_RUN" -eq 1 ]; then
-        packages_for_pm "$pm" | sed "s/^/${YELLOW}[dry-run]${NC} pacote: /"
+        packages_for_pm "$pm" | sed "s/^/${YELLOW}[dry-run]${NC} package: /"
         return 0
     fi
 
     if [ "$(id -u)" -ne 0 ] && ! have sudo; then
-        warn "sudo nao encontrado. Pulei instalacao de pacotes."
+        warn "sudo not found. Skipping package installation."
         return 0
     fi
 
@@ -184,19 +184,19 @@ install_packages() {
     missing=""
     while IFS= read -r pkg; do
         [ -n "$pkg" ] || continue
-        printf "  ${CYAN}$PACKAGE${NC} Verificando/Instalando: ${WHITE}%s${NC}..." "$pkg"
+        printf "  ${CYAN}$PACKAGE${NC} Checking/Installing: ${WHITE}%s${NC}..." "$pkg"
         if install_one_package "$pm" "$pkg" >/dev/null 2>&1; then
             printf " ${GREEN}OK${NC}\n"
             INSTALLED_PKGS=$((INSTALLED_PKGS + 1))
         else
-            printf " ${RED}FALHA${NC}\n"
-            warn "Nao consegui instalar '$pkg' pelo $pm."
+            printf " ${RED}FAILED${NC}\n"
+            warn "Could not install '$pkg' via $pm."
             missing="${missing}${pkg} "
         fi
     done < <(packages_for_pm "$pm")
 
     if [ -n "$missing" ]; then
-        warn "Pacotes pendentes: $missing"
+        warn "Pending packages: $missing"
     fi
 }
 
@@ -215,7 +215,7 @@ copy_file() {
     src="$1"
     dest="$2"
 
-    [ -e "$src" ] || die "Arquivo origem nao encontrado: $src"
+    [ -e "$src" ] || die "Source file not found: $src"
     run mkdir -p "$(dirname "$dest")"
 
     if [ -e "$dest" ] || [ -L "$dest" ]; then
@@ -227,7 +227,7 @@ copy_file() {
         backup_path "$dest"
     fi
 
-    log "Copiando: ${WHITE}$(basename "$src")${NC} -> ${WHITE}$dest${NC}"
+    log "Copying: ${WHITE}$(basename "$src")${NC} -> ${WHITE}$dest${NC}"
     run cp -L "$src" "$dest"
     COPIED_FILES=$((COPIED_FILES + 1))
 }
@@ -243,7 +243,7 @@ copy_dir_contents() {
         dest="$dest_dir/$(basename "$src")"
         if [ -d "$src" ] && [ ! -L "$src" ]; then
             [ -e "$dest" ] && backup_path "$dest"
-            log "Copiando diretorio: ${WHITE}$(basename "$src")${NC}"
+            log "Copying directory: ${WHITE}$(basename "$src")${NC}"
             run cp -aL "$src" "$dest"
             COPIED_FILES=$((COPIED_FILES + 1))
         else
@@ -276,17 +276,17 @@ install_configs() {
         wallpaper.sh
     )
 
-    log "${MAGENTA}Instalando arquivos do Waybar...${NC}"
+    log "${MAGENTA}Installing Waybar files...${NC}"
     for file in "${waybar_files[@]}"; do
         copy_file "$SOURCE_DIR/$file" "$waybar_dir/$file"
     done
 
-    log "${MAGENTA}Instalando Mako e Wofi...${NC}"
+    log "${MAGENTA}Installing Mako and Wofi...${NC}"
     copy_dir_contents "$SOURCE_DIR/mako-config" "$mako_dir"
     copy_dir_contents "$SOURCE_DIR/wofi-config" "$wofi_dir"
 
     if [ "$INSTALL_HYPR" -eq 1 ] && [ -f "$SOURCE_DIR/hypr-config/hyprland.conf" ]; then
-        log "${MAGENTA}Instalando Hyprland config...${NC}"
+        log "${MAGENTA}Installing Hyprland config...${NC}"
         copy_file "$SOURCE_DIR/hypr-config/hyprland.conf" "$hypr_dir/hyprland.conf"
         patch_installed_paths "$hypr_dir/hyprland.conf"
     fi
@@ -294,7 +294,7 @@ install_configs() {
     patch_installed_paths "$waybar_dir/config.jsonc"
     patch_installed_paths "$waybar_dir/config-left.jsonc"
 
-    log "${MAGENTA}Ajustando permissões...${NC}"
+    log "${MAGENTA}Adjusting permissions...${NC}"
     run chmod +x \
         "$waybar_dir/audio-input.sh" "$waybar_dir/audio-output.sh" \
         "$waybar_dir/clipboard-history.sh" "$waybar_dir/clipboard-listener.sh" \
@@ -310,12 +310,12 @@ post_install_checks() {
     missing_required=()
     missing_optional=()
 
-    printf "\n${BOLD}--- Verificação de Binários ---${NC}\n"
+    printf "\n${BOLD}--- Binary Check ---${NC}\n"
     for bin in "${required_bins[@]}"; do
         if have "$bin"; then
             printf "  ${GREEN}✔${NC} %-15s ${GREEN}[OK]${NC}\n" "$bin"
         else
-            printf "  ${RED}✘${NC} %-15s ${RED}[AUSENTE]${NC}\n" "$bin"
+            printf "  ${RED}✘${NC} %-15s ${RED}[MISSING]${NC}\n" "$bin"
             missing_required+=("$bin")
         fi
     done
@@ -324,18 +324,18 @@ post_install_checks() {
         if have "$bin"; then
             printf "  ${CYAN}ℹ${NC} %-15s ${GREEN}[OK]${NC}\n" "$bin"
         else
-            printf "  ${YELLOW}⚠${NC} %-15s ${YELLOW}[OPCIONAL AUSENTE]${NC}\n" "$bin"
+            printf "  ${YELLOW}⚠${NC} %-15s ${YELLOW}[OPTIONAL MISSING]${NC}\n" "$bin"
             missing_optional+=("$bin")
         fi
     done
 
     if [ "${#missing_required[@]}" -gt 0 ]; then
-        warn "Binarios criticos ainda ausentes: ${missing_required[*]}"
+        warn "Critical binaries still missing: ${missing_required[*]}"
     fi
 }
 
 apply_changes() {
-    log "${MAGENTA}Aplicando configuracoes...${NC}"
+    log "${MAGENTA}Applying configurations...${NC}"
 
     if [ -x "$HOME/.config/waybar/wallpaper.sh" ]; then
         run "$HOME/.config/waybar/wallpaper.sh" apply
@@ -349,15 +349,15 @@ apply_changes() {
         waybar --config "$HOME/.config/waybar/config.jsonc" --style "$HOME/.config/waybar/style.css" &
         waybar --config "$HOME/.config/waybar/config-bottom.jsonc" --style "$HOME/.config/waybar/style.css" &
     else
-        warn "waybar nao encontrado."
+        warn "waybar not found."
     fi
 
     if have hyprctl; then
-        hyprctl reload >/dev/null 2>&1 || warn "hyprctl reload falhou. Execute manualmente no Hyprland."
+        hyprctl reload >/dev/null 2>&1 || warn "hyprctl reload failed. Execute manually in Hyprland."
     fi
 }
 
-# --- Sistema de Menu (Configuração) ---
+# --- Menu System (Configuration) ---
 
 print_header() {
     cat <<EOF
@@ -369,28 +369,28 @@ ${MAGENTA}${BOLD}
   ██║██║ ╚████║███████║   ██║   ██║  ██║███████╗███████╗███████╗██║  ██║
   ╚═╝╚═╝  ╚═══╝╚══════╝   ╚═╝   ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝
 ${NC}
-             ${CYAN}Instalador do Dotfiles (Hyprland + Waybar)${NC}
+             ${CYAN}Dotfiles Installer (Hyprland + Waybar)${NC}
 EOF
     echo
 }
 
 show_summary() {
-    printf "\n${BOLD}${GREEN}=== Resumo da Instalação ===${NC}\n"
-    printf "${CYAN}Pacotes instalados:${NC}  %d\n" "$INSTALLED_PKGS"
-    printf "${CYAN}Arquivos copiados:${NC}   %d\n" "$COPIED_FILES"
-    printf "${CYAN}Backups criados:${NC}     %d\n" "$BACKUPS_CREATED"
+    printf "\n${BOLD}${GREEN}=== Installation Summary ===${NC}\n"
+    printf "${CYAN}Packages installed:${NC}  %d\n" "$INSTALLED_PKGS"
+    printf "${CYAN}Files copied:${NC}       %d\n" "$COPIED_FILES"
+    printf "${CYAN}Backups created:${NC}    %d\n" "$BACKUPS_CREATED"
     echo "=============================="
 }
 
 prompt_apply() {
-    printf "\nDeseja aplicar as alterações agora? (y/n): "
+    printf "\nApply changes now? (y/n): "
     read -r choice
     if [[ "$choice" =~ ^[Yy]$ ]]; then
         apply_changes
     fi
 }
 
-# Funções de Ação do Menu
+# Menu Action Functions
 action_full_install() {
     INSTALL_PACKAGES=1
     INSTALL_HYPR=1
@@ -399,7 +399,7 @@ action_full_install() {
     post_install_checks
     show_summary
     prompt_apply
-    return 130 # Sair do menu após conclusão
+    return 130 # Exit menu after completion
 }
 
 action_install_packages() {
@@ -421,24 +421,24 @@ action_check_deps() {
 
 action_apply_changes() {
     apply_changes
-    success "Alterações aplicadas!"
+    success "Changes applied!"
     return 0
 }
 
 action_exit() {
     if [ -t 1 ]; then clear; fi
-    log "Saindo..."
+    log "Exiting..."
     exit 0
 }
 
 interactive_menu() {
     declare -A labels=(
-        [0]="🚀  Instalação Completa (Recomendado)"
-        [1]="📦  Apenas Instalar Pacotes"
-        [2]="🎨  Apenas Copiar Configurações"
-        [3]="🔍  Verificar Dependências"
-        [4]="🔄  Aplicar Alterações Agora"
-        [5]="✘   Sair"
+        [0]="🚀  Full Installation (Recommended)"
+        [1]="📦  Install Packages Only"
+        [2]="🎨  Copy Configurations Only"
+        [3]="🔍  Check Dependencies"
+        [4]="🔄  Apply Changes Now"
+        [5]="✘   Exit"
     )
     declare -A actions=(
         [0]="action_full_install"
@@ -457,16 +457,16 @@ interactive_menu() {
 
 usage() {
     cat <<EOF
-Uso: ./install.sh [opcoes]
+Usage: ./install.sh [options]
 
-Opcoes:
-  --no-packages  Nao instala dependencias do sistema.
-  --no-hypr      Nao instala hyprland.conf em ~/.config/hypr.
-  --force        Sobrescreve arquivos sem perguntar.
-  --dry-run      Mostra acoes sem copiar/instalar.
-  -h, --help     Mostra esta ajuda.
+Options:
+  --no-packages  Do not install system dependencies.
+  --no-hypr      Do not install hyprland.conf in ~/.config/hypr.
+  --force        Overwrite files without asking.
+  --dry-run      Show actions without copying/installing.
+  -h, --help     Show this help.
 
-Se executado sem opcoes, abre o menu interativo.
+If run without options, opens the interactive menu.
 EOF
 }
 
@@ -478,7 +478,7 @@ if [ "$#" -gt 0 ]; then
             --force) FORCE=1 ;;
             --dry-run) DRY_RUN=1 ;;
             -h|--help) usage; exit 0 ;;
-            *) die "Opcao desconhecida: $1" ;;
+            *) die "Unknown option: $1" ;;
         esac
         shift
     done

@@ -17,4 +17,4 @@ if [ ! -f "$WOFI_STYLE" ]; then
     WOFI_STYLE="$HOME/.config/waybar/wofi.css"
 fi
 
-wofi --show drun --prompt "Buscar..." --conf "$WOFI_CONF" --style "$WOFI_STYLE"
+wofi --show drun --prompt "Search..." --conf "$WOFI_CONF" --style "$WOFI_STYLE"

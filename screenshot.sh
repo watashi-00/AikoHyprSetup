@@ -39,7 +39,7 @@ case "$1" in
         color=$(hyprpicker -a)
         if [ -n "$color" ]; then
             wl-copy "$color"
-            notify-send "Color Picker" "Cor copiada: $color" -i color-management
+            notify-send "Color Picker" "Color copied: $color" -i color-management
         fi
         exit 0
         ;;
@@ -60,5 +60,5 @@ esac
 if [ -f "$FILE" ]; then
     wl-copy < "$FILE"
     # Send notification with 'screenshot' category
-    notify-send -a "Hyprland" -i "$FILE" -c "screenshot" "Captura de Tela" "Imagem salva e copiada.\nClique para editar."
+    notify-send -a "Hyprland" -i "$FILE" -c "screenshot" "Screenshot" "Image saved and copied.\nClick to edit."
 fi

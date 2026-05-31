@@ -57,7 +57,7 @@ load_assignments() {
                     if [ -f "$file" ]; then
                         assignments+=("$monitor|$file")
                     else
-                        warn "Wallpaper não encontrado: $file"
+                        warn "Wallpaper not found: $file"
                     fi
                 fi
                 ;;
@@ -108,7 +108,7 @@ start_hyprpaper() {
     if have hyprpaper; then
         nohup hyprpaper --config "$HYPRPAPER_CONF" >/dev/null 2>&1 &
     else
-        warn "hyprpaper não encontrado. Pulando wallpaper estático."
+        warn "hyprpaper not found. Skipping static wallpaper."
     fi
 }
 
@@ -116,13 +116,13 @@ start_mpvpaper() {
     monitor="$1"
     file="$2"
     
-    # mpvpaper usa '*' para todos os monitores
+    # mpvpaper uses '*' for all monitors
     [ "$monitor" = "ALL" ] && monitor="*"
     
     if have mpvpaper; then
         nohup mpvpaper -f -p -o "no-audio --loop-file=inf" "$monitor" "$file" >/dev/null 2>&1 &
     else
-        warn "mpvpaper não encontrado para wallpaper animado: $file"
+        warn "mpvpaper not found for animated wallpaper: $file"
     fi
 }
 
@@ -131,11 +131,11 @@ apply_wallpaper() {
 
     if [ "${#assignments[@]}" -eq 0 ]; then
         if [ -f "$HYPRPAPER_CONF" ]; then
-            log "Nenhum wallpaper novo encontrado. Reaplicando $HYPRPAPER_CONF"
+            log "No new wallpaper found. Reapplying $HYPRPAPER_CONF"
             stop_running
             start_hyprpaper
         else
-            warn "Nenhum wallpaper configurado em $STATE_FILE"
+            warn "No wallpaper configured in $STATE_FILE"
         fi
         return 0
     fi
@@ -166,6 +166,6 @@ case "${1:-apply}" in
         stop_running
         ;;
     *)
-        die "Uso: $0 [apply|start|stop]"
+        die "Usage: $0 [apply|start|stop]"
         ;;
 esac

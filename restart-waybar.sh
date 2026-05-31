@@ -1,19 +1,19 @@
 #!/bin/bash
 
-# Mata todas as instâncias do Waybar que estiverem rodando
+# Kill all running Waybar instances
 killall waybar || true
 
-# Aplica wallpaper (estático ou animado)
+# Apply wallpaper (static or animated)
 if [ -x ~/.config/waybar/wallpaper.sh ]; then
     ~/.config/waybar/wallpaper.sh apply
 fi
 
-# Aguarda um pequeno momento para garantir que os processos fecharam
+# Wait a moment to ensure processes are closed
 sleep 0.5
 
-# Inicia as três instâncias conforme sua configuração
+# Start the three instances according to your configuration
 waybar --config ~/.config/waybar/config.jsonc --style ~/.config/waybar/style.css &
 waybar --config ~/.config/waybar/config-bottom.jsonc --style ~/.config/waybar/style.css &
 waybar --config ~/.config/waybar/config-left.jsonc --style ~/.config/waybar/style.css &
 
-echo "Waybars reiniciadas com sucesso!"
+echo "Waybars restarted successfully!"

@@ -77,8 +77,8 @@
 
     "network": {
         "format-wifi": "<span color='#ff8fbd'>\uf1eb</span>  {essid}",
-        "format-ethernet": "<span color='#ff8fbd'>\uf796</span>  Conectado",
-        "format-disconnected": "<span color='#ff8fbd'>\u26a0</span>  Desconectado"
+        "format-ethernet": "<span color='#ff8fbd'>\uf796</span>  Connected",
+        "format-disconnected": "<span color='#ff8fbd'>\u26a0</span>  Disconnected"
     },
 
     "battery": {
