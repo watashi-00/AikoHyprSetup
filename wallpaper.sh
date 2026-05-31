@@ -36,8 +36,8 @@ is_animated_file() {
 }
 
 stop_running() {
-    pkill -x hyprpaper 2>/dev/null || true
-    pkill -x mpvpaper 2>/dev/null || true
+    pkill -x hyprpaper >/dev/null 2>&1 || true
+    pkill -x mpvpaper >/dev/null 2>&1 || true
     sleep 0.2 # Give processes time to close
 }
 
@@ -64,6 +64,20 @@ load_assignments() {
                 ;;
         esac
     done < "$STATE_FILE"
+}
+
+get_current_for_monitor() {
+    local target="$1"
+    local entry
+    for entry in "${assignments[@]}"; do
+        monitor="${entry%%|*}"
+        file="${entry#*|}"
+        if [ "$monitor" = "$target" ] || [ "$monitor" = "ALL" ]; then
+            echo "$(basename "$file")"
+            return
+        fi
+    done
+    echo "None"
 }
 
 write_hyprpaper_config() {
@@ -132,14 +146,94 @@ select_wallpaper() {
         die "zenity is required for graphical file selection. Please install it."
     fi
 
+    load_assignments
+    
+    # Get active monitors
+    local monitors=()
+    if have hyprctl; then
+        while read -r name; do
+            monitors+=("$name")
+        done < <(hyprctl monitors -j | jq -r '.[] | .name')
+    fi
+
+    # Build Zenity list options
+    local zen_options=("ALL" "All Monitors Change" "$(get_current_for_monitor "ALL")")
+    for mon in "${monitors[@]}"; do
+        zen_options+=("$mon" "Monitor: $mon" "$(get_current_for_monitor "$mon")")
+    done
+
+    local choice
+    choice=$(zenity --list --title="Select Target Monitor" \
+        --column="ID" --column="Monitor" --column="Current Wallpaper" \
+        --hide-column=1 --width=500 --height=400 \
+        "${zen_options[@]}")
+
+    if [ -z "$choice" ]; then
+        log "Selection cancelled."
+        return 0
+    fi
+
     local selected_file
-    selected_file=$(zenity --file-selection --title="Select Wallpaper" --file-filter="Images | *.jpg *.png *.webp *.jpeg *.gif *.mp4 *.webm")
+    selected_file=$(zenity --file-selection --title="Select Wallpaper for $choice" \
+        --file-filter="Images & Videos | *.jpg *.png *.webp *.jpeg *.gif *.mp4 *.webm")
 
     if [ -n "$selected_file" ]; then
-        log "Selected: $selected_file"
-        # For simplicity, we apply to ALL monitors
-        mkdir -p "$(dirname "$STATE_FILE")"
-        echo "assignment=ALL|$selected_file" > "$STATE_FILE"
+        log "Selected for $choice: $selected_file"
+        
+        # Update STATE_FILE
+        if [ "$choice" = "ALL" ]; then
+            # Overwrite everything with a single ALL entry
+            printf "assignment=ALL|%s\n" "$selected_file" > "$STATE_FILE"
+        else
+            # Remove existing entries for this monitor or ALL
+            local new_entries=()
+            local found=0
+            
+            # If we currently have an 'ALL' entry and we are setting a specific one,
+            # we need to split 'ALL' into individual monitors minus the current choice.
+            local has_all=0
+            local all_file=""
+            for entry in "${assignments[@]}"; do
+                m="${entry%%|*}"
+                f="${entry#*|}"
+                if [ "$m" = "ALL" ]; then
+                    has_all=1
+                    all_file="$f"
+                    break
+                fi
+            done
+
+            if [ "$has_all" -eq 1 ]; then
+                # Expand ALL to individual monitors
+                for mon in "${monitors[@]}"; do
+                    if [ "$mon" = "$choice" ]; then
+                        new_entries+=("$mon|$selected_file")
+                    else
+                        new_entries+=("$mon|$all_file")
+                    fi
+                done
+            else
+                # Just update the specific monitor or add it
+                for entry in "${assignments[@]}"; do
+                    m="${entry%%|*}"
+                    f="${entry#*|}"
+                    if [ "$m" = "$choice" ]; then
+                        new_entries+=("$m|$selected_file")
+                        found=1
+                    else
+                        new_entries+=("$m|$f")
+                    fi
+                done
+                [ "$found" -eq 0 ] && new_entries+=("$choice|$selected_file")
+            fi
+
+            # Save new entries
+            printf "" > "$STATE_FILE"
+            for entry in "${new_entries[@]}"; do
+                printf "assignment=%s\n" "$entry" >> "$STATE_FILE"
+            done
+        fi
+        
         apply_wallpaper
     else
         log "No file selected."
@@ -187,8 +281,9 @@ apply_wallpaper() {
                     sleep 0.5 # Wait for new hyprpaper to be ready
                     hyprctl hyprpaper unload all >/dev/null 2>&1 || true
                     hyprctl hyprpaper preload "$file" >/dev/null 2>&1 || true
-                    [ "$monitor" = "ALL" ] && monitor=""
-                    hyprctl hyprpaper wallpaper "$monitor,$file" >/dev/null 2>&1 || true
+                    local mon_target="$monitor"
+                    [ "$mon_target" = "ALL" ] && mon_target=""
+                    hyprctl hyprpaper wallpaper "$mon_target,$file" >/dev/null 2>&1 || true
                 ) &
             fi
         fi
