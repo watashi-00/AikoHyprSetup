@@ -86,12 +86,7 @@ class AikoList(Gtk.Window):
                     return json.load(f)
             except:
                 return []
-        return [
-            {"text": "Study for exam", "done": True},
-            {"text": "Practice piano", "done": False},
-            {"text": "Read chapter 5", "done": False},
-            {"text": "Workout", "done": True}
-        ]
+        return []
 
     def save_tasks(self):
         try:
@@ -131,6 +126,9 @@ class AikoList(Gtk.Window):
             if task["done"]:
                 label.get_style_context().add_class("done")
             label.set_halign(Gtk.Align.START)
+            label.set_line_wrap(True)
+            label.set_max_width_chars(30)
+            label.set_xalign(0)
             row.pack_start(label, True, True, 0)
 
             delete_btn = Gtk.Button(label="×")
