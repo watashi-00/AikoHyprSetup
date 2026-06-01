@@ -1,0 +1,217 @@
+/*
+ @name: Black & White
+ @author: Aiko
+ @hypr-active-border: rgba(ffffffff)
+ @hypr-inactive-border: rgba(333333aa)
+ @hypr-gaps-in: 6
+ @hypr-gaps-out: 12
+ @hypr-rounding: 12
+ @hypr-active-opacity: 1.0
+ @hypr-inactive-opacity: 0.9
+ @wofi-bg: rgba(10, 10, 10, 0.98)
+ @wofi-border: rgba(255, 255, 255, 0.4)
+ @wofi-text: #ffffff
+ @wofi-accent: rgba(255, 255, 255, 0.15)
+ @mako-bg: #0a0a0a
+ @mako-text: #ffffff
+ @mako-border: #ffffff
+ @mako-rounding: 10
+ @waybar_accent: #ffffff
+ @widget-aiko-note: black-white.css
+ @widget-aiko-player: black-white.css
+ @widget-aiko-clock: black-white.css
+ @widget-aiko-usercard: black-white.css
+ @widget-aiko-weather: black-white.css
+ @widget-aiko-list: black-white.css
+ @widget-aiko-sys: black-white.css
+*/
+
+* {
+    font-family: "JetBrainsMono Nerd Font", sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+window#waybar {
+    background: rgba(10, 10, 10, 0.92);
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6), 0 0 10px rgba(255, 255, 255, 0.05);
+    padding: 0 10px;
+}
+
+window#waybar.screenshot {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+#screenshot-tools {
+    background: #0a0a0a;
+    border: 1px solid #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+}
+
+#custom-area, #custom-full, #custom-picker, #custom-edit, #custom-close {
+    color: #ffffff;
+    padding: 6px 18px;
+    font-size: 17px;
+}
+
+#custom-area:hover, #custom-full:hover, #custom-picker:hover, #custom-edit:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+}
+
+#custom-close {
+    color: #ffffff;
+    opacity: 0.6;
+}
+
+#custom-close:hover {
+    opacity: 1;
+    background: #444444;
+}
+
+window#waybar.top {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+window#waybar.top .modules-left,
+window#waybar.top .modules-right {
+    background: rgba(10, 10, 10, 0.94);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+    margin: 5px 0;
+}
+
+window#waybar.top .modules-left {
+    padding: 4px 12px;
+    min-width: 820px;
+}
+
+window#waybar.top .modules-right {
+    padding: 4px 12px;
+}
+
+#workspaces {
+    min-width: 220px;
+}
+
+#workspaces button {
+    background: rgba(255, 255, 255, 0.05);
+    color: #888888;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    margin: 2px 4px;
+    padding: 0 12px;
+    transition: all 0.2s ease;
+}
+
+#workspaces button:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+#workspaces button.active {
+    color: #000000;
+    background-color: #ffffff;
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
+}
+
+#spotify-info {
+    padding: 0;
+    margin: 0;
+}
+
+#custom-spotify {
+    color: #ffffff;
+    min-width: 160px;
+    font-weight: 800;
+}
+
+#spotify-buttons {
+    min-width: 150px;
+    margin-left: 10px;
+}
+
+#custom-spotify-prev, #custom-spotify-play, #custom-spotify-next {
+    color: #ffffff;
+    font-size: 16px;
+    padding: 2px 8px;
+    border-radius: 6px;
+}
+
+#custom-spotify-play:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+#cava {
+    color: #ffffff;
+    margin-left: 30px;
+    opacity: 0.8;
+}
+
+#custom-audio-output, #custom-audio-input, #bluetooth,
+#network, #battery, #clock, #custom-power {
+    color: #ffffff;
+    padding: 0 12px;
+    font-size: 13px;
+    border-radius: 8px;
+}
+
+#custom-audio-output:hover, #network:hover, #clock:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+#custom-power {
+    color: #ffffff;
+    font-weight: 900;
+    background: rgba(255, 255, 255, 0.1);
+    margin-left: 5px;
+}
+
+#custom-power:hover {
+    background: #ffffff;
+    color: #000000;
+}
+
+image#album-art {
+    min-width: 40px;
+    min-height: 40px;
+    margin-left: 40px;
+    margin-right: 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+#taskbar button {
+    border-radius: 10px;
+    border: 1px solid transparent;
+    margin: 0 5px;
+    padding: 2px 6px;
+    transition: all 0.2s ease;
+}
+
+#taskbar button:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+#taskbar button.active {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+}
+
+#custom-launcher-menu {
+    color: #ffffff;
+    font-size: 18px;
+    padding: 0 15px;
+}

@@ -14,7 +14,6 @@ class AikoPlayer(Gtk.Window):
         
         self.set_name("aiko-player-window")
         self.set_role("aiko-player")
-        self.set_wmclass("aiko-player", "aiko-player")
         
         self.set_type_hint(Gdk.WindowTypeHint.DIALOG)
         self.set_keep_above(True)

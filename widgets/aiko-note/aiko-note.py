@@ -11,7 +11,6 @@ class AikoNote(Gtk.Window):
         # Identity for Hyprland rules
         self.set_name("aiko-note-window")
         self.set_role("aiko-note")
-        self.set_wmclass("aiko-note", "aiko-note")
         
         self.set_type_hint(Gdk.WindowTypeHint.DIALOG)
         self.set_decorated(False)
@@ -106,7 +105,9 @@ class AikoNote(Gtk.Window):
         if not found:
             color = Gdk.RGBA()
             color.parse("#ff8fbd")
-
+        
+        # Construct hex string from components to avoid direct field assignment
+        # which can fail with 'field is not writable' on some systems
         hex_color = "#{:02x}{:02x}{:02x}".format(
             int(color.red * 255),
             int(color.green * 255),

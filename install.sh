@@ -10,6 +10,7 @@ trap cleanup_term EXIT
 
 # --- Initial Settings ---
 SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ISSUES="https://github.com/watashi-00/AikoHyprSetup/issues"
 if [ -f "$SOURCE_DIR/waybar/config.jsonc" ]; then
     WAYBAR_SOURCE_DIR="$SOURCE_DIR/waybar"
 elif [ -f "$SOURCE_DIR/config.jsonc" ]; then
@@ -25,6 +26,7 @@ DRY_RUN=0
 # --- Colors and Style ---
 NC=$'\e[0m'
 BOLD=$'\e[1m'
+UNDERLINE=$'\e[4m'
 RED=$'\e[0;31m'
 GREEN=$'\e[0;32m'
 YELLOW=$'\e[1;33m'
@@ -71,9 +73,9 @@ success() {
 warn() {
     printf "${YELLOW}[$WARN]${NC} %s\n" "$*" >&2
 }
-
 error() {
     printf "${RED}[$ERROR]${NC} %s\n" "$*" >&2
+    printf "${YELLOW}[$INFO]${NC} Report issues at: ${UNDERLINE}${REPO_ISSUES}${NC}\n" >&2
 }
 
 die() {
@@ -298,6 +300,38 @@ patch_installed_paths() {
         "$file"
 }
 
+preserve_hyprland_hw_settings() {
+    local hypr_conf="$1"
+    local old_conf_content="$2"
+    [ -n "$old_conf_content" ] || return 0
+
+    log "Checking for hardware-specific settings to preserve (e.g. from gpu_setup)..."
+    
+    # Extract monitor lines that are not the generic default
+    local monitors
+    monitors=$(echo "$old_conf_content" | grep -E '^[[:space:]]*monitor[[:space:]]*=' | grep -v 'preferred, auto, 1' || true)
+    
+    # Extract environment variables (often GPU related)
+    local envs
+    envs=$(echo "$old_conf_content" | grep -E '^[[:space:]]*env[[:space:]]*=' || true)
+
+    if [ -n "$monitors" ] || [ -n "$envs" ]; then
+        log "Found existing hardware settings. Preserving..."
+        
+        # Remove the generic monitor line from the new config if we have specific ones
+        if [ -n "$monitors" ]; then
+            sed -i '/^[[:space:]]*monitor[[:space:]]*=[[:space:]]*,[[:space:]]*preferred,[[:space:]]*auto,[[:space:]]*1/d' "$hypr_conf"
+        fi
+
+        {
+            echo -e "\n# --- Preserved Hardware Settings (e.g. from gpu_setup) ---"
+            [ -n "$monitors" ] && echo "$monitors"
+            [ -n "$envs" ] && echo "$envs"
+            echo "# ---------------------------------------------------------"
+        } >> "$hypr_conf"
+    fi
+}
+
 install_configs() {
     waybar_dir="$HOME/.config/waybar"
     hypr_dir="$HOME/.config/hypr"
@@ -356,8 +390,19 @@ install_configs() {
 
     log "${MAGENTA}Installing Hyprland config...${NC}"
     if [ "$INSTALL_HYPR" -eq 1 ] && [ -d "$SOURCE_DIR/configs/hypr" ]; then
+        local hypr_conf="$hypr_dir/hyprland.conf"
+        local old_hypr_content=""
+        if [ -f "$hypr_conf" ]; then
+            old_hypr_content=$(cat "$hypr_conf")
+        fi
+
         copy_dir_contents "$SOURCE_DIR/configs/hypr" "$hypr_dir"
-        patch_installed_paths "$hypr_dir/hyprland.conf"
+        
+        if [ -n "$old_hypr_content" ]; then
+            preserve_hyprland_hw_settings "$hypr_conf" "$old_hypr_content"
+        fi
+
+        patch_installed_paths "$hypr_conf"
         [ -f "$hypr_dir/shortcuts.txt" ] && patch_installed_paths "$hypr_dir/shortcuts.txt"
     fi
 

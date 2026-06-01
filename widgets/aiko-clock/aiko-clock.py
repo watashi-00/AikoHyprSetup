@@ -10,7 +10,6 @@ class AikoClock(Gtk.Window):
         super().__init__(title="Aiko Clock")
         self.set_name("aiko-clock-window")
         self.set_role("aiko-clock")
-        self.set_wmclass("aiko-clock", "aiko-clock")
         self.set_type_hint(Gdk.WindowTypeHint.DIALOG)
         self.set_keep_above(True)
         self.set_decorated(False)
