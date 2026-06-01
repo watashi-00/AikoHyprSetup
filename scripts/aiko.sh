@@ -37,6 +37,7 @@ Options:
   --player          Open the Aiko-Player widget
   --list            Open the Aiko-List widget
   --sys             Open the Aiko-System widget
+  --all             Open all Aiko widgets at once
   --edit-usercard   Edit the User Card information
   --restart         Restart Waybar and refresh configs
 
@@ -123,6 +124,19 @@ case "${1:-}" in
         else
             echo "Error: Aiko-Player widget not found."
         fi
+        ;;
+    --all)
+        echo "Launching all Aiko widgets..."
+        # List of widgets to launch
+        widgets=("aiko-clock" "aiko-weather" "aiko-note" "aiko-player" "aiko-list" "aiko-sys" "aiko-usercard")
+        for widget in "${widgets[@]}"; do
+            script="$PROJECT_ROOT/widgets/$widget/$widget.sh"
+            if [ -f "$script" ]; then
+                echo "  -> Starting $widget"
+                bash "$script" &
+                sleep 0.2 # Small delay to avoid race conditions and window overlap issues
+            fi
+        done
         ;;
     --edit-usercard)
         EDITOR_SCRIPT="$PROJECT_ROOT/widgets/aiko-usercard/aiko-usercard-editor.py"
