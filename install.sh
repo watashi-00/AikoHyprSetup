@@ -341,9 +341,10 @@ install_configs() {
     copy_dir_contents "$SOURCE_DIR/assets" "$waybar_dir/assets"
 
     log "${MAGENTA}Installing Hyprland config...${NC}"
-    if [ "$INSTALL_HYPR" -eq 1 ] && [ -f "$SOURCE_DIR/configs/hypr/hyprland.conf" ]; then
-        copy_file "$SOURCE_DIR/configs/hypr/hyprland.conf" "$hypr_dir/hyprland.conf"
+    if [ "$INSTALL_HYPR" -eq 1 ] && [ -d "$SOURCE_DIR/configs/hypr" ]; then
+        copy_dir_contents "$SOURCE_DIR/configs/hypr" "$hypr_dir"
         patch_installed_paths "$hypr_dir/hyprland.conf"
+        [ -f "$hypr_dir/shortcuts.txt" ] && patch_installed_paths "$hypr_dir/shortcuts.txt"
     fi
 
     log "${MAGENTA}Installing Desktop Entries...${NC}"

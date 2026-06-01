@@ -26,5 +26,6 @@ SUPER + PRINT       Screenshot Area
 SUPER + SHIFT + PRT Color Picker
 
 SYSTEM
-SUPER + RESTART     Refresh and Restart Waybar
+SUPER + UP          Restore active window
+SUPER + DOWN        Minimize active window
 ALT + TAB           Cycle windows
