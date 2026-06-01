@@ -6,11 +6,12 @@
 
 #usercard-avatar-container {
     border: 2px solid #ff8fbd;
-    border-radius: 60px; /* Circular effect */
+    border-radius: 55px; /* Half of 110px for a perfect circle */
+    background-color: transparent;
 }
 
 #usercard-avatar {
-    border-radius: 50px;
+    border-radius: 55px;
 }
 
 #usercard-name {
@@ -57,17 +58,18 @@
     font-size: 16px;
 }
 
-/* Bottom Tags Styling */
+/* Bottom Tags Styling - Dynamic & Pink */
 #usercard-bottom-tag-container {
-    background-color: rgba(255, 255, 255, 0.07);
+    background-color: rgba(255, 143, 189, 0.15); /* Pinkish transparent background */
+    border: 1px solid rgba(255, 143, 189, 0.3);
     border-radius: 8px;
-    padding: 4px 12px;
+    padding: 6px 0; /* Vertical padding, horizontal handled by homogeneous expansion */
 }
 
 #usercard-bottom-tag {
-    color: #e6e1ea;
+    color: #ff8fbd; /* Pink text */
     font-family: "JetBrainsMono Nerd Font", sans-serif;
     font-size: 12px;
-    font-weight: 600;
-    opacity: 0.8;
+    font-weight: 700;
+    opacity: 0.9;
 }

@@ -17,7 +17,7 @@ class AikoUserCard(Gtk.Window):
         self.set_keep_above(True)
         self.set_decorated(False)
         self.set_resizable(False)
-        self.set_default_size(420, 260)
+        self.set_default_size(420, 280)
 
         # Base paths
         self.script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -29,20 +29,21 @@ class AikoUserCard(Gtk.Window):
         # Load CSS
         self.load_css()
 
-        # Main Layout (Vertical to accommodate tags at bottom)
+        # Main Layout
         self.outer_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20)
         self.outer_vbox.set_margin_top(25)
-        self.outer_vbox.set_margin_bottom(20)
+        self.outer_vbox.set_margin_bottom(25)
         self.outer_vbox.set_margin_start(25)
         self.outer_vbox.set_margin_end(25)
         self.add(self.outer_vbox)
 
         # Top Section (Avatar + Info)
         self.main_hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=25)
-        self.outer_vbox.pack_start(self.main_hbox, True, True, 0)
+        self.outer_vbox.pack_start(self.main_hbox, False, False, 0)
 
-        # Left Side: Avatar
+        # Left Side: Avatar (Square container for perfect circle)
         self.avatar_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        self.avatar_box.set_size_request(110, 110)
         self.main_hbox.pack_start(self.avatar_box, False, False, 0)
         
         avatar_path = os.path.join(self.project_root, self.config.get("avatar", "assets/aiko-icon.svg"))
@@ -57,7 +58,7 @@ class AikoUserCard(Gtk.Window):
             avatar_event = Gtk.EventBox()
             avatar_event.set_name("usercard-avatar-container")
             avatar_event.add(self.avatar_image)
-            self.avatar_box.pack_start(avatar_event, True, False, 0)
+            self.avatar_box.pack_start(avatar_event, False, False, 0)
         except Exception as e:
             print(f"Error loading avatar: {e}")
 
@@ -113,19 +114,21 @@ class AikoUserCard(Gtk.Window):
         self.quote_icon.set_valign(Gtk.Align.END)
         quote_hbox.pack_end(self.quote_icon, False, False, 0)
 
-        # Bottom Section: Horizontal Tags
-        self.tags_row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
-        self.tags_row.set_halign(Gtk.Align.CENTER)
-        self.outer_vbox.pack_end(self.tags_row, False, False, 0)
+        # Bottom Section: Full-width Horizontal Tags
+        config_tags = self.config.get("tags", [])
+        if config_tags:
+            # homogeneous=True makes all tags equal width
+            self.tags_row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10, homogeneous=True)
+            self.outer_vbox.pack_end(self.tags_row, False, False, 0)
 
-        for tag_text in self.config.get("tags", []):
-            tag_lbl = Gtk.Label(label=tag_text)
-            tag_lbl.set_name("usercard-bottom-tag")
-            # Wrap in event box for background/padding control in CSS
-            tag_eb = Gtk.EventBox()
-            tag_eb.set_name("usercard-bottom-tag-container")
-            tag_eb.add(tag_lbl)
-            self.tags_row.pack_start(tag_eb, False, False, 0)
+            for tag_text in config_tags:
+                tag_lbl = Gtk.Label(label=tag_text)
+                tag_lbl.set_name("usercard-bottom-tag")
+                
+                tag_eb = Gtk.EventBox()
+                tag_eb.set_name("usercard-bottom-tag-container")
+                tag_eb.add(tag_lbl)
+                self.tags_row.pack_start(tag_eb, True, True, 0)
 
         # Event connections
         self.connect("destroy", Gtk.main_quit)
