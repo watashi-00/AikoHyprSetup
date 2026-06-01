@@ -5,14 +5,12 @@
 
 GEN_SCRIPT="$HOME/.config/waybar/scripts/icon-gen.sh"
 THEME_FILE="$HOME/.config/waybar/style.css"
-AIKO_ICON="$HOME/.config/waybar/assets/aiko-icon.svg"
 
 # If the scripts are not in the config folder yet, use the local one (repo)
 if [ ! -f "$GEN_SCRIPT" ]; then
     SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
     GEN_SCRIPT="$SCRIPT_DIR/icon-gen.sh"
     THEME_FILE="$SCRIPT_DIR/../waybar/style.css"
-    AIKO_ICON="$SCRIPT_DIR/../assets/aiko-icon.svg"
 fi
 
 get_accent_color() {
@@ -22,23 +20,31 @@ get_accent_color() {
 }
 
 reload_bottom_bar() {
-    notify-send -i "$AIKO_ICON" "Aiko System" "Refreshing taskbar icons..." -t 1500
+    echo "[listener] Reloading Waybar bottom bar..."
     pkill -f "waybar --config .*config-bottom.jsonc" || true
-    sleep 0.2
+    sleep 0.4
     nohup waybar --config "$HOME/.config/waybar/config-bottom.jsonc" --style "$HOME/.config/waybar/style.css" >/dev/null 2>&1 &
 }
 
 handle() {
+    echo "[listener] Received event: $1"
     case $1 in
         openwindow*)
             class=$(echo "$1" | sed 's/openwindow>>//' | cut -d',' -f3)
             
             if [ -n "$class" ]; then
+                echo "[listener] New window opened: $class"
                 accent=$(get_accent_color)
                 bash "$GEN_SCRIPT" "$accent" "$class"
+                local exit_code=$?
                 
-                if [ $? -eq 200 ]; then
+                if [ $exit_code -eq 200 ]; then
+                    echo "[listener] New icon generated for $class"
                     reload_bottom_bar
+                elif [ $exit_code -eq 0 ]; then
+                    echo "[listener] Icon already exists for $class"
+                else
+                    echo "[listener] Icon generation failed for $class (code: $exit_code)"
                 fi
             fi
             ;;
@@ -46,6 +52,7 @@ handle() {
 }
 
 # Listen to hyprland socket
+echo "[listener] Aiko Icon Listener active..."
 socat -U - "UNIX-CONNECT:$XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock" | while read -r line; do
     handle "$line"
 done
