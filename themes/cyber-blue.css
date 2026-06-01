@@ -46,6 +46,16 @@ window#waybar.screenshot {
     box-shadow: none;
 }
 
+window#waybar.screenshot.top .modules-left,
+window#waybar.screenshot.top .modules-right {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    min-width: 0;
+    padding: 0;
+    margin: 0;
+}
+
 #screenshot-tools {
     background: #010410;
     border: 1px solid #00ffff;

@@ -47,8 +47,18 @@ window#waybar.screenshot {
     padding: 0;
 }
 
+window#waybar.screenshot.top .modules-left,
+window#waybar.screenshot.top .modules-right {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    min-width: 0;
+    padding: 0;
+    margin: 0;
+}
+
 #screenshot-tools {
-    background: rgba(28, 22, 35, 0.96);
+    background: rgba(30, 32, 35, 0.95);
     border-radius: 16px;
     border: 1px solid rgba(255, 134, 185, 0.42);
     box-shadow: 0 10px 30px rgba(13, 8, 18, 0.6);
