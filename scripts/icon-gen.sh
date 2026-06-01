@@ -79,7 +79,6 @@ process_icon() {
     local output_file="$COLOR_CACHE_DIR/$APPS_SUBDIR/$app_input.png"
     
     if [ -f "$output_file" ]; then
-        echo "[icon-gen] Icon already exists for $app_input"
         return 0
     fi
 
@@ -91,7 +90,6 @@ process_icon() {
     done
 
     if [ -n "$icon_path" ]; then
-        echo "[icon-gen] Processing $app_input using $icon_path"
         if magick -background none "$icon_path" -resize 32x32 \
                -channel RGB -colorspace gray +channel \
                -fill "$COLOR_INPUT" -tint 100 "$output_file" 2>/dev/null; then
@@ -104,11 +102,9 @@ process_icon() {
             fi
             return 200
         else
-            echo "[icon-gen] Magick failed for $app_input"
             return 1
         fi
     else
-        echo "[icon-gen] No icon found for $app_input, using fallback"
         local letter=$(echo "${app_input:0:1}" | tr '[:lower:]' '[:upper:]' | head -c 1)
         if magick -size 32x32 xc:none -fill "$COLOR_INPUT" -draw "roundrectangle 2,2 30,30 8,8" \
                -fill white -pointsize 20 -gravity center -annotate +0+0 "$letter" \
@@ -121,7 +117,6 @@ process_icon() {
             fi
             return 200
         else
-            echo "[icon-gen] Fallback magick failed for $app_input"
             return 1
         fi
     fi
@@ -133,6 +128,13 @@ if [ -n "$APP_NAME" ]; then
 else
     NEW_ICONS=0
     RUNNING_APPS=$(hyprctl clients -j | jq -r '.[].class' | sort -u)
+    for a in $RUNNING_APPS; do 
+        process_icon "$a"
+        [ $? -eq 200 ] && NEW_ICONS=1
+    done
+    [ $NEW_ICONS -eq 1 ] && exit 200 || exit 0
+fi
+_APPS=$(hyprctl clients -j | jq -r '.[].class' | sort -u)
     for a in $RUNNING_APPS; do 
         process_icon "$a"
         [ $? -eq 200 ] && NEW_ICONS=1

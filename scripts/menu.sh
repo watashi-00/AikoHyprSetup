@@ -61,9 +61,14 @@ menu() {
     
     local choice key action action_status
 
+    # Ensure terminal focus tracking and bracketed paste are disabled
+    printf "\e[?1004l\e[?2004l"
+
     while true; do
         _menu_render "$labels_name" "$order_name"
         
+        # Disable again just in case a sub-command turned them on
+        printf "\e[?1004l\e[?2004l"
         read -r choice
         
         if [[ "$choice" =~ ^[Qq]$ ]]; then

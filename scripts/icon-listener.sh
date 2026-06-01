@@ -20,31 +20,25 @@ get_accent_color() {
 }
 
 reload_bottom_bar() {
-    echo "[listener] Reloading Waybar bottom bar..."
     pkill -f "waybar --config .*config-bottom.jsonc" || true
     sleep 0.4
     nohup waybar --config "$HOME/.config/waybar/config-bottom.jsonc" --style "$HOME/.config/waybar/style.css" >/dev/null 2>&1 &
 }
 
 handle() {
-    echo "[listener] Received event: $1"
     case $1 in
         openwindow*)
             class=$(echo "$1" | sed 's/openwindow>>//' | cut -d',' -f3)
             
             if [ -n "$class" ]; then
-                echo "[listener] New window opened: $class"
                 accent=$(get_accent_color)
                 bash "$GEN_SCRIPT" "$accent" "$class"
                 local exit_code=$?
                 
                 if [ $exit_code -eq 200 ]; then
-                    echo "[listener] New icon generated for $class"
                     reload_bottom_bar
-                elif [ $exit_code -eq 0 ]; then
-                    echo "[listener] Icon already exists for $class"
-                else
-                    echo "[listener] Icon generation failed for $class (code: $exit_code)"
+                elif [ $exit_code -ne 0 ]; then
+                    echo "[listener] Icon generation failed for $class (code: $exit_code)" >&2
                 fi
             fi
             ;;
