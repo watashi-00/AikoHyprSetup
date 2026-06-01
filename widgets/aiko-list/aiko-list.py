@@ -12,7 +12,6 @@ class AikoList(Gtk.Window):
         # Identity for Hyprland rules
         self.set_name("aiko-list-window")
         self.set_role("aiko-list")
-        self.set_wmclass("aiko-list", "aiko-list")
         
         self.set_type_hint(Gdk.WindowTypeHint.DIALOG)
         self.set_decorated(False)

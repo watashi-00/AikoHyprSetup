@@ -77,19 +77,19 @@ patch_file() {
         local value=$(grep "@$tag:" "$selected_file" | cut -d':' -f2- | sed 's/^ //;s/[[:space:]]*$//')
         
         if [ -n "$value" ]; then
-            # Escape value for sed
-            local escaped_value=$(echo "$value" | sed 's/[\/&]/\\&/g')
-            # The regex handles both shell-style (#) and CSS-style (/* */) comments
-            # It preserves the leading indentation and the setting name
-            sed -i "s|^\([[:space:]]*\)\([^#/\n]*\)\([#/;*]*\)[[:space:]]*$marker|\1\2\3 $value $marker|g" "$file"
-            
-            # Second pass to fix double assignments if the line already had a value
-            # (Matches 'setting = old_val # @theme:tag' and replaces old_val)
-            # This is complex, so we use a simpler approach: 
-            # Capture everything until the assignment operator (= or :) and then put the new value
+            # Special logic for Waybar config.jsonc to patch colors inside Pango span tags
+            if [[ "$file" == *"config.jsonc" ]]; then
+                # Replace #hex within color='...' or color="..." on the same line as the marker
+                # This ensures we don't accidentally patch non-marked lines
+                sed -i "/$marker/s/color=['\"][^'\"]*['\"]/color='$value'/g" "$file"
+            fi
+
+            # Standard patching for Hyprland/Mako style assignments
             if grep -q "=" "$file"; then
                 sed -i "s|^\([[:space:]]*[a-zA-Z0-9._-]*[[:space:]]*=[[:space:]]*\)[^#]*$marker|\1$value # $marker|g" "$file"
             fi
+            
+            # CSS standard patching
             if grep -q ":" "$file" && [[ "$file" == *.css ]]; then
                  sed -i "s|^\([[:space:]]*[a-zA-Z0-9._-]*[[:space:]]*:[[:space:]]*\)[^;]*;[[:space:]]*/\* $marker \*/|\1$value; /* $marker */|g" "$file"
             fi
@@ -102,6 +102,7 @@ patch_file() {
 patch_file "$HYPR_CONF"
 patch_file "$MAKO_CONF"
 patch_file "$WOFI_STYLE"
+patch_file "$REPO_DIR/waybar/config.jsonc"
 
 # --- 4. Widget Theme Mapping ---
 log "Updating widgets..."

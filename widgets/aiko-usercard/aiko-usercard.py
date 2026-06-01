@@ -13,7 +13,6 @@ class AikoUserCard(Gtk.Window):
         # Identity for Hyprland rules
         self.set_name("aiko-usercard-window")
         self.set_role("aiko-usercard")
-        self.set_wmclass("aiko-usercard", "aiko-usercard")
         
         self.set_type_hint(Gdk.WindowTypeHint.DIALOG)
         self.set_keep_above(True)
