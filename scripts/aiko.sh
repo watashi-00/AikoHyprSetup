@@ -31,6 +31,8 @@ Options:
   --wallpaper       Open the wallpaper selector
   --theme           Open the theme selector
   --note            Open the Aiko-Note widget
+  --clock           Open the Aiko-Clock widget
+  --weather         Open the Aiko-Weather widget
   --restart         Restart Waybar and refresh configs
 
 Examples:
@@ -73,6 +75,20 @@ case "${1:-}" in
             bash "$PROJECT_ROOT/widgets/aiko-note/aiko-note.sh"
         else
             echo "Error: Aiko-Note widget not found."
+        fi
+        ;;
+    --clock)
+        if [ -f "$PROJECT_ROOT/widgets/aiko-clock/aiko-clock.sh" ]; then
+            bash "$PROJECT_ROOT/widgets/aiko-clock/aiko-clock.sh"
+        else
+            echo "Error: Aiko-Clock widget not found."
+        fi
+        ;;
+    --weather)
+        if [ -f "$PROJECT_ROOT/widgets/aiko-weather/aiko-weather.sh" ]; then
+            bash "$PROJECT_ROOT/widgets/aiko-weather/aiko-weather.sh"
+        else
+            echo "Error: Aiko-Weather widget not found."
         fi
         ;;
     --restart)

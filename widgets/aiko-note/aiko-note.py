@@ -86,7 +86,7 @@ class AikoNote(Gtk.Window):
         # Transparent background support
         screen = self.get_screen()
         visual = screen.get_rgba_visual()
-        if visual and self.is_composited():
+        if visual:
             self.set_visual(visual)
 
         self.show_all()
