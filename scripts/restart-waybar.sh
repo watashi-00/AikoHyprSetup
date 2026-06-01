@@ -26,7 +26,7 @@ sleep 0.4
 nohup waybar --config "$HOME/.config/waybar/config-bottom.jsonc" --style "$HOME/.config/waybar/style.css" >/dev/null 2>&1 &
 
 # Restart Listeners
-nohup $HOME/.config/waybar/icon-listener.sh >/dev/null 2>&1 &
-nohup $HOME/.config/waybar/clipboard-listener.sh >/dev/null 2>&1 &
+nohup "$HOME/.config/waybar/scripts/icon-listener.sh" >/dev/null 2>&1 &
+nohup "$HOME/.config/waybar/scripts/clipboard-listener.sh" >/dev/null 2>&1 &
 
 echo "Waybars and Listeners restarted successfully!"
