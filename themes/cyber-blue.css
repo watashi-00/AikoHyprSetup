@@ -163,7 +163,6 @@ image#album-art {
     margin-left: 50px;
     border-radius: 0;
     border: 2px solid #00ffff;
-    filter: grayscale(100%) brightness(1.2);
 }
 
 #taskbar button {

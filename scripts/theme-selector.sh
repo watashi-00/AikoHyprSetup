@@ -155,7 +155,18 @@ while read -r line; do
     fi
 done < <(grep "@widget-" "$selected_file")
 
-# --- 4. Sync to ~/.config ---
+# --- 4. Icon Generation (Dynamic Taskbar) ---
+accent_color=$(grep "@mako-border" "$selected_file" | cut -d':' -f2 | tr -d '[:space:]')
+if [ -z "$accent_color" ]; then
+    accent_color="#ff8fbd" # Default pink
+fi
+
+if [ -f "$REPO_DIR/scripts/icon-gen.sh" ]; then
+    log "Generating themed icons for color: $accent_color"
+    bash "$REPO_DIR/scripts/icon-gen.sh" "$accent_color"
+fi
+
+# --- 5. Sync to ~/.config ---
 mkdir -p "$HOME/.config/waybar" "$HOME/.config/hypr" "$HOME/.config/wofi" "$HOME/.config/mako"
 
 # Helper to copy only if source and dest are different

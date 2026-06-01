@@ -114,7 +114,7 @@ packages_for_pm() {
                 cliphist libnotify network-manager-applet grim slurp curl \
                 hyprpicker swappy xdg-utils bluez ttf-font-awesome \
                 ttf-jetbrains-mono-nerd polkit-kde-agent zenity gthumb imagemagick \
-                python-gobject
+                python-gobject socat
             ;;
         apt)
             printf '%s\n' \
@@ -123,7 +123,7 @@ packages_for_pm() {
                 cliphist libnotify-bin network-manager-gnome grim slurp curl \
                 hyprpicker swappy xdg-utils bluez fonts-font-awesome \
                 fonts-jetbrains-mono polkit-kde-agent-1 zenity gthumb imagemagick \
-                python3-gi
+                python3-gi socat
             ;;
         dnf)
             printf '%s\n' \
@@ -132,7 +132,7 @@ packages_for_pm() {
                 cliphist libnotify NetworkManager-applet grim slurp curl \
                 hyprpicker swappy xdg-utils bluez fontawesome-fonts \
                 jetbrains-mono-fonts polkit-kde zenity gthumb ImageMagick \
-                python3-gobject
+                python3-gobject socat
             ;;
         zypper)
             printf '%s\n' \
@@ -141,7 +141,7 @@ packages_for_pm() {
                 cliphist libnotify-tools NetworkManager-applet grim slurp curl \
                 hyprpicker swappy xdg-utils bluez fontawesome-fonts \
                 jetbrains-mono-fonts polkit-kde-agent-6 zenity gthumb ImageMagick \
-                python3-gobject
+                python3-gobject socat
             ;;
         apk)
             printf '%s\n' \
@@ -150,7 +150,7 @@ packages_for_pm() {
                 cliphist libnotify network-manager-applet grim slurp curl \
                 hyprpicker swappy xdg-utils bluez fontawesome-fonts \
                 ttf-jetbrains-mono polkit-kde-agent zenity gthumb imagemagick \
-                py3-gobject3
+                py3-gobject3 socat
             ;;
     esac
 }
@@ -299,7 +299,7 @@ install_configs() {
         audio-input.sh audio-output.sh clipboard-history.sh
         clipboard-listener.sh launcher.sh menu.sh minimize.sh restart-waybar.sh
         screenshot.sh spotify-art.sh spotify-info.sh spotify-playstate.sh
-        wallpaper.sh power-menu.sh theme-selector.sh aiko.sh
+        wallpaper.sh power-menu.sh theme-selector.sh aiko.sh icon-gen.sh
     )
 
     log "${MAGENTA}Installing Waybar configs...${NC}"
