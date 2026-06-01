@@ -1,0 +1,31 @@
+AIKO HYPR SETUP - KEYBOARD SHORTCUTS
+
+GENERAL
+SUPER + Q           Open Kitty Terminal
+SUPER + C           Close active window
+SUPER + M           Open Power Menu
+SUPER + E           Open File Manager (Thunar)
+SUPER + V           Toggle floating window
+SUPER + R           Open App Launcher (Wofi)
+SUPER + F           Toggle fullscreen
+SUPER + Z           Open Audio Control (Pavucontrol)
+SUPER + F1          Show this shortcuts help
+
+WIDGETS
+SUPER + T           Open Aiko Clock
+SUPER + W           Open Aiko Weather
+SUPER + U           Open Aiko User Card
+SUPER + Y           Open Clipboard History
+
+MEDIA & AUDIO
+SUPER + P           Media Play/Pause
+SUPER + F2          Decrease Volume
+SUPER + F3          Increase Volume
+PRINT               Screenshot Menu
+SUPER + PRINT       Screenshot Area
+SUPER + SHIFT + PRT Color Picker
+
+SYSTEM
+SUPER + UP          Restore active window
+SUPER + DOWN        Minimize active window
+ALT + TAB           Cycle windows
