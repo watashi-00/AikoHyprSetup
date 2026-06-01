@@ -573,6 +573,18 @@ action_global_aiko() {
     return 0
 }
 
+action_diagnostics() {
+    local diag_script="$SOURCE_DIR/scripts/diagnostics.sh"
+    if [ -f "$diag_script" ]; then
+        bash "$diag_script"
+    elif [ -x "$HOME/.config/waybar/scripts/diagnostics.sh" ]; then
+        "$HOME/.config/waybar/scripts/diagnostics.sh"
+    else
+        warn "Diagnostics script not found."
+    fi
+    return 0
+}
+
 action_exit() {
     if [ -t 1 ]; then clear; fi
     log "Exiting..."
@@ -589,6 +601,7 @@ interactive_menu() {
         [6]="🔄  Restart Waybar"
         [7]="🔍  Check System Health"
         [8]="🆙  Update Setup (Git Pull)"
+        [9]="🩺  Environment Diagnostics"
         [0]="✘   Exit"
     )
 
@@ -601,9 +614,10 @@ interactive_menu() {
         [6]="action_restart_waybar"
         [7]="action_check_health"
         [8]="action_git_pull"
+        [9]="action_diagnostics"
         [0]="action_exit"
     )
-    local order=(1 2 3 4 5 6 7 8 0)
+    local order=(1 2 3 4 5 6 7 8 9 0)
     
     menu "" labels actions order
 }

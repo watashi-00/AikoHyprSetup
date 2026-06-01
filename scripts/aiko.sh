@@ -38,6 +38,7 @@ Options:
   --list            Open the Aiko-List widget
   --sys             Open the Aiko-System widget
   --all             Open all Aiko widgets at once
+  --diag            Run system environment diagnostics
   --edit-usercard   Edit the User Card information
   --restart         Restart Waybar and refresh configs
 
@@ -76,7 +77,6 @@ case "${1:-}" in
         fi
         ;;
     --note)
-        # Try to find the widget in repo or installed path
         if [ -f "$PROJECT_ROOT/widgets/aiko-note/aiko-note.sh" ]; then
             bash "$PROJECT_ROOT/widgets/aiko-note/aiko-note.sh"
         else
@@ -127,16 +127,22 @@ case "${1:-}" in
         ;;
     --all)
         echo "Launching all Aiko widgets..."
-        # List of widgets to launch
         widgets=("aiko-clock" "aiko-weather" "aiko-note" "aiko-player" "aiko-list" "aiko-sys" "aiko-usercard")
         for widget in "${widgets[@]}"; do
             script="$PROJECT_ROOT/widgets/$widget/$widget.sh"
             if [ -f "$script" ]; then
                 echo "  -> Starting $widget"
                 bash "$script" &
-                sleep 0.2 # Small delay to avoid race conditions and window overlap issues
+                sleep 0.2
             fi
         done
+        ;;
+    --diag)
+        if [ -f "$PROJECT_ROOT/scripts/diagnostics.sh" ]; then
+            bash "$PROJECT_ROOT/scripts/diagnostics.sh"
+        else
+            echo "Error: Diagnostics script not found."
+        fi
         ;;
     --edit-usercard)
         EDITOR_SCRIPT="$PROJECT_ROOT/widgets/aiko-usercard/aiko-usercard-editor.py"
