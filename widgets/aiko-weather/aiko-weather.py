@@ -21,6 +21,10 @@ class AikoWeather(Gtk.Window):
         self.set_decorated(False)
         self.set_resizable(False)
         self.set_default_size(250, 350)
+        self.set_name("aiko-weather-window")
+
+        # Paths
+        self.script_dir = os.path.dirname(os.path.abspath(__file__))
 
         # Weather icons mapping (Nerd Font)
         # WMO Code mapping for Open-Meteo
