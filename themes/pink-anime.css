@@ -124,7 +124,7 @@ window#waybar.left {
 
 #workspaces button {
     padding: 0;
-    min-width: 29px;
+    min-width: 50px;
     min-height: 29px;
     color: #f0c2da;
     background: rgba(255, 255, 255, 0.03);
