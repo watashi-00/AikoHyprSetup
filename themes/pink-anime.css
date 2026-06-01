@@ -49,12 +49,12 @@ window#waybar.screenshot {
 
 window#waybar.screenshot .modules-left,
 window#waybar.screenshot .modules-right {
-    background: transparent;
-    border: none;
-    box-shadow: none;
-    min-width: 0;
-    padding: 0;
-    margin: 0;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    min-width: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
 }
 
 #screenshot-tools {
