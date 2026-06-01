@@ -1,0 +1,39 @@
+#main-container {
+    background-color: rgba(30, 32, 35, 0.95);
+    border: 2px solid #ff8fbd;
+    border-radius: 20px;
+}
+
+#resource-icon {
+    color: #ff8fbd;
+    font-size: 18px;
+}
+
+#resource-name {
+    color: #ff8fbd;
+    font-size: 16px;
+    font-weight: 800;
+}
+
+#resource-value {
+    color: #e6e1ea;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+/* Progress Bar (ProgressBar) */
+progressbar progress,
+progressbar trough {
+    min-height: 10px;
+    border-radius: 5px;
+}
+
+progressbar trough {
+    background-color: rgba(255, 143, 189, 0.1);
+    border: none;
+}
+
+progressbar progress {
+    background-color: #ff8fbd;
+    border: none;
+}
