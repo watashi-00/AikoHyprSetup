@@ -1,0 +1,100 @@
+#main-container {
+    background-color: rgba(30, 32, 35, 0.95);
+    border: 2px solid #ff8fbd;
+    border-radius: 20px;
+}
+
+#list-title {
+    color: #ff8fbd;
+    font-size: 20px;
+    font-weight: 800;
+}
+
+#list-add-btn {
+    background-color: #ff8fbd;
+    color: #1e2023;
+    border-radius: 50%;
+    min-width: 32px;
+    min-height: 32px;
+    font-size: 20px;
+    font-weight: 800;
+    border: none;
+    padding: 0;
+}
+
+#list-add-btn:hover {
+    background-color: #ffb3d1;
+}
+
+#task-row {
+    padding: 5px 0;
+}
+
+#task-label {
+    color: #e6e1ea;
+    font-size: 16px;
+}
+
+#task-label.done {
+    color: #ff8fbd;
+    opacity: 0.7;
+    text-decoration: line-through;
+}
+
+#task-check {
+    color: #ff8fbd;
+}
+
+/* Checkbox styling */
+checkbutton#task-check check {
+    background-color: transparent;
+    border: 2px solid #ff8fbd;
+    border-radius: 6px;
+    min-width: 20px;
+    min-height: 20px;
+}
+
+checkbutton#task-check:checked check {
+    background-color: #ff8fbd;
+    background-image: none;
+}
+
+#task-delete-btn {
+    background: transparent;
+    color: #e6e1ea;
+    border: none;
+    font-size: 18px;
+    opacity: 0.5;
+}
+
+#task-delete-btn:hover {
+    color: #ff4f4f;
+    opacity: 1;
+}
+
+/* Dialog Styling */
+#task-dialog {
+    background-color: #1e2023;
+    border: 2px solid #ff8fbd;
+    border-radius: 15px;
+}
+
+entry {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 143, 189, 0.3);
+    border-radius: 8px;
+    color: #e6e1ea;
+    padding: 8px;
+}
+
+entry:focus {
+    border-color: #ff8fbd;
+}
+
+button {
+    background-color: #ff8fbd;
+    color: #1e2023;
+    border-radius: 8px;
+    padding: 5px 15px;
+    font-weight: 700;
+}
