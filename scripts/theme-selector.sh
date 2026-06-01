@@ -83,8 +83,11 @@ fi
 log "Applying theme: $selected_name"
 
 # --- 1. Apply Waybar Style ---
+# Use relative link for portability
 rm -f "$WAYBAR_STYLE"
-ln -s "$selected_file" "$WAYBAR_STYLE"
+# WAYBAR_STYLE is usually repo/waybar/style.css, and selected_file is repo/themes/name.css
+# The link needs to point from waybar/ to ../themes/name.css
+ln -sf "../themes/$(basename "$selected_file")" "$WAYBAR_STYLE"
 
 # --- 2. Extract Variables ---
 get_var() {
@@ -149,7 +152,8 @@ while read -r line; do
             if [ -f "$source_theme" ]; then
                 log "Linking theme for $widget_name: $theme_file"
                 rm -f "$widget_dir/theme.css"
-                ln -s "$source_theme" "$widget_dir/theme.css"
+                # Create relative link (theme.css is in widget_dir, source_theme is in widget_dir/themes/)
+                ln -sf "themes/$theme_file" "$widget_dir/theme.css"
             fi
         fi
     fi

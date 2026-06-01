@@ -358,6 +358,19 @@ install_configs() {
     copy_dir_contents "$SOURCE_DIR/configs/fastfetch" "$HOME/.config/fastfetch"
     patch_installed_paths "$HOME/.config/fastfetch/config.jsonc"
 
+    log "${MAGENTA}Creating default theme links...${NC}"
+    # Use relative links for portability
+    [ ! -f "$waybar_dir/style.css" ] && run ln -sf "themes/pink-anime.css" "$waybar_dir/style.css"
+    
+    # Widget theme links
+    local widget
+    for widget in aiko-note aiko-player aiko-clock aiko-usercard aiko-weather; do
+        local w_dir="$waybar_dir/widgets/$widget"
+        if [ -d "$w_dir" ] && [ ! -f "$w_dir/theme.css" ]; then
+            run ln -sf "themes/pink-anime.css" "$w_dir/theme.css"
+        fi
+    done
+
     # Add fastfetch to .bashrc if not present
     if [ -f "$HOME/.bashrc" ] && ! grep -q "fastfetch" "$HOME/.bashrc"; then
         log "Adding fastfetch to .bashrc..."
