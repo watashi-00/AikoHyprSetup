@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# --- Terminal Cleanup Trap ---
+cleanup_term() {
+    printf "\e[?1004l\e[?2004l"
+}
+trap cleanup_term EXIT
+# -----------------------------
+
 # --- Initial Settings ---
 SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 INSTALL_PACKAGES=1
@@ -299,6 +306,7 @@ install_configs() {
         clipboard-listener.sh launcher.sh menu.sh minimize.sh restart-waybar.sh
         screenshot.sh spotify-art.sh spotify-info.sh spotify-playstate.sh
         wallpaper.sh power-menu.sh theme-selector.sh aiko.sh icon-gen.sh
+        sync-fastfetch.py
     )
 
     log "${MAGENTA}Installing Waybar configs...${NC}"
@@ -390,6 +398,11 @@ EOF
     log "${MAGENTA}Generating initial themed icons (Pink Anime default)...${NC}"
     if [ -x "$waybar_dir/icon-gen.sh" ]; then
         run "$waybar_dir/icon-gen.sh" "#ff8fbd"
+    fi
+
+    log "${MAGENTA}Syncing Fastfetch logo properties...${NC}"
+    if [ -x "$waybar_dir/sync-fastfetch.py" ]; then
+        run "$waybar_dir/sync-fastfetch.py"
     fi
 }
 

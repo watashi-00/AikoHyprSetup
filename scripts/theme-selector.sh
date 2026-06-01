@@ -131,6 +131,11 @@ if [ -f "$REPO_DIR/scripts/icon-gen.sh" ]; then
     bash "$REPO_DIR/scripts/icon-gen.sh" "$accent_color"
 fi
 
+if [ -f "$REPO_DIR/scripts/sync-fastfetch.py" ]; then
+    log "Syncing Fastfetch logo colors..."
+    python3 "$REPO_DIR/scripts/sync-fastfetch.py"
+fi
+
 # --- 6. Sync and Refresh ---
 # Only copy if we are not already in the target directory
 if [ "$(realpath -m "$WAYBAR_STYLE")" != "$(realpath -m "$HOME/.config/waybar/style.css")" ]; then

@@ -2,6 +2,16 @@
 # aiko - Global CLI for AikoHyprSetup management
 
 VERSION="1.0.0"
+
+# --- Terminal Cleanup Trap ---
+# Ensures focus tracking and bracketed paste are disabled on exit
+# to prevent ^[[I and ^[[O leaking into the prompt.
+cleanup() {
+    printf "\e[?1004l\e[?2004l"
+}
+trap cleanup EXIT
+# -----------------------------
+
 # Get the real directory of the script, resolving symlinks
 SCRIPT_DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
 
@@ -40,6 +50,7 @@ Options:
   --all             Open all Aiko widgets at once
   --diag            Run system environment diagnostics
   --edit-usercard   Edit the User Card information
+  --edit-logo       Edit terminal ASCII logo color and spacing
   --restart         Restart Waybar and refresh configs
 
 Examples:
@@ -150,6 +161,18 @@ case "${1:-}" in
             python3 "$EDITOR_SCRIPT"
         else
             echo "Error: User Card editor not found at $EDITOR_SCRIPT"
+        fi
+        ;;
+    --edit-logo)
+        LOGO_EDITOR="$PROJECT_ROOT/widgets/aiko-sys/aiko-logo-editor.py"
+        if [ -f "$LOGO_EDITOR" ]; then
+            python3 "$LOGO_EDITOR"
+            if command -v fastfetch >/dev/null 2>&1; then
+                clear
+                fastfetch
+            fi
+        else
+            echo "Error: Logo editor not found at $LOGO_EDITOR"
         fi
         ;;
     --restart)
