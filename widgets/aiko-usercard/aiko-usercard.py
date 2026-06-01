@@ -11,38 +11,45 @@ class AikoUserCard(Gtk.Window):
         super().__init__(title="Aiko User Card")
         
         # Identity for Hyprland rules
-        self.set_name("aiko-usercard")
+        self.set_name("aiko-usercard-window")
         self.set_role("aiko-usercard")
+        self.set_wmclass("aiko-usercard", "aiko-usercard")
         
         self.set_type_hint(Gdk.WindowTypeHint.DIALOG)
         self.set_keep_above(True)
         self.set_decorated(False)
         self.set_resizable(False)
-        self.set_default_size(420, 280)
+        self.set_default_size(420, 320)
 
         # Base paths
         self.script_dir = os.path.dirname(os.path.abspath(__file__))
         self.project_root = os.path.abspath(os.path.join(self.script_dir, "../../"))
         
-        # Load Config
         self.config = self.load_config()
-
-        # Load CSS
         self.load_css()
 
-        # Main Layout
-        self.outer_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20)
-        self.outer_vbox.set_margin_top(25)
-        self.outer_vbox.set_margin_bottom(25)
-        self.outer_vbox.set_margin_start(25)
-        self.outer_vbox.set_margin_end(25)
-        self.add(self.outer_vbox)
+        # Main Box (Transparent)
+        self.main_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
+        self.add(self.main_vbox)
+
+        # Styled Container
+        self.styled_container = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
+        self.styled_container.set_name("main-container")
+        self.main_vbox.pack_start(self.styled_container, True, True, 0)
+
+        # Content Box inside Container
+        content_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20)
+        content_vbox.set_margin_top(25)
+        content_vbox.set_margin_bottom(25)
+        content_vbox.set_margin_start(25)
+        content_vbox.set_margin_end(25)
+        self.styled_container.pack_start(content_vbox, True, True, 0)
 
         # Top Section (Avatar + Info)
         self.main_hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=25)
-        self.outer_vbox.pack_start(self.main_hbox, False, False, 0)
+        content_vbox.pack_start(self.main_hbox, False, False, 0)
 
-        # Left Side: Avatar (Square container for perfect circle)
+        # Left Side: Avatar
         self.avatar_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self.avatar_box.set_size_request(110, 110)
         self.main_hbox.pack_start(self.avatar_box, False, False, 0)
@@ -54,7 +61,6 @@ class AikoUserCard(Gtk.Window):
         try:
             pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(avatar_path, 110, 110, True)
             circular_pixbuf = self.get_circular_pixbuf(pixbuf)
-            
             self.avatar_image = Gtk.Image.new_from_pixbuf(circular_pixbuf)
             self.avatar_image.set_name("usercard-avatar")
             
@@ -69,19 +75,16 @@ class AikoUserCard(Gtk.Window):
         self.info_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=5)
         self.main_hbox.pack_start(self.info_vbox, True, True, 0)
 
-        # Header: Name
         self.name_label = Gtk.Label(label=self.config.get("name", "User"))
         self.name_label.set_name("usercard-name")
         self.name_label.set_halign(Gtk.Align.START)
         self.info_vbox.pack_start(self.name_label, False, False, 0)
 
-        # Handle
         self.handle_label = Gtk.Label(label=self.config.get("handle", "@user"))
         self.handle_label.set_name("usercard-handle")
         self.handle_label.set_halign(Gtk.Align.START)
         self.info_vbox.pack_start(self.handle_label, False, False, 0)
 
-        # Tags Row: Tag and Country
         tags_hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=15)
         self.info_vbox.pack_start(tags_hbox, False, False, 5)
 
@@ -117,17 +120,15 @@ class AikoUserCard(Gtk.Window):
         self.quote_icon.set_valign(Gtk.Align.END)
         quote_hbox.pack_end(self.quote_icon, False, False, 0)
 
-        # Bottom Section: Full-width Horizontal Tags
+        # Bottom Section
         config_tags = self.config.get("tags", [])
         if config_tags:
-            # homogeneous=True makes all tags equal width
             self.tags_row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10, homogeneous=True)
-            self.outer_vbox.pack_end(self.tags_row, False, False, 0)
+            content_vbox.pack_end(self.tags_row, False, False, 0)
 
             for tag_text in config_tags:
                 tag_lbl = Gtk.Label(label=tag_text)
                 tag_lbl.set_name("usercard-bottom-tag")
-                
                 tag_eb = Gtk.EventBox()
                 tag_eb.set_name("usercard-bottom-tag-container")
                 tag_eb.add(tag_lbl)
@@ -149,18 +150,13 @@ class AikoUserCard(Gtk.Window):
         if not pixbuf: return None
         width = pixbuf.get_width()
         height = pixbuf.get_height()
-        
         surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, width, height)
         context = cairo.Context(surface)
-        
-        # Circle path
         radius = min(width, height) / 2
         context.arc(width / 2, height / 2, radius, 0, 2 * 3.14159)
         context.clip()
-        
         Gdk.cairo_set_source_pixbuf(context, pixbuf, 0, 0)
         context.paint()
-        
         return Gdk.pixbuf_get_from_surface(surface, 0, 0, width, height)
 
     def load_config(self):
@@ -179,7 +175,6 @@ class AikoUserCard(Gtk.Window):
 
     def load_css(self):
         css_provider = Gtk.CssProvider()
-        # Use theme.css symlink for dynamic switching
         theme_path = os.path.join(self.script_dir, "theme.css")
         if os.path.exists(theme_path):
             css_provider.load_from_path(theme_path)

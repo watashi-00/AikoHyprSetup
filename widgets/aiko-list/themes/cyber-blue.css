@@ -1,7 +1,12 @@
+#aiko-list-window {
+    background-color: transparent;
+}
+
 #main-container {
     background-color: rgba(2, 4, 15, 0.95);
     border: 2px solid #00ffff;
     border-radius: 0;
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
 }
 
 #list-title {
@@ -48,7 +53,6 @@
     color: #00ffff;
 }
 
-/* Checkbox styling */
 checkbutton#task-check check {
     background-color: transparent;
     border: 2px solid #00ffff;
@@ -75,7 +79,6 @@ checkbutton#task-check:checked check {
     opacity: 1;
 }
 
-/* Dialog Styling */
 #task-dialog {
     background-color: #02040f;
     border: 2px solid #00ffff;

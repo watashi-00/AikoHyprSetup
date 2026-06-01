@@ -9,13 +9,14 @@ class AikoNote(Gtk.Window):
         super().__init__(title="Aiko Note")
         
         # Identity for Hyprland rules
+        self.set_name("aiko-note-window")
         self.set_role("aiko-note")
         self.set_wmclass("aiko-note", "aiko-note")
         
         self.set_type_hint(Gdk.WindowTypeHint.DIALOG)
         self.set_decorated(False)
         self.set_resizable(True)
-        self.set_default_size(350, 200)
+        self.set_default_size(350, 250)
         self.set_keep_above(True)
         self.set_position(Gtk.WindowPosition.CENTER)
 
@@ -29,23 +30,28 @@ class AikoNote(Gtk.Window):
         # CSS setup
         self.load_css()
 
-        # Layout
-        overlay = Gtk.Overlay()
-        self.add(overlay)
+        # Main Box (Transparent)
+        self.main_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
+        self.add(self.main_vbox)
 
-        main_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=5)
-        main_vbox.set_name("main-container")
-        main_vbox.set_margin_top(15)
-        main_vbox.set_margin_bottom(15)
-        main_vbox.set_margin_start(20)
-        main_vbox.set_margin_end(20)
-        overlay.add(main_vbox)
+        # Styled Container
+        self.container = Gtk.Overlay()
+        self.container.set_name("main-container")
+        self.main_vbox.pack_start(self.container, True, True, 0)
+
+        # Content Box inside Overlay
+        content_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=5)
+        content_vbox.set_margin_top(20)
+        content_vbox.set_margin_bottom(20)
+        content_vbox.set_margin_start(20)
+        content_vbox.set_margin_end(20)
+        self.container.add(content_vbox)
 
         # Title
         title_label = Gtk.Label(label="Notes")
         title_label.set_name("note-title")
         title_label.set_halign(Gtk.Align.START)
-        main_vbox.pack_start(title_label, False, False, 0)
+        content_vbox.pack_start(title_label, False, False, 0)
 
         # Text View (Content)
         scrolled = Gtk.ScrolledWindow()
@@ -66,7 +72,7 @@ class AikoNote(Gtk.Window):
         
         self.buffer.connect("changed", self.on_text_changed)
         scrolled.add(self.textview)
-        main_vbox.pack_start(scrolled, True, True, 5)
+        content_vbox.pack_start(scrolled, True, True, 5)
 
         # Cat icon (Bottom Right Overlay)
         self.cat_image = Gtk.Image()
@@ -77,7 +83,7 @@ class AikoNote(Gtk.Window):
         self.cat_image.set_margin_bottom(-5)
         
         self.update_cat_icon()
-        overlay.add_overlay(self.cat_image)
+        self.container.add_overlay(self.cat_image)
 
         # Event connections
         self.connect("destroy", Gtk.main_quit)
@@ -95,11 +101,9 @@ class AikoNote(Gtk.Window):
         svg_path = self.get_asset_path("cat-icon.svg")
         if not svg_path: return
 
-        # Get accent color from CSS
         context = self.cat_image.get_style_context()
         found, color = context.lookup_color("accent_color")
         if not found:
-            # Fallback to pink if not found in CSS
             color = Gdk.RGBA()
             color.parse("#ff8fbd")
 
@@ -113,9 +117,7 @@ class AikoNote(Gtk.Window):
             with open(svg_path, "r") as f:
                 svg_data = f.read()
             
-            # Robust coloring: Replace any hex color or 'currentColor'
             import re
-            # Replace fill and stroke values
             svg_data = re.sub(r'fill:#[0-9a-fA-F]{6}', f'fill:{hex_color}', svg_data)
             svg_data = re.sub(r'stroke:#[0-9a-fA-F]{6}', f'stroke:{hex_color}', svg_data)
             svg_data = re.sub(r'fill="#[0-9a-fA-F]{6}"', f'fill="{hex_color}"', svg_data)
@@ -128,10 +130,7 @@ class AikoNote(Gtk.Window):
             loader.close()
             
             pixbuf = loader.get_pixbuf()
-            
-            # Scaling with fixed aspect ratio
-            # We target 150px height, calculating width to match
-            target_h = 150
+            target_h = 120
             aspect = pixbuf.get_width() / pixbuf.get_height()
             target_w = int(target_h * aspect)
             
@@ -141,18 +140,10 @@ class AikoNote(Gtk.Window):
             print(f"Error coloring/scaling SVG: {e}")
 
     def get_asset_path(self, filename):
-        # 1. Check local directory (dev)
         local_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "assets", filename)
         if os.path.exists(local_path): return local_path
-        
-        # 2. Check installed path (scripts folder)
         installed_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "assets", filename)
         if os.path.exists(installed_path): return installed_path
-
-        # 3. Check flat installation path
-        flat_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets", filename)
-        if os.path.exists(flat_path): return flat_path
-        
         return None
 
     def load_css(self):
@@ -175,10 +166,8 @@ class AikoNote(Gtk.Window):
             print(f"Error saving note: {e}")
 
     def on_key_press(self, widget, event):
-        # Close on Escape
         if event.keyval == Gdk.KEY_Escape:
             self.destroy()
-        # Close on Ctrl+Q or Ctrl+W
         if (event.state & Gdk.ModifierType.CONTROL_MASK):
             if event.keyval == Gdk.KEY_q or event.keyval == Gdk.KEY_w:
                 self.destroy()

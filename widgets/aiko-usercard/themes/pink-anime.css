@@ -1,75 +1,62 @@
 #aiko-usercard-window {
-    background-color: rgba(30, 32, 35, 0.95);
-    border: 2px solid #ff8fbd;
-    border-radius: 20px;
-}
-
-#usercard-avatar-container {
-    border: 2px solid #ff8fbd;
-    border-radius: 55px; /* Half of 110px for a perfect circle */
     background-color: transparent;
 }
 
-#usercard-avatar {
-    border-radius: 55px;
+#main-container {
+    background-color: rgba(30, 32, 35, 0.95);
+    border: 2px solid #ff8fbd;
+    border-radius: 15px;
 }
 
 #usercard-name {
     color: #ff8fbd;
-    font-family: "JetBrainsMono Nerd Font", sans-serif;
     font-size: 24px;
     font-weight: 800;
 }
 
 #usercard-handle {
     color: #e6e1ea;
-    font-family: "JetBrainsMono Nerd Font", sans-serif;
     font-size: 14px;
     opacity: 0.7;
 }
 
 #usercard-tag {
     color: #ff8fbd;
-    font-family: "JetBrainsMono Nerd Font", sans-serif;
-    font-size: 14px;
-    font-weight: 600;
+    background-color: rgba(255, 143, 189, 0.1);
+    border-radius: 8px;
+    padding: 2px 10px;
+    font-weight: 700;
 }
 
 #usercard-country {
-    color: #ff8fbd;
-    font-family: "JetBrainsMono Nerd Font", sans-serif;
-    font-size: 14px;
+    color: #e6e1ea;
+    font-weight: 600;
 }
 
 #usercard-quote-box {
     background-color: rgba(255, 255, 255, 0.05);
     border-radius: 12px;
+    border-left: 4px solid #ff8fbd;
 }
 
 #usercard-quote-text {
-    color: #e6e1ea;
-    font-family: "JetBrainsMono Nerd Font", sans-serif;
-    font-size: 14px;
+    color: #ffd7e8;
     font-style: italic;
 }
 
 #usercard-quote-icon {
     color: #ff8fbd;
-    font-size: 16px;
+    font-size: 18px;
 }
 
-/* Bottom Tags Styling - Dynamic & Pink */
 #usercard-bottom-tag-container {
-    background-color: rgba(255, 143, 189, 0.15); /* Pinkish transparent background */
-    border: 1px solid rgba(255, 143, 189, 0.3);
-    border-radius: 8px;
-    padding: 6px 0; /* Vertical padding, horizontal handled by homogeneous expansion */
+    background-color: rgba(255, 143, 189, 0.15);
+    border-radius: 10px;
+    padding: 8px;
 }
 
 #usercard-bottom-tag {
-    color: #ff8fbd; /* Pink text */
-    font-family: "JetBrainsMono Nerd Font", sans-serif;
-    font-size: 12px;
-    font-weight: 700;
-    opacity: 0.9;
+    color: #ff8fbd;
+    font-weight: 800;
+    font-size: 13px;
 }

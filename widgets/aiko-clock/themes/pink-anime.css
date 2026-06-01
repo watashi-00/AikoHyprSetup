@@ -1,22 +1,23 @@
 #aiko-clock-window {
+    background-color: transparent;
+}
+
+#main-container {
     background-color: rgba(30, 32, 35, 0.95);
     border: 2px solid #ff8fbd;
-    border-radius: 20px;
+    border-radius: 15px;
 }
 
 #clock-time {
     color: #ff8fbd;
-    font-family: "JetBrainsMono Nerd Font", sans-serif;
     font-size: 42px;
     font-weight: 800;
-    margin: 0;
-    padding: 0;
+    font-family: "JetBrainsMono Nerd Font", sans-serif;
 }
 
 #clock-date {
-    color: #e6e1ea;
-    font-family: "JetBrainsMono Nerd Font", sans-serif;
+    color: #ffd7e8;
     font-size: 16px;
     font-weight: 600;
-    margin-top: -5px;
+    opacity: 0.9;
 }

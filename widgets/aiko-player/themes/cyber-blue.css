@@ -1,5 +1,9 @@
 #aiko-player-window {
-    background-color: rgba(2, 4, 15, 0.96);
+    background-color: transparent;
+}
+
+#main-container {
+    background-color: rgba(2, 4, 15, 0.95);
     border: 2px solid #00ffff;
     border-radius: 0;
     box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
@@ -7,7 +11,7 @@
 
 #player-art {
     border-radius: 0;
-    border: 2px solid #00ffff;
+    border: 1px solid #00ffff;
 }
 
 #player-title {
@@ -17,75 +21,64 @@
     text-shadow: 0 0 5px #00ffff;
 }
 
-#player-artist {
+#player-artist, #player-album {
     color: #00ffff;
-    font-size: 15px;
-    font-weight: 700;
-    opacity: 0.9;
-}
-
-#player-album {
-    color: #00ffff;
-    font-size: 13px;
-    font-weight: 500;
-    opacity: 0.6;
+    font-size: 14px;
+    opacity: 0.7;
 }
 
 #player-heart {
-    color: #00ffff;
+    color: #ff0055;
     font-size: 22px;
 }
 
 #player-time {
     color: #00ffff;
-    font-size: 11px;
-    font-weight: 700;
-    opacity: 0.7;
+    font-size: 12px;
+    font-weight: 800;
 }
 
-/* Progress Bar (Scale) */
 scale#player-progress contents trough {
-    background-color: rgba(0, 255, 255, 0.1);
-    border-radius: 0;
+    background-color: rgba(0, 255, 255, 0.05);
     min-height: 6px;
+    border-radius: 0;
     border: 1px solid #004466;
 }
 
-scale#player-progress contents trough highlight {
+scale#player-progress contents trough progress {
     background-color: #00ffff;
+    min-height: 6px;
     border-radius: 0;
 }
 
 scale#player-progress contents trough slider {
     background-color: #00ffff;
+    min-width: 12px;
+    min-height: 12px;
+    margin: -3px;
     border-radius: 0;
-    min-width: 10px;
-    min-height: 10px;
-    box-shadow: 0 0 5px #00ffff;
 }
 
-/* Buttons */
 #player-btn-main {
     background-color: transparent;
     color: #00ffff;
-    border: 2px solid #00ffff;
     border-radius: 0;
-    min-width: 44px;
-    min-height: 44px;
-    font-size: 22px;
-    box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+    min-width: 50px;
+    min-height: 50px;
+    font-size: 32px;
+    border: 2px solid #00ffff;
     transition: all 0.2s ease;
 }
 
 #player-btn-main:hover {
     background-color: rgba(0, 255, 255, 0.2);
-    box-shadow: 0 0 15 #00ffff;
+    box-shadow: 0 0 10px #00ffff;
 }
 
 #player-btn-small {
     background: transparent;
     color: #00ffff;
-    font-size: 20px;
+    font-size: 26px;
     border: none;
     transition: all 0.2s ease;
 }

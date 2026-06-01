@@ -1,13 +1,13 @@
-/*
- @name: Pink Anime (Note Widget)
-*/
-
 @define-color accent_color #ff8fbd;
 
 #aiko-note-window {
+    background-color: transparent;
+}
+
+#main-container {
     background-color: rgba(30, 32, 35, 0.95);
     border: 2px solid #ff8fbd;
-    border-radius: 20px;
+    border-radius: 15px;
 }
 
 #note-title {
@@ -33,4 +33,3 @@
 #note-cat-icon {
     opacity: 0.8;
 }
-

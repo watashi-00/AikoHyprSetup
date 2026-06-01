@@ -10,6 +10,7 @@ class AikoList(Gtk.Window):
         super().__init__(title="Aiko Tasks")
         
         # Identity for Hyprland rules
+        self.set_name("aiko-list-window")
         self.set_role("aiko-list")
         self.set_wmclass("aiko-list", "aiko-list")
         
@@ -28,10 +29,14 @@ class AikoList(Gtk.Window):
         # CSS setup
         self.load_css()
 
-        # Main Container
+        # Main Box (Transparent)
         self.main_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
-        self.main_vbox.set_name("main-container")
         self.add(self.main_vbox)
+
+        # Styled Container
+        self.styled_container = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
+        self.styled_container.set_name("main-container")
+        self.main_vbox.pack_start(self.styled_container, True, True, 0)
 
         # Header Section
         self.header_hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
@@ -40,7 +45,7 @@ class AikoList(Gtk.Window):
         self.header_hbox.set_margin_bottom(10)
         self.header_hbox.set_margin_start(20)
         self.header_hbox.set_margin_end(20)
-        self.main_vbox.pack_start(self.header_hbox, False, False, 0)
+        self.styled_container.pack_start(self.header_hbox, False, False, 0)
 
         title_label = Gtk.Label(label="Tasks")
         title_label.set_name("list-title")
@@ -56,7 +61,7 @@ class AikoList(Gtk.Window):
         self.scrolled = Gtk.ScrolledWindow()
         self.scrolled.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
         self.scrolled.set_shadow_type(Gtk.ShadowType.NONE)
-        self.main_vbox.pack_start(self.scrolled, True, True, 0)
+        self.styled_container.pack_start(self.scrolled, True, True, 0)
 
         self.list_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=5)
         self.list_vbox.set_name("list-container")
