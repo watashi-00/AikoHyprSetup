@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Aiko User Card
+Comment=Profile and quick info card
+Exec=/home/watashi/.config/waybar/widgets/aiko-usercard/aiko-usercard.sh
+Icon=contact-new-symbolic
+Terminal=false
+Type=Application
+Categories=Utility;
+Keywords=user;profile;card;aiko;
+StartupWMClass=aiko-usercard
