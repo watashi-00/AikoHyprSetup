@@ -68,9 +68,8 @@ class AikoClock(Gtk.Window):
     def load_css(self):
         css_provider = Gtk.CssProvider()
         
-        # Try to load theme based on current Waybar theme if possible, 
-        # but for now we use a hardcoded reference to pink-anime.css as requested.
-        theme_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "themes", "pink-anime.css")
+        # Use theme.css symlink for dynamic switching
+        theme_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "theme.css")
         
         if os.path.exists(theme_path):
             css_provider.load_from_path(theme_path)
