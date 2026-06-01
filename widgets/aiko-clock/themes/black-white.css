@@ -1,0 +1,23 @@
+#aiko-clock-window {
+    background-color: transparent;
+}
+
+#main-container {
+    background-color: rgba(10, 10, 10, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+}
+
+#clock-time {
+    color: #ffffff;
+    font-size: 48px;
+    font-weight: 800;
+}
+
+#clock-date {
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 600;
+    opacity: 0.7;
+}

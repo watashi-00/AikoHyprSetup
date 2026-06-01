@@ -1,0 +1,83 @@
+#aiko-player-window {
+    background-color: transparent;
+}
+
+#main-container {
+    background-color: rgba(10, 10, 10, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
+}
+
+#player-art {
+    border-radius: 12px;
+}
+
+#player-title {
+    color: #ffffff;
+    font-size: 20px;
+    font-weight: 800;
+}
+
+#player-artist, #player-album {
+    color: #bbbbbb;
+    font-size: 14px;
+}
+
+#player-heart {
+    color: #ffffff;
+    font-size: 22px;
+    opacity: 0.8;
+}
+
+#player-time {
+    color: #888888;
+    font-size: 12px;
+}
+
+scale#player-progress contents trough {
+    background-color: rgba(255, 255, 255, 0.1);
+    min-height: 8px;
+    border-radius: 4px;
+}
+
+scale#player-progress contents trough progress {
+    background-color: #ffffff;
+    min-height: 8px;
+    border-radius: 4px;
+}
+
+scale#player-progress contents trough slider {
+    background-color: #ffffff;
+    min-width: 14px;
+    min-height: 14px;
+    margin: -3px;
+}
+
+#player-btn-main {
+    background-color: #ffffff;
+    color: #000000;
+    border-radius: 50%;
+    min-width: 50px;
+    min-height: 50px;
+    font-size: 28px;
+    border: none;
+    transition: all 0.2s ease;
+}
+
+#player-btn-main:hover {
+    background-color: #dddddd;
+}
+
+#player-btn-small {
+    background: transparent;
+    color: #ffffff;
+    font-size: 26px;
+    border: none;
+    opacity: 0.7;
+    transition: all 0.2s ease;
+}
+
+#player-btn-small:hover {
+    opacity: 1;
+}
