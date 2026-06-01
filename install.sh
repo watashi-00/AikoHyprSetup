@@ -298,6 +298,38 @@ patch_installed_paths() {
         "$file"
 }
 
+preserve_hyprland_hw_settings() {
+    local hypr_conf="$1"
+    local old_conf_content="$2"
+    [ -n "$old_conf_content" ] || return 0
+
+    log "Checking for hardware-specific settings to preserve (e.g. from gpu_setup)..."
+    
+    # Extract monitor lines that are not the generic default
+    local monitors
+    monitors=$(echo "$old_conf_content" | grep -E '^[[:space:]]*monitor[[:space:]]*=' | grep -v 'preferred, auto, 1' || true)
+    
+    # Extract environment variables (often GPU related)
+    local envs
+    envs=$(echo "$old_conf_content" | grep -E '^[[:space:]]*env[[:space:]]*=' || true)
+
+    if [ -n "$monitors" ] || [ -n "$envs" ]; then
+        log "Found existing hardware settings. Preserving..."
+        
+        # Remove the generic monitor line from the new config if we have specific ones
+        if [ -n "$monitors" ]; then
+            sed -i '/^[[:space:]]*monitor[[:space:]]*=[[:space:]]*,[[:space:]]*preferred,[[:space:]]*auto,[[:space:]]*1/d' "$hypr_conf"
+        fi
+
+        {
+            echo -e "\n# --- Preserved Hardware Settings (e.g. from gpu_setup) ---"
+            [ -n "$monitors" ] && echo "$monitors"
+            [ -n "$envs" ] && echo "$envs"
+            echo "# ---------------------------------------------------------"
+        } >> "$hypr_conf"
+    fi
+}
+
 install_configs() {
     waybar_dir="$HOME/.config/waybar"
     hypr_dir="$HOME/.config/hypr"
@@ -356,8 +388,19 @@ install_configs() {
 
     log "${MAGENTA}Installing Hyprland config...${NC}"
     if [ "$INSTALL_HYPR" -eq 1 ] && [ -d "$SOURCE_DIR/configs/hypr" ]; then
+        local hypr_conf="$hypr_dir/hyprland.conf"
+        local old_hypr_content=""
+        if [ -f "$hypr_conf" ]; then
+            old_hypr_content=$(cat "$hypr_conf")
+        fi
+
         copy_dir_contents "$SOURCE_DIR/configs/hypr" "$hypr_dir"
-        patch_installed_paths "$hypr_dir/hyprland.conf"
+        
+        if [ -n "$old_hypr_content" ]; then
+            preserve_hyprland_hw_settings "$hypr_conf" "$old_hypr_content"
+        fi
+
+        patch_installed_paths "$hypr_conf"
         [ -f "$hypr_dir/shortcuts.txt" ] && patch_installed_paths "$hypr_dir/shortcuts.txt"
     fi
 
