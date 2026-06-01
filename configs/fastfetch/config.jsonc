@@ -1,21 +1,21 @@
 {
     "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
     "logo": {
-        "source": "$HOME/.config/waybar/assets/kitty-icon.svg",
-        "type": "kitty-icat",
-        "height": 18,
-        "width": 35,
+        "source": "$HOME/.config/waybar/assets/aiko-frame.txt",
+        "type": "auto",
+        "width": 30,
+        "height": 25,
         "padding": {
-            "top": 2,
-            "left": 2,
-            "right": 4
+            "top": 0,
+            "left": 10,
+            "right": 2
         }
     },
     "display": {
         "separator": " ➜  ",
         "disableLinewrap": true,
         "key": {
-            "width": 18,
+            "width": 4,
             "type": "string"
         },
         "color": {
@@ -28,62 +28,62 @@
         "separator",
         {
             "type": "os",
-            "key": "󰘳 OS",
+            "key": "󰘳",
             "keyColor": "magenta"
         },
         {
             "type": "host",
-            "key": "󰌢 Host",
+            "key": "󰌢",
             "keyColor": "magenta"
         },
         {
             "type": "kernel",
-            "key": "󰒋 Kernel",
+            "key": "󰒋",
             "keyColor": "magenta"
         },
         {
             "type": "uptime",
-            "key": "󰅐 Uptime",
+            "key": "󰅐",
             "keyColor": "magenta"
         },
         {
             "type": "packages",
-            "key": "󰏖 Packages",
+            "key": "󰏖",
             "keyColor": "magenta"
         },
         {
             "type": "shell",
-            "key": "󱆃 Shell",
+            "key": "󱆃",
             "keyColor": "magenta"
         },
         {
             "type": "display",
-            "key": "󰍹 Resolution",
+            "key": "󰍹",
             "keyColor": "magenta"
         },
         {
             "type": "wm",
-            "key": "󱂬 WM",
+            "key": "󱂬",
             "keyColor": "magenta"
         },
         {
             "type": "terminal",
-            "key": "󰆍 Terminal",
+            "key": "󰆍",
             "keyColor": "magenta"
         },
         {
             "type": "cpu",
-            "key": "󰻠 CPU",
+            "key": "󰻠",
             "keyColor": "magenta"
         },
         {
             "type": "gpu",
-            "key": "󰢮 GPU",
+            "key": "󰢮",
             "keyColor": "magenta"
         },
         {
             "type": "memory",
-            "key": "󰑭 Memory",
+            "key": "󰑭",
             "keyColor": "magenta"
         },
         "break"

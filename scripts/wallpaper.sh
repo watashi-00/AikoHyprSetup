@@ -42,39 +42,6 @@ stop_running() {
     sleep 0.2
 }
 
-update_fastfetch_config() {
-    local img="$1"
-    [ -z "$img" ] && return
-    
-    local config_file="$HOME/.config/fastfetch/config.jsonc"
-    
-    if [ ! -f "$config_file" ]; then
-        if [ -f "$WAYBAR_DIR/configs/fastfetch/config.jsonc" ]; then
-            config_file="$WAYBAR_DIR/configs/fastfetch/config.jsonc"
-        else
-            warn "Fastfetch config not found."
-            return
-        fi
-    fi
-
-    log "Updating Fastfetch logo to $img..."
-    
-    local type="kitty"
-    local temp_file
-    temp_file=$(mktemp)
-    
-    if jq --arg src "$img" --arg type "$type" '.logo.source = $src | .logo.type = $type' "$config_file" > "$temp_file"; then
-        cp "$temp_file" "$config_file"
-    else
-        warn "Failed to update Fastfetch config with jq"
-    fi
-    rm -f "$temp_file"
-
-    if have notify-send; then
-        notify-send "Aiko Terminal" "Terminal logo updated!" -i "$img"
-    fi
-}
-
 load_assignments() {
     assignments=()
     if [ ! -f "$STATE_FILE" ]; then return 0; fi
@@ -235,7 +202,6 @@ select_wallpaper() {
 
     local zen_options=(
         "ALL" "All Monitors Change" "$(get_current_for_monitor "ALL")"
-        "TERMINAL" "Terminal Image (Fastfetch)" "$(basename "$current_term_img")"
     )
     for mon in "${monitors[@]}"; do
         zen_options+=("$mon" "Monitor: $mon" "$(get_current_for_monitor "$mon")")
@@ -248,14 +214,6 @@ select_wallpaper() {
         "${zen_options[@]}" 2>/dev/null)
     
     if [ -z "$target" ]; then return 0; fi
-
-    if [ "$target" = "TERMINAL" ]; then
-        local selected_file
-        selected_file=$(zenity --file-selection --title="Select Image for Terminal" \
-            --file-filter="Images | *.png *.jpg *.jpeg *.webp *.svg" 2>/dev/null)
-        [ -n "$selected_file" ] && update_fastfetch_config "$selected_file"
-        return 0
-    fi
 
     local selected_file
     selected_file=$(zenity --file-selection --title="Select Image/Video for $target" \
@@ -290,11 +248,6 @@ select_wallpaper() {
             fi
             printf "" > "$STATE_FILE"
             for entry in "${new_entries[@]}"; do printf "assignment=%s\n" "$entry" >> "$STATE_FILE"; done
-        fi
-
-        # Ask to sync with terminal after changing monitor
-        if zenity --question --title="Sync Terminal" --text="Do you want to use this same image for the terminal as well?" --width=300 2>/dev/null; then
-            update_fastfetch_config "$selected_file"
         fi
 
         apply_wallpaper
