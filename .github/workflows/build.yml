@@ -5,10 +5,12 @@ on:
     branches:
       - master
       - main
+      - test
   pull_request:
     branches:
       - master
       - main
+      - test
 
 jobs:
   build:
@@ -29,6 +31,9 @@ jobs:
 
       - name: Package Build Archive
         run: |
+          # Install zip utility
+          sudo apt-get install -y zip
+          
           # Create a directory for the release package
           mkdir -p build/AikoHyprSetup
           
@@ -38,16 +43,21 @@ jobs:
           # Get a short version of the commit SHA for versioning
           SHORT_SHA=$(git rev-parse --short HEAD)
           
-          # Create a tarball of the package
+          # Create multiple archive formats
           cd build
           tar -czvf AikoHyprSetup-${SHORT_SHA}.tar.gz AikoHyprSetup/
+          tar -cJvf AikoHyprSetup-${SHORT_SHA}.tar.xz AikoHyprSetup/
+          zip -r AikoHyprSetup-${SHORT_SHA}.zip AikoHyprSetup/
           
-          # Export the filename to an environment variable for the next step
-          echo "artifact_name=AikoHyprSetup-${SHORT_SHA}.tar.gz" >> $GITHUB_ENV
+          # Export the base artifact name to an environment variable
+          echo "artifact_name_base=AikoHyprSetup-${SHORT_SHA}" >> $GITHUB_ENV
 
-      - name: Upload Build Artifact
+      - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: AikoHyprSetup-Build
-          path: build/${{ env.artifact_name }}
+          name: AikoHyprSetup-Builds
+          path: |
+            build/${{ env.artifact_name_base }}.tar.gz
+            build/${{ env.artifact_name_base }}.tar.xz
+            build/${{ env.artifact_name_base }}.zip
           retention-days: 14
