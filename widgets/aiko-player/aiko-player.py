@@ -1,6 +1,6 @@
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, Gdk, GLib, GdkPixbuf
+from gi.repository import Gtk, Gdk, GLib, GdkPixbuf, Pango
 import os
 import sys
 import subprocess
@@ -19,7 +19,10 @@ class AikoPlayer(Gtk.Window):
         self.set_keep_above(True)
         self.set_decorated(False)
         self.set_resizable(False)
-        self.set_default_size(500, 250)
+        
+        # Enforce fixed size
+        self.set_default_size(480, 260)
+        self.set_size_request(480, 260)
 
         # Paths
         self.script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -28,52 +31,58 @@ class AikoPlayer(Gtk.Window):
         self.load_css()
 
         # Layout
-        self.main_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=15)
-        self.main_vbox.set_margin_top(20)
+        self.main_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
+        self.main_vbox.set_margin_top(25)
         self.main_vbox.set_margin_bottom(20)
-        self.main_vbox.set_margin_start(20)
-        self.main_vbox.set_margin_end(20)
+        self.main_vbox.set_margin_start(25)
+        self.main_vbox.set_margin_end(25)
         self.add(self.main_vbox)
 
         # Upper Section (Art + Info)
-        self.upper_hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=20)
-        self.main_vbox.pack_start(self.upper_hbox, True, True, 0)
+        self.upper_hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=25)
+        self.main_vbox.pack_start(self.upper_hbox, False, False, 0)
 
         # Album Art
         self.art_image = Gtk.Image()
         self.art_image.set_name("player-art")
+        self.art_image.set_size_request(160, 160)
         self.upper_hbox.pack_start(self.art_image, False, False, 0)
 
         # Info VBox
-        self.info_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=5)
+        self.info_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
+        self.info_vbox.set_valign(Gtk.Align.CENTER)
         self.upper_hbox.pack_start(self.info_vbox, True, True, 0)
 
         self.title_label = Gtk.Label(label="No Title")
         self.title_label.set_name("player-title")
         self.title_label.set_halign(Gtk.Align.START)
         self.title_label.set_ellipsize(Pango.EllipsizeMode.END)
+        self.title_label.set_max_width_chars(20) # Prevent stretching
         self.info_vbox.pack_start(self.title_label, False, False, 0)
 
         self.artist_label = Gtk.Label(label="Unknown Artist")
         self.artist_label.set_name("player-artist")
         self.artist_label.set_halign(Gtk.Align.START)
+        self.artist_label.set_ellipsize(Pango.EllipsizeMode.END)
+        self.artist_label.set_max_width_chars(25)
         self.info_vbox.pack_start(self.artist_label, False, False, 0)
 
         self.album_label = Gtk.Label(label="Unknown Album")
         self.album_label.set_name("player-album")
         self.album_label.set_halign(Gtk.Align.START)
+        self.album_label.set_ellipsize(Pango.EllipsizeMode.END)
+        self.album_label.set_max_width_chars(25)
         self.info_vbox.pack_start(self.album_label, False, False, 0)
 
         # Heart Icon (Right side of info)
-        self.heart_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        self.upper_hbox.pack_end(self.heart_box, False, False, 0)
         self.heart_label = Gtk.Label(label="♥")
         self.heart_label.set_name("player-heart")
-        self.heart_box.pack_start(self.heart_label, False, False, 0)
+        self.heart_label.set_valign(Gtk.Align.CENTER)
+        self.upper_hbox.pack_end(self.heart_label, False, False, 0)
 
         # Progress Section
-        self.progress_hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
-        self.main_vbox.pack_start(self.progress_hbox, False, False, 0)
+        self.progress_hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
+        self.main_vbox.pack_start(self.progress_hbox, False, False, 5)
 
         self.time_label = Gtk.Label(label="0:00")
         self.time_label.set_name("player-time")
@@ -90,11 +99,11 @@ class AikoPlayer(Gtk.Window):
         self.progress_hbox.pack_start(self.duration_label, False, False, 0)
 
         # Controls Section
-        self.controls_hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=30)
+        self.controls_hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=25)
         self.controls_hbox.set_halign(Gtk.Align.CENTER)
         self.main_vbox.pack_start(self.controls_hbox, False, False, 0)
 
-        self.prev_btn = Gtk.Button(label="󰒮")
+        self.prev_btn = Gtk.Button(label="󰒫")
         self.prev_btn.set_name("player-btn-small")
         self.prev_btn.connect("clicked", lambda x: self.run_playerctl("previous"))
         self.controls_hbox.pack_start(self.prev_btn, False, False, 0)
@@ -104,7 +113,7 @@ class AikoPlayer(Gtk.Window):
         self.play_btn.connect("clicked", lambda x: self.run_playerctl("play-pause"))
         self.controls_hbox.pack_start(self.play_btn, False, False, 0)
 
-        self.next_btn = Gtk.Button(label="󰒭")
+        self.next_btn = Gtk.Button(label="󰒬")
         self.next_btn.set_name("player-btn-small")
         self.next_btn.connect("clicked", lambda x: self.run_playerctl("next"))
         self.controls_hbox.pack_start(self.next_btn, False, False, 0)
@@ -202,8 +211,8 @@ class AikoPlayer(Gtk.Window):
 
     def apply_art(self, pixbuf):
         if not pixbuf: return
-        # Scale to 120x120
-        scaled = pixbuf.scale_simple(120, 120, GdkPixbuf.InterpType.BILINEAR)
+        # Scale to 160x160
+        scaled = pixbuf.scale_simple(160, 160, GdkPixbuf.InterpType.BILINEAR)
         GLib.idle_add(self.art_image.set_from_pixbuf, scaled)
 
     def on_key_press(self, widget, event):
