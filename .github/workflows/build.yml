@@ -31,33 +31,23 @@ jobs:
 
       - name: Package Build Archive
         run: |
-          # Install zip utility
-          sudo apt-get install -y zip
-          
-          # Create a directory for the release package
+          sudo apt-get update
+          sudo apt-get install -y zip tar xz-utils
           mkdir -p build/AikoHyprSetup
-          
-          # Copy all necessary directories and files, preserving symlinks
-          cp -a configs scripts themes waybar widgets assets install.sh README.md LICENSE build/AikoHyprSetup/ 2>/dev/null || true
-          
-          # Get a short version of the commit SHA for versioning
+          cp -a configs scripts themes waybar widgets assets install.sh README.md LICENSE build/AikoHyprSetup/
           SHORT_SHA=$(git rev-parse --short HEAD)
-          
-          # Create multiple archive formats
+          echo "SHORT_SHA=${SHORT_SHA}" >> $GITHUB_ENV
           cd build
-          tar -czvf AikoHyprSetup-${SHORT_SHA}.tar.gz AikoHyprSetup/
-          tar -cJvf AikoHyprSetup-${SHORT_SHA}.tar.xz AikoHyprSetup/
-          zip -r AikoHyprSetup-${SHORT_SHA}.zip AikoHyprSetup/
-          
-          # Export the base artifact name to an environment variable
-          echo "artifact_name_base=AikoHyprSetup-${SHORT_SHA}" >> $GITHUB_ENV
+          tar -czvf "AikoHyprSetup-${SHORT_SHA}.tar.gz" AikoHyprSetup/
+          tar -cJvf "AikoHyprSetup-${SHORT_SHA}.tar.xz" AikoHyprSetup/
+          zip -r "AikoHyprSetup-${SHORT_SHA}.zip" AikoHyprSetup/
 
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: AikoHyprSetup-Builds
+          name: AikoHyprSetup-Builds-${{ env.SHORT_SHA }}
           path: |
-            build/${{ env.artifact_name_base }}.tar.gz
-            build/${{ env.artifact_name_base }}.tar.xz
-            build/${{ env.artifact_name_base }}.zip
+            build/*.tar.gz
+            build/*.tar.xz
+            build/*.zip
           retention-days: 14
