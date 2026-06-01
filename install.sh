@@ -335,7 +335,7 @@ install_configs() {
 
     log "${MAGENTA}Installing Widgets...${NC}"
     copy_dir_contents "$SOURCE_DIR/widgets" "$waybar_dir/widgets"
-    find "$waybar_dir/widgets" -type f \( -name "*.sh" -o -name "*.css" \) -exec sed -i "s#/home/watashi#$HOME#g;s#\$HOME#$HOME#g;s#~/.config#$HOME/.config#g" {} +
+    find "$waybar_dir/widgets" -type f \( -name "*.sh" -o -name "*.css" -o -name "*.py" \) -exec sed -i "s#/home/watashi#$HOME#g;s#\$HOME#$HOME#g;s#~/.config#$HOME/.config#g" {} +
 
     log "${MAGENTA}Installing Assets...${NC}"
     copy_dir_contents "$SOURCE_DIR/assets" "$waybar_dir/assets"
