@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Aiko Tasks
+Comment=Simple task list widget
+Exec=bash -c "$HOME/.config/waybar/widgets/aiko-list/aiko-list.sh"
+Icon=checkbox-checked-symbolic
+Terminal=false
+Type=Application
+Categories=Utility;
+Keywords=task;todo;list;aiko;
+Path=/home/watashi/.config/waybar/widgets/aiko-list

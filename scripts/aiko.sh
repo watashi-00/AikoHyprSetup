@@ -35,6 +35,7 @@ Options:
   --weather         Open the Aiko-Weather widget
   --usercard        Open the Aiko-UserCard widget
   --player          Open the Aiko-Player widget
+  --list            Open the Aiko-List widget
   --edit-usercard   Edit the User Card information
   --restart         Restart Waybar and refresh configs
 
@@ -78,6 +79,13 @@ case "${1:-}" in
             bash "$PROJECT_ROOT/widgets/aiko-note/aiko-note.sh"
         else
             echo "Error: Aiko-Note widget not found."
+        fi
+        ;;
+    --list)
+        if [ -f "$PROJECT_ROOT/widgets/aiko-list/aiko-list.sh" ]; then
+            bash "$PROJECT_ROOT/widgets/aiko-list/aiko-list.sh"
+        else
+            echo "Error: Aiko-List widget not found."
         fi
         ;;
     --clock)

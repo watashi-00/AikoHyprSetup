@@ -363,7 +363,7 @@ install_configs() {
     
     # Widget theme links
     local widget
-    for widget in aiko-note aiko-player aiko-clock aiko-usercard aiko-weather; do
+    for widget in aiko-note aiko-player aiko-clock aiko-usercard aiko-weather aiko-list; do
         local w_dir="$waybar_dir/widgets/$widget"
         if [ -d "$w_dir" ] && [ ! -f "$w_dir/theme.css" ]; then
             run ln -sf "themes/pink-anime.css" "$w_dir/theme.css"
