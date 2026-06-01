@@ -384,6 +384,11 @@ EOF
 
     log "${MAGENTA}Adjusting permissions...${NC}"
     run chmod +x "$waybar_dir"/*.sh
+
+    log "${MAGENTA}Generating initial themed icons (Pink Anime default)...${NC}"
+    if [ -x "$waybar_dir/icon-gen.sh" ]; then
+        run "$waybar_dir/icon-gen.sh" "#ff8fbd"
+    fi
 }
 
 post_install_checks() {
