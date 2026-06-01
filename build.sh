@@ -3,8 +3,9 @@ set -euo pipefail
 
 # --- Settings ---
 PROJECT_NAME="AikoHyprSetup"
-BUILD_DIR="dist"
-OUTPUT_FILE="${PROJECT_NAME}.tar.gz"
+SHORT_SHA=$(git rev-parse --short HEAD 2>/dev/null || echo "latest")
+BUILD_DIR="dist/${PROJECT_NAME}"
+OUTPUT_FILE="${PROJECT_NAME}-${SHORT_SHA}.tar.gz"
 
 # Colors
 NC='\e[0m'
@@ -23,8 +24,8 @@ success() {
 
 # 1. Cleanup
 log "Cleaning build environment..."
-rm -rf "$BUILD_DIR"
-rm -f "$OUTPUT_FILE"
+rm -rf "dist"
+rm -f "${PROJECT_NAME}-"*.tar.gz
 
 # 2. Create build directory
 log "Preparing build directory..."
@@ -72,34 +73,21 @@ fi
 # 3. Copy essential files
 log "Copying essential files..."
 
-# Root files
-cp install.sh LICENSE README.md "$BUILD_DIR/"
+# Use cp -a to preserve symlinks and copy directories recursively
+cp -a configs scripts themes waybar widgets assets install.sh README.md LICENSE "$BUILD_DIR/" 2>/dev/null || true
 
-# Waybar configs
-cp waybar/* "$BUILD_DIR/waybar/"
-
-# Scripts
-cp scripts/* "$BUILD_DIR/scripts/"
-
-# System configs
-cp -r configs/hypr "$BUILD_DIR/configs/"
-cp -r configs/mako "$BUILD_DIR/configs/"
-cp -r configs/wofi "$BUILD_DIR/configs/"
-cp -r configs/applications "$BUILD_DIR/configs/"
-cp -r configs/kitty "$BUILD_DIR/configs/"
-cp -r configs/fastfetch "$BUILD_DIR/configs/"
-
-# Widgets (Copying everything, excluding python files if binaries exist)
-cp -r widgets/* "$BUILD_DIR/widgets/"
-find "$BUILD_DIR/widgets" -name "__pycache__" -type d -exec rm -rf {} +
+# Remove __pycache__ just in case
+find "$BUILD_DIR" -name "__pycache__" -type d -exec rm -rf {} +
 
 # 4. Create package
 log "Compressing files into ${OUTPUT_FILE}..."
-tar -czf "$OUTPUT_FILE" -C "$BUILD_DIR" .
+cd dist
+tar -czf "../$OUTPUT_FILE" "${PROJECT_NAME}"
+cd ..
 
 # 5. Finalization
 log "Cleaning temporary directory..."
-rm -rf "$BUILD_DIR"
+rm -rf "dist"
 
 echo -e "\n${GREEN}${BOLD}Build completed successfully!${NC}"
 success "Package generated: ${OUTPUT_FILE}"
