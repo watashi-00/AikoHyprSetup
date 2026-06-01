@@ -11,7 +11,8 @@ class AikoSys(Gtk.Window):
         
         # Identity for Hyprland rules
         self.set_role("aiko-sys")
-        self.set_wmclass("aiko-sys", "aiko-sys")
+        # wmclass is deprecated, use set_name for CSS and role/class for Hyprland
+        # self.set_wmclass("aiko-sys", "aiko-sys")
         
         self.set_type_hint(Gdk.WindowTypeHint.DIALOG)
         self.set_decorated(False)
@@ -29,16 +30,16 @@ class AikoSys(Gtk.Window):
         self.add(self.main_vbox)
 
         # Style context for the main container (where the border/bg lives)
-        self.container = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20)
-        self.container.set_name("main-container")
-        self.main_vbox.pack_start(self.container, True, True, 0)
+        self.styled_container = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20)
+        self.styled_container.set_name("main-container")
+        self.main_vbox.pack_start(self.styled_container, True, True, 0)
 
         self.stats_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=15)
         self.stats_box.set_margin_top(25)
         self.stats_box.set_margin_bottom(25)
         self.stats_box.set_margin_start(25)
         self.stats_box.set_margin_end(25)
-        self.container.pack_start(self.stats_box, True, True, 0)
+        self.styled_container.pack_start(self.stats_box, True, True, 0)
 
         # Initialize progress bars and labels
         self.resources = {}
@@ -105,16 +106,12 @@ class AikoSys(Gtk.Window):
         seen_mounts = set()
         
         for part in partitions:
-            # Only include physical devices and avoid duplicates
             if not part.device.startswith('/dev/'): continue
             if part.mountpoint in seen_mounts: continue
-            
-            # Skip read-only or small system partitions like /boot if preferred
             if part.mountpoint == '/boot' or part.mountpoint.startswith('/boot/'): continue
 
             try:
                 usage = psutil.disk_usage(part.mountpoint)
-                # Filter out very small partitions (< 1GB) to keep UI clean
                 if usage.total < 1024**3: continue
 
                 name = f"Disk ({part.mountpoint})"
