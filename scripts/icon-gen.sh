@@ -16,13 +16,11 @@ APPS_SUBDIR="$ICON_SIZE/apps"
 
 mkdir -p "$COLOR_CACHE_DIR/$APPS_SUBDIR"
 
-# Link theme folder to current color cache
 if [ "$(readlink -f "$TARGET_THEME_DIR")" != "$(readlink -f "$COLOR_CACHE_DIR")" ]; then
     rm -rf "$TARGET_THEME_DIR"
     ln -s "$COLOR_CACHE_DIR" "$TARGET_THEME_DIR"
 fi
 
-# Ensure index.theme exists
 if [ ! -f "$COLOR_CACHE_DIR/index.theme" ]; then
     cat <<EOF > "$COLOR_CACHE_DIR/index.theme"
 [Icon Theme]
@@ -58,10 +56,9 @@ find_icon_path() {
         "/usr/share/icons"
         "/usr/share/pixmaps"
     )
-    # Search for SVG first for better quality, then PNG
     for dir in "${search_dirs[@]}"; do
         [ -d "$dir" ] || continue
-        # Prefer 'apps' or 'scalable' folders
+        # Deep search for SVG or PNG in apps/scalable/48x48
         local found=$(find "$dir" -name "$name.svg" -o -name "$name.png" 2>/dev/null | grep -E "apps|scalable" | head -n 1)
         if [ -n "$found" ]; then echo "$found"; return 0; fi
     done
@@ -73,16 +70,19 @@ process_icon() {
     [ -z "$app_input" ] && return 1
     local output_file="$COLOR_CACHE_DIR/$APPS_SUBDIR/$app_input.png"
     
-    # Skip if already exists in this color folder
     [ -f "$output_file" ] && return 0
 
     local icon_name=$(map_class_to_icon "$app_input")
     local icon_path=$(find_icon_path "$icon_name")
 
     if [ -n "$icon_path" ]; then
-        # CRITICAL FIX: -background none MUST come before the input file for SVGs
-        # Using the tint logic you preferred
-        magick -background none "$icon_path" -resize 32x32 -colorspace gray -fill "$COLOR_INPUT" -tint 100 "$output_file" 2>/dev/null
+        # FINAL ATTEMPT: PRESERVE ALPHA CHANNEL AT ALL COSTS
+        # 1. -background none: critical for SVGs
+        # 2. -channel RGB -colorspace gray +channel: affects color but keeps transparency
+        # 3. -fill COLOR -tint 100: applies the theme color
+        magick -background none "$icon_path" -resize 32x32 \
+               -channel RGB -colorspace gray +channel \
+               -fill "$COLOR_INPUT" -tint 100 "$output_file" 2>/dev/null
     else
         # Fallback D
         local letter=$(echo "${app_input:0:1}" | tr '[:lower:]' '[:upper:]' | head -c 1)
@@ -96,7 +96,7 @@ if [ -n "$APP_NAME" ]; then
     process_icon "$APP_NAME"
 else
     RUNNING_APPS=$(hyprctl clients -j | jq -r '.[].class' | tr '[:upper:]' '[:lower:]' | sort -u)
-    COMMON_APPS="firefox discord kitty thunar code spotify google-chrome"
+    COMMON_APPS="firefox discord kitty thunar code spotify"
     ALL_APPS=$(echo "$RUNNING_APPS $COMMON_APPS" | tr ' ' '\n' | sort -u)
     for a in $ALL_APPS; do process_icon "$a"; done
 fi
