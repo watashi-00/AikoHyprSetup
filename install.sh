@@ -401,12 +401,12 @@ apply_changes() {
     log "${MAGENTA}Applying configurations...${NC}"
 
     local waybar_dir="$HOME/.config/waybar"
+    local local_restart="$SOURCE_DIR/scripts/restart-waybar.sh"
 
-    if [ -x "$waybar_dir/wallpaper.sh" ]; then
-        run "$waybar_dir/wallpaper.sh" apply
-    fi
-
-    if [ -x "$waybar_dir/restart-waybar.sh" ]; then
+    if [ -f "$local_restart" ]; then
+        log "Using source restart script for immediate application..."
+        run bash "$local_restart"
+    elif [ -x "$waybar_dir/restart-waybar.sh" ]; then
         run "$waybar_dir/restart-waybar.sh"
     elif have waybar; then
         pkill waybar 2>/dev/null || true
