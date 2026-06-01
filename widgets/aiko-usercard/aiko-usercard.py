@@ -179,7 +179,8 @@ class AikoUserCard(Gtk.Window):
 
     def load_css(self):
         css_provider = Gtk.CssProvider()
-        theme_path = os.path.join(self.script_dir, "themes", "pink-anime.css")
+        # Use theme.css symlink for dynamic switching
+        theme_path = os.path.join(self.script_dir, "theme.css")
         if os.path.exists(theme_path):
             css_provider.load_from_path(theme_path)
             Gtk.StyleContext.add_provider_for_screen(

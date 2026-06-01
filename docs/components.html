@@ -8,7 +8,7 @@
         :root {
             --bg: #0a0a0a;
             --card-bg: #121212;
-            --accent: #ffffff;
+            --accent: #ff8fbd;
             --text: #e0e0e0;
             --text-dim: #909090;
             --border: rgba(255, 255, 255, 0.12);
@@ -111,7 +111,7 @@
 
         <section id="waybar">
             <h2>Waybar Components</h2>
-            <p>All Waybar elements can be styled using their CSS IDs or classes in <code>waybar/style.css</code>.</p>
+            <p>All Waybar elements can be styled using their CSS IDs or classes in <code>themes/*.css</code> (which are linked to <code>waybar/style.css</code>).</p>
 
             <div class="component-card">
                 <h3><span class="tag">#custom-spotify</span> - Music Info</h3>
@@ -120,11 +120,6 @@
     min-width: 160px;
     color: #ffc2dc;
 }</pre>
-                <div class="preview">
-                    <div class="waybar-mock">
-                        <span>Nightcore Hits - Clarity</span>
-                    </div>
-                </div>
             </div>
 
             <div class="component-card">
@@ -135,13 +130,6 @@
                     <li><code>#custom-spotify-play</code>: Play/Pause toggle button.</li>
                     <li><code>#custom-spotify-next</code>: Next track button.</li>
                 </ul>
-                <div class="preview">
-                    <div class="waybar-mock">
-                        <span class="btn-mock">󰒮</span>
-                        <span class="btn-mock">󰐊</span>
-                        <span class="btn-mock">󰒭</span>
-                    </div>
-                </div>
             </div>
 
             <div class="component-card">
@@ -154,58 +142,91 @@
             </div>
 
             <div class="component-card">
-                <h3><span class="tag">#custom-power</span> - Power Menu</h3>
-                <p>The logout/shutdown button button on the right side.</p>
-                <div class="preview">
-                    <div class="waybar-mock">
-                        <span class="btn-mock"></span>
-                    </div>
-                </div>
+                <h3><span class="tag">#taskbar</span> - Dynamic Taskbar</h3>
+                <p>The taskbar with themed icons. Uses the <code>Aiko</code> icon theme generated dynamically.</p>
+                <pre>#taskbar button image {
+    /* Filters are not supported in Waybar, use icon-gen system */
+}</pre>
             </div>
         </section>
 
-        <section id="hyprland">
-            <h2>Hyprland Theme Tags</h2>
-            <p>Special comments used by the <code>theme-selector.sh</code> script to update Hyprland settings dynamically.</p>
+        <section id="widgets">
+            <h2>Aiko Widgets</h2>
+            <p>Standalone Python/GTK 3 widgets that respond to the global theme system via <code>theme.css</code> symlink.</p>
+
+            <div class="component-card">
+                <h3><span class="tag">Aiko Note</span></h3>
+                <p>Simple sticky note widget. Linked via <code>@widget-aiko-note</code> tag.</p>
+                <ul>
+                    <li>ID: <code>#aiko-note-window</code></li>
+                    <li>Content: <code>#note-content</code></li>
+                </ul>
+            </div>
+
+            <div class="component-card">
+                <h3><span class="tag">Aiko Player</span></h3>
+                <p>Rich media player widget with album art. Linked via <code>@widget-aiko-player</code> tag.</p>
+                <ul>
+                    <li>ID: <code>#aiko-player-window</code></li>
+                    <li>Controls: <code>#player-btn-main</code>, <code>#player-btn-small</code></li>
+                    <li>Progress: <code>scale#player-progress</code></li>
+                </ul>
+            </div>
+
+            <div class="component-card">
+                <h3><span class="tag">Aiko User Card</span></h3>
+                <p>Personalized user info card. Linked via <code>@widget-aiko-usercard</code> tag.</p>
+                <ul>
+                    <li>ID: <code>#aiko-usercard-window</code></li>
+                    <li>Avatar: <code>#usercard-avatar-container</code> (circular clipping)</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="theme-tags">
+            <h2>Global Theme Tags</h2>
+            <p>Place these markers at the end of lines in configuration files. The <code>theme-selector.sh</code> script will search and replace values based on the theme header.</p>
             
             <div class="component-card">
-                <h3>Theme Markers</h3>
-                <p>Add these comments at the end of the line in the respective config files to make them theme-able:</p>
+                <h3>Configuration Markers</h3>
                 
                 <h4>Hyprland (<code>configs/hypr/hyprland.conf</code>)</h4>
                 <ul>
-                    <li><code># @theme:gaps_in</code>: Inner gaps between windows.</li>
-                    <li><code># @theme:gaps_out</code>: Outer gaps (screen edge).</li>
-                    <li><code># @theme:active_border</code>: Gradient for active windows.</li>
-                    <li><code># @theme:rounding</code>: Corner radius.</li>
+                    <li><code>@theme:gaps_in</code>: Inner gaps.</li>
+                    <li><code>@theme:gaps_out</code>: Outer gaps.</li>
+                    <li><code>@theme:active_border</code>: Active window border color/gradient.</li>
+                    <li><code>@theme:inactive_border</code>: Inactive window border color.</li>
+                    <li><code>@theme:rounding</code>: Corner rounding radius.</li>
+                    <li><code>@theme:active_opacity</code>: Active window opacity.</li>
+                    <li><code>@theme:inactive_opacity</code>: Inactive window opacity.</li>
                 </ul>
 
                 <h4>Wofi (<code>configs/wofi/style.css</code>)</h4>
                 <ul>
-                    <li><code>/* @theme:wofi_bg */</code>: Main window background.</li>
-                    <li><code>/* @theme:wofi_border */</code>: Border color and style.</li>
-                    <li><code>/* @theme:wofi_text */</code>: Default text color.</li>
-                    <li><code>/* @theme:wofi_accent */</code>: Highlight color for selected items.</li>
+                    <li><code>@theme:wofi_bg</code>: Window background.</li>
+                    <li><code>@theme:wofi_border</code>: Window border.</li>
+                    <li><code>@theme:wofi_text</code>: Text color.</li>
+                    <li><code>@theme:wofi_accent</code>: Selection color.</li>
                 </ul>
 
                 <h4>Mako (<code>configs/mako/config</code>)</h4>
                 <ul>
-                    <li><code># @theme:mako_bg</code>: Notification background color.</li>
-                    <li><code># @theme:mako_text</code>: Notification text color.</li>
-                    <li><code># @theme:mako_border</code>: Notification border color.</li>
-                    <li><code># @theme:mako_rounding</code>: Corner radius for notifications.</li>
+                    <li><code>@theme:mako_bg</code>: Background color.</li>
+                    <li><code>@theme:mako_text</code>: Text color.</li>
+                    <li><code>@theme:mako_border</code>: Border color.</li>
+                    <li><code>@theme:mako_rounding</code>: Corner radius.</li>
+                </ul>
+
+                <h4>Dynamic Widget Mapping</h4>
+                <p>Define these in the theme CSS header (e.g., <code>themes/pink-anime.css</code>):</p>
+                <ul>
+                    <li><code>@widget-aiko-note</code>: CSS file for Note widget.</li>
+                    <li><code>@widget-aiko-player</code>: CSS file for Player widget.</li>
+                    <li><code>@widget-aiko-clock</code>: CSS file for Clock widget.</li>
+                    <li><code>@widget-aiko-usercard</code>: CSS file for UserCard widget.</li>
+                    <li><code>@widget-aiko-weather</code>: CSS file for Weather widget.</li>
                 </ul>
             </div>
-        </section>
-
-        <section id="scripts">
-            <h2>Custom Scripts</h2>
-            <p>Located in the <code>scripts/</code> directory.</p>
-            <ul>
-                <li><code>wallpaper.sh</code>: Graphical wallpaper selector with cropping.</li>
-                <li><code>theme-selector.sh</code>: Dynamic theme engine switcher.</li>
-                <li><code>power-menu.sh</code>: System power options via Wofi.</li>
-            </ul>
         </section>
 
         <footer style="text-align: center; margin-top: 50px; opacity: 0.6; font-size: 0.8em;">

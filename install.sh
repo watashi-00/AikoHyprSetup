@@ -292,7 +292,6 @@ install_configs() {
 
     waybar_files=(
         config.jsonc config-bottom.jsonc config-left.jsonc config-screenshot.jsonc
-        style.css
     )
 
     scripts=(
@@ -358,6 +357,19 @@ install_configs() {
     copy_dir_contents "$SOURCE_DIR/configs/fastfetch" "$HOME/.config/fastfetch"
     patch_installed_paths "$HOME/.config/fastfetch/config.jsonc"
 
+    log "${MAGENTA}Creating default theme links...${NC}"
+    # Use relative links for portability
+    [ ! -f "$waybar_dir/style.css" ] && run ln -sf "themes/pink-anime.css" "$waybar_dir/style.css"
+    
+    # Widget theme links
+    local widget
+    for widget in aiko-note aiko-player aiko-clock aiko-usercard aiko-weather; do
+        local w_dir="$waybar_dir/widgets/$widget"
+        if [ -d "$w_dir" ] && [ ! -f "$w_dir/theme.css" ]; then
+            run ln -sf "themes/pink-anime.css" "$w_dir/theme.css"
+        fi
+    done
+
     # Add fastfetch to .bashrc if not present
     if [ -f "$HOME/.bashrc" ] && ! grep -q "fastfetch" "$HOME/.bashrc"; then
         log "Adding fastfetch to .bashrc..."
@@ -372,6 +384,11 @@ EOF
 
     log "${MAGENTA}Adjusting permissions...${NC}"
     run chmod +x "$waybar_dir"/*.sh
+
+    log "${MAGENTA}Generating initial themed icons (Pink Anime default)...${NC}"
+    if [ -x "$waybar_dir/icon-gen.sh" ]; then
+        run "$waybar_dir/icon-gen.sh" "#ff8fbd"
+    fi
 }
 
 post_install_checks() {

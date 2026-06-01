@@ -288,7 +288,8 @@ class AikoWeather(Gtk.Window):
 
     def load_css(self):
         css_provider = Gtk.CssProvider()
-        theme_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "themes", "pink-anime.css")
+        # Use theme.css symlink for dynamic switching
+        theme_path = os.path.join(self.script_dir, "theme.css")
         if os.path.exists(theme_path):
             css_provider.load_from_path(theme_path)
             Gtk.StyleContext.add_provider_for_screen(
@@ -296,6 +297,7 @@ class AikoWeather(Gtk.Window):
                 css_provider,
                 Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
             )
+
 
 if __name__ == "__main__":
     try:
