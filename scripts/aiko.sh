@@ -2,6 +2,16 @@
 # aiko - Global CLI for AikoHyprSetup management
 
 VERSION="1.0.0"
+
+# --- Terminal Cleanup Trap ---
+# Ensures focus tracking and bracketed paste are disabled on exit
+# to prevent ^[[I and ^[[O leaking into the prompt.
+cleanup() {
+    printf "\e[?1004l\e[?2004l"
+}
+trap cleanup EXIT
+# -----------------------------
+
 # Get the real directory of the script, resolving symlinks
 SCRIPT_DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
 
@@ -37,7 +47,10 @@ Options:
   --player          Open the Aiko-Player widget
   --list            Open the Aiko-List widget
   --sys             Open the Aiko-System widget
+  --all             Open all Aiko widgets at once
+  --diag            Run system environment diagnostics
   --edit-usercard   Edit the User Card information
+  --edit-logo       Edit terminal ASCII logo color and spacing
   --restart         Restart Waybar and refresh configs
 
 Examples:
@@ -75,7 +88,6 @@ case "${1:-}" in
         fi
         ;;
     --note)
-        # Try to find the widget in repo or installed path
         if [ -f "$PROJECT_ROOT/widgets/aiko-note/aiko-note.sh" ]; then
             bash "$PROJECT_ROOT/widgets/aiko-note/aiko-note.sh"
         else
@@ -124,12 +136,43 @@ case "${1:-}" in
             echo "Error: Aiko-Player widget not found."
         fi
         ;;
+    --all)
+        echo "Launching all Aiko widgets..."
+        widgets=("aiko-clock" "aiko-weather" "aiko-note" "aiko-player" "aiko-list" "aiko-sys" "aiko-usercard")
+        for widget in "${widgets[@]}"; do
+            script="$PROJECT_ROOT/widgets/$widget/$widget.sh"
+            if [ -f "$script" ]; then
+                echo "  -> Starting $widget"
+                bash "$script" &
+                sleep 0.2
+            fi
+        done
+        ;;
+    --diag)
+        if [ -f "$PROJECT_ROOT/scripts/diagnostics.sh" ]; then
+            bash "$PROJECT_ROOT/scripts/diagnostics.sh"
+        else
+            echo "Error: Diagnostics script not found."
+        fi
+        ;;
     --edit-usercard)
         EDITOR_SCRIPT="$PROJECT_ROOT/widgets/aiko-usercard/aiko-usercard-editor.py"
         if [ -f "$EDITOR_SCRIPT" ]; then
             python3 "$EDITOR_SCRIPT"
         else
             echo "Error: User Card editor not found at $EDITOR_SCRIPT"
+        fi
+        ;;
+    --edit-logo)
+        LOGO_EDITOR="$PROJECT_ROOT/widgets/aiko-sys/aiko-logo-editor.py"
+        if [ -f "$LOGO_EDITOR" ]; then
+            python3 "$LOGO_EDITOR"
+            if command -v fastfetch >/dev/null 2>&1; then
+                clear
+                fastfetch
+            fi
+        else
+            echo "Error: Logo editor not found at $LOGO_EDITOR"
         fi
         ;;
     --restart)

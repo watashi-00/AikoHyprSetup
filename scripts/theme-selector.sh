@@ -131,6 +131,11 @@ if [ -f "$REPO_DIR/scripts/icon-gen.sh" ]; then
     bash "$REPO_DIR/scripts/icon-gen.sh" "$accent_color"
 fi
 
+if [ -f "$REPO_DIR/scripts/sync-fastfetch.py" ]; then
+    log "Syncing Fastfetch logo colors..."
+    python3 "$REPO_DIR/scripts/sync-fastfetch.py"
+fi
+
 # --- 6. Sync and Refresh ---
 # Only copy if we are not already in the target directory
 if [ "$(realpath -m "$WAYBAR_STYLE")" != "$(realpath -m "$HOME/.config/waybar/style.css")" ]; then
@@ -140,12 +145,10 @@ fi
 if command -v hyprctl >/dev/null 2>&1; then hyprctl reload >/dev/null 2>&1 || true; fi
 if command -v makoctl >/dev/null 2>&1; then makoctl reload >/dev/null 2>&1 || true; fi
 
-if [ -x "$REPO_DIR/scripts/restart-waybar.sh" ]; then
-    nohup "$REPO_DIR/scripts/restart-waybar.sh" >/dev/null 2>&1 &
-else
-    pkill waybar || true
-    sleep 0.5
-    nohup waybar >/dev/null 2>&1 &
+# Automatically restart Waybar to apply new theme
+RESTART_SCRIPT="$REPO_DIR/scripts/restart-waybar.sh"
+if [ -f "$RESTART_SCRIPT" ]; then
+    bash "$RESTART_SCRIPT"
 fi
 
 log "Global theme applied successfully!"

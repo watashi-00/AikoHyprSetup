@@ -110,11 +110,11 @@ window#waybar.bottom {
 }
 
 window#waybar.left {
-    min-width: 70px;
+    min-width: 64px;
     background: rgba(30, 32, 35, 0.95);
     border-radius: 18px;
     border: 1px solid rgba(255, 134, 185, 0.24);
-    padding: 9px 5px;
+    padding: 0 5px;
 }
 
 #workspaces {
@@ -124,7 +124,7 @@ window#waybar.left {
 
 #workspaces button {
     padding: 0;
-    min-width: 29px;
+    min-width: 50px;
     min-height: 29px;
     color: #f0c2da;
     background: rgba(255, 255, 255, 0.03);
@@ -241,7 +241,7 @@ image#album-art {
     background: transparent;
     border: none;
     transition: all 0.18s ease;
-    margin: 4px 0;
+    margin: 0;
 }
 
 #custom-launcher-terminal:hover, #custom-launcher-browser:hover, #custom-launcher-files:hover,

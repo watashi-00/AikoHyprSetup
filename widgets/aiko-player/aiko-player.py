@@ -12,8 +12,9 @@ class AikoPlayer(Gtk.Window):
     def __init__(self):
         super().__init__(title="Aiko Player")
         
-        self.set_name("aiko-player")
+        self.set_name("aiko-player-window")
         self.set_role("aiko-player")
+        self.set_wmclass("aiko-player", "aiko-player")
         
         self.set_type_hint(Gdk.WindowTypeHint.DIALOG)
         self.set_keep_above(True)
@@ -30,17 +31,30 @@ class AikoPlayer(Gtk.Window):
         # Load CSS
         self.load_css()
 
-        # Layout
-        self.main_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
-        self.main_vbox.set_margin_top(25)
-        self.main_vbox.set_margin_bottom(20)
-        self.main_vbox.set_margin_start(25)
-        self.main_vbox.set_margin_end(25)
+        # Main Box (Transparent)
+        self.main_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
         self.add(self.main_vbox)
+
+        # Styled Container
+        self.styled_container = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
+        self.styled_container.set_name("main-container")
+        self.styled_container.set_margin_top(0)
+        self.styled_container.set_margin_bottom(0)
+        self.styled_container.set_margin_start(0)
+        self.styled_container.set_margin_end(0)
+        self.main_vbox.pack_start(self.styled_container, True, True, 0)
+
+        # Content Box inside Container for padding
+        content_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
+        content_vbox.set_margin_top(25)
+        content_vbox.set_margin_bottom(20)
+        content_vbox.set_margin_start(25)
+        content_vbox.set_margin_end(25)
+        self.styled_container.pack_start(content_vbox, True, True, 0)
 
         # Upper Section (Art + Info)
         self.upper_hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=25)
-        self.main_vbox.pack_start(self.upper_hbox, False, False, 0)
+        content_vbox.pack_start(self.upper_hbox, False, False, 0)
 
         # Album Art
         self.art_image = Gtk.Image()
@@ -57,7 +71,7 @@ class AikoPlayer(Gtk.Window):
         self.title_label.set_name("player-title")
         self.title_label.set_halign(Gtk.Align.START)
         self.title_label.set_ellipsize(Pango.EllipsizeMode.END)
-        self.title_label.set_max_width_chars(20) # Prevent stretching
+        self.title_label.set_max_width_chars(20) 
         self.info_vbox.pack_start(self.title_label, False, False, 0)
 
         self.artist_label = Gtk.Label(label="Unknown Artist")
@@ -74,7 +88,7 @@ class AikoPlayer(Gtk.Window):
         self.album_label.set_max_width_chars(25)
         self.info_vbox.pack_start(self.album_label, False, False, 0)
 
-        # Heart Icon (Right side of info)
+        # Heart Icon
         self.heart_label = Gtk.Label(label="♥")
         self.heart_label.set_name("player-heart")
         self.heart_label.set_valign(Gtk.Align.CENTER)
@@ -82,7 +96,7 @@ class AikoPlayer(Gtk.Window):
 
         # Progress Section
         self.progress_hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
-        self.main_vbox.pack_start(self.progress_hbox, False, False, 5)
+        content_vbox.pack_start(self.progress_hbox, False, False, 5)
 
         self.time_label = Gtk.Label(label="0:00")
         self.time_label.set_name("player-time")
@@ -101,7 +115,7 @@ class AikoPlayer(Gtk.Window):
         # Controls Section
         self.controls_hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=25)
         self.controls_hbox.set_halign(Gtk.Align.CENTER)
-        self.main_vbox.pack_start(self.controls_hbox, False, False, 0)
+        content_vbox.pack_start(self.controls_hbox, False, False, 0)
 
         self.prev_btn = Gtk.Button(label="󰒫")
         self.prev_btn.set_name("player-btn-small")
@@ -147,14 +161,12 @@ class AikoPlayer(Gtk.Window):
 
     def update_info(self):
         try:
-            # Metadata
             title = subprocess.check_output(["playerctl", "metadata", "title"], stderr=subprocess.DEVNULL).decode().strip()
             artist = subprocess.check_output(["playerctl", "metadata", "artist"], stderr=subprocess.DEVNULL).decode().strip()
             album = subprocess.check_output(["playerctl", "metadata", "album"], stderr=subprocess.DEVNULL).decode().strip()
             art_url = subprocess.check_output(["playerctl", "metadata", "mpris:artUrl"], stderr=subprocess.DEVNULL).decode().strip()
             status = subprocess.check_output(["playerctl", "status"], stderr=subprocess.DEVNULL).decode().strip()
             
-            # Position/Duration
             pos = float(subprocess.check_output(["playerctl", "position"], stderr=subprocess.DEVNULL).decode().strip())
             dur = float(subprocess.check_output(["playerctl", "metadata", "mpris:length"], stderr=subprocess.DEVNULL).decode().strip()) / 1000000
 
@@ -162,17 +174,14 @@ class AikoPlayer(Gtk.Window):
             self.artist_label.set_text(artist or "Unknown Artist")
             self.album_label.set_text(album or "Unknown Album")
             
-            # Update Play/Pause Icon
             self.play_btn.set_label("󰏤" if status == "Playing" else "󰐊")
 
-            # Update Progress
             if not self.is_seeking:
                 self.progress_bar.set_range(0, dur)
                 self.progress_bar.set_value(pos)
                 self.time_label.set_text(self.format_time(pos))
                 self.duration_label.set_text(self.format_time(dur))
 
-            # Update Art if changed
             if art_url != self.current_art_url:
                 self.current_art_url = art_url
                 threading.Thread(target=self.load_art, args=(art_url,)).start()
@@ -194,7 +203,6 @@ class AikoPlayer(Gtk.Window):
             if url.startswith("file://"):
                 path = url[7:]
             else:
-                # Handle URLs (Spotify uses URLs)
                 with urllib.request.urlopen(url) as response:
                     data = response.read()
                     loader = GdkPixbuf.PixbufLoader()
@@ -211,7 +219,6 @@ class AikoPlayer(Gtk.Window):
 
     def apply_art(self, pixbuf):
         if not pixbuf: return
-        # Scale to 160x160
         scaled = pixbuf.scale_simple(160, 160, GdkPixbuf.InterpType.BILINEAR)
         GLib.idle_add(self.art_image.set_from_pixbuf, scaled)
 

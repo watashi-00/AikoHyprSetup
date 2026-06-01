@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# --- Terminal Cleanup Trap ---
+cleanup_term() {
+    printf "\e[?1004l\e[?2004l"
+}
+trap cleanup_term EXIT
+# -----------------------------
+
 # --- Initial Settings ---
 SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 INSTALL_PACKAGES=1
@@ -249,7 +256,7 @@ copy_file() {
     fi
 
     log "Copying: ${WHITE}$(basename "$src")${NC} -> ${WHITE}$dest${NC}"
-    run cp -L "$src" "$dest"
+    run cp -P "$src" "$dest"
     COPIED_FILES=$((COPIED_FILES + 1))
 }
 
@@ -265,7 +272,7 @@ copy_dir_contents() {
         if [ -d "$src" ] && [ ! -L "$src" ]; then
             [ -e "$dest" ] && backup_path "$dest"
             log "Copying directory: ${WHITE}$(basename "$src")${NC}"
-            run cp -aL "$src" "$dest"
+            run cp -a "$src" "$dest"
             COPIED_FILES=$((COPIED_FILES + 1))
         else
             copy_file "$src" "$dest"
@@ -299,6 +306,7 @@ install_configs() {
         clipboard-listener.sh launcher.sh menu.sh minimize.sh restart-waybar.sh
         screenshot.sh spotify-art.sh spotify-info.sh spotify-playstate.sh
         wallpaper.sh power-menu.sh theme-selector.sh aiko.sh icon-gen.sh
+        sync-fastfetch.py
     )
 
     log "${MAGENTA}Installing Waybar configs...${NC}"
@@ -350,6 +358,8 @@ install_configs() {
     local app_dir="$HOME/.local/share/applications"
     mkdir -p "$app_dir"
     copy_dir_contents "$SOURCE_DIR/configs/applications" "$app_dir"
+    # Patch paths in desktop entries
+    find "$app_dir" -type f -name "aiko-*.desktop" -exec sed -i "s#/home/watashi#$HOME#g;s#\$HOME#$HOME#g" {} +
 
     log "${MAGENTA}Installing Kitty and Fastfetch configs...${NC}"
     mkdir -p "$HOME/.config/kitty" "$HOME/.config/fastfetch"
@@ -383,11 +393,16 @@ EOF
     fi
 
     log "${MAGENTA}Adjusting permissions...${NC}"
-    run chmod +x "$waybar_dir"/*.sh
+    find "$waybar_dir" -type f -name "*.sh" -exec chmod +x {} +
 
     log "${MAGENTA}Generating initial themed icons (Pink Anime default)...${NC}"
     if [ -x "$waybar_dir/icon-gen.sh" ]; then
         run "$waybar_dir/icon-gen.sh" "#ff8fbd"
+    fi
+
+    log "${MAGENTA}Syncing Fastfetch logo properties...${NC}"
+    if [ -x "$waybar_dir/sync-fastfetch.py" ]; then
+        run "$waybar_dir/sync-fastfetch.py"
     fi
 }
 
@@ -466,60 +481,69 @@ show_summary() {
 }
 
 prompt_apply() {
-    printf "\nApply changes now? (y/n): "
-    read -r choice
-    if [[ "$choice" =~ ^[Yy]$ ]]; then
+    if confirm "Apply changes and restart Waybar now?"; then
         apply_changes
     fi
 }
 
 # Menu Action Functions
-action_full_install() {
-    INSTALL_PACKAGES=1
-    INSTALL_HYPR=1
+action_full_setup() {
+    log "Starting full setup..."
     install_packages
     install_configs
+    action_global_aiko "silent"
     post_install_checks
     show_summary
+    apply_changes
+    return 130
+}
+
+action_update_configs() {
+    install_configs
+    show_summary
     prompt_apply
-    return 130 # Exit menu after completion
+    return 0
 }
 
 action_install_packages() {
     install_packages
     show_summary
-    return 130
+    return 0
 }
 
-action_install_configs() {
-    install_configs
-    show_summary
-    return 130
-}
-
-action_check_deps() {
+action_check_health() {
     post_install_checks
     return 0
 }
 
-action_apply_changes() {
+action_restart_waybar() {
     apply_changes
-    success "Changes applied!"
+    success "Waybar and Hyprland reloaded!"
+    return 0
+}
+
+action_git_pull() {
+    if [ -d "$SOURCE_DIR/.git" ]; then
+        log "Updating AikoHyprSetup from GitHub..."
+        if git -C "$SOURCE_DIR" pull; then
+            success "Update successful! Please restart the installer if needed."
+        else
+            error "Failed to pull updates. Check your connection or git status."
+        fi
+    else
+        warn "Not a git repository. Skip update."
+    fi
     return 0
 }
 
 action_wallpaper_changer() {
     local wp_script="$SOURCE_DIR/scripts/wallpaper.sh"
-    
     if [ -f "$wp_script" ]; then
-        log "Using local wallpaper script..."
         bash "$wp_script" select
-        success "Wallpaper process completed!"
     elif [ -x "$HOME/.config/waybar/wallpaper.sh" ]; then
         "$HOME/.config/waybar/wallpaper.sh" select
-        success "Wallpaper process completed!"
     else
-        warn "Wallpaper script not found. Please install configurations first."
+        warn "Wallpaper script not found."
     fi
     return 0
 }
@@ -537,23 +561,39 @@ action_theme_selector() {
 }
 
 action_global_aiko() {
+    local mode="${1:-normal}"
     local aiko_src="$HOME/.config/waybar/aiko.sh"
     local aiko_dest="/usr/local/bin/aiko"
 
     if [ ! -f "$aiko_src" ]; then
-        error "Aiko script not found at $aiko_src. Please run 'Copy Configurations' first."
+        if [ "$mode" != "silent" ]; then
+            error "Aiko script not found. Install configs first."
+        fi
         return 0
     fi
 
-    log "Setting up 'aiko' as a global command..."
+    if [ "$mode" != "silent" ]; then
+        log "Setting up 'aiko' command..."
+    fi
+    
     validate_sudo
     sudo_cmd ln -sf "$aiko_src" "$aiko_dest"
     sudo_cmd chmod +x "$aiko_dest"
     
-    if have aiko; then
-        success "Global command 'aiko' is ready! Try running: aiko --help"
+    if [ "$mode" != "silent" ]; then
+        success "Global command 'aiko' is ready!"
+    fi
+    return 0
+}
+
+action_diagnostics() {
+    local diag_script="$SOURCE_DIR/scripts/diagnostics.sh"
+    if [ -f "$diag_script" ]; then
+        bash "$diag_script"
+    elif [ -x "$HOME/.config/waybar/scripts/diagnostics.sh" ]; then
+        "$HOME/.config/waybar/scripts/diagnostics.sh"
     else
-        warn "Could not verify 'aiko' command. Check if /usr/local/bin is in your PATH."
+        warn "Diagnostics script not found."
     fi
     return 0
 }
@@ -561,34 +601,36 @@ action_global_aiko() {
 action_exit() {
     if [ -t 1 ]; then clear; fi
     log "Exiting..."
-    exit 0
+    return 127
 }
 
 interactive_menu() {
     declare -A labels=(
-        [1]="🚀  Full Installation (Recommended)"
-        [2]="📦  Install Packages Only"
-        [3]="🎨  Copy Configurations Only"
-        [4]="🔍  Check Dependencies"
-        [5]="🔄  Apply Changes Now"
-        [6]="🖼️   Update Wallpaper"
-        [7]="🎨  Select Theme"
-        [8]="🌍  Make 'aiko' Global Command"
+        [1]="🚀  Full Setup (Recommended)"
+        [2]="🎨  Update Configs & Widgets"
+        [3]="📦  Install Packages Only"
+        [4]="🖼️   Change Wallpaper"
+        [5]="🎨  Change Theme"
+        [6]="🔄  Restart Waybar"
+        [7]="🔍  Check System Health"
+        [8]="🆙  Update Setup (Git Pull)"
+        [9]="🩺  Environment Diagnostics"
         [0]="✘   Exit"
     )
 
     declare -A actions=(
-        [1]="action_full_install"
-        [2]="action_install_packages"
-        [3]="action_install_configs"
-        [4]="action_check_deps"
-        [5]="action_apply_changes"
-        [6]="action_wallpaper_changer"
-        [7]="action_theme_selector"
-        [8]="action_global_aiko"
+        [1]="action_full_setup"
+        [2]="action_update_configs"
+        [3]="action_install_packages"
+        [4]="action_wallpaper_changer"
+        [5]="action_theme_selector"
+        [6]="action_restart_waybar"
+        [7]="action_check_health"
+        [8]="action_git_pull"
+        [9]="action_diagnostics"
         [0]="action_exit"
     )
-    local order=(1 2 3 4 5 6 7 8 0)
+    local order=(1 2 3 4 5 6 7 8 9 0)
     
     menu "" labels actions order
 }
