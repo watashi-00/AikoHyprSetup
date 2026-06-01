@@ -113,7 +113,8 @@ packages_for_pm() {
                 pipewire pipewire-pulse wireplumber pavucontrol wl-clipboard \
                 cliphist libnotify network-manager-applet grim slurp curl \
                 hyprpicker swappy xdg-utils bluez ttf-font-awesome \
-                ttf-jetbrains-mono-nerd polkit-kde-agent zenity gthumb imagemagick
+                ttf-jetbrains-mono-nerd polkit-kde-agent zenity gthumb imagemagick \
+                python-gobject
             ;;
         apt)
             printf '%s\n' \
@@ -121,7 +122,8 @@ packages_for_pm() {
                 pipewire pipewire-pulse wireplumber pavucontrol wl-clipboard \
                 cliphist libnotify-bin network-manager-gnome grim slurp curl \
                 hyprpicker swappy xdg-utils bluez fonts-font-awesome \
-                fonts-jetbrains-mono polkit-kde-agent-1 zenity gthumb imagemagick
+                fonts-jetbrains-mono polkit-kde-agent-1 zenity gthumb imagemagick \
+                python3-gi
             ;;
         dnf)
             printf '%s\n' \
@@ -129,7 +131,8 @@ packages_for_pm() {
                 pipewire pipewire-pulseaudio wireplumber pavucontrol wl-clipboard \
                 cliphist libnotify NetworkManager-applet grim slurp curl \
                 hyprpicker swappy xdg-utils bluez fontawesome-fonts \
-                jetbrains-mono-fonts polkit-kde zenity gthumb ImageMagick
+                jetbrains-mono-fonts polkit-kde zenity gthumb ImageMagick \
+                python3-gobject
             ;;
         zypper)
             printf '%s\n' \
@@ -137,7 +140,8 @@ packages_for_pm() {
                 pipewire pipewire-pulseaudio wireplumber pavucontrol wl-clipboard \
                 cliphist libnotify-tools NetworkManager-applet grim slurp curl \
                 hyprpicker swappy xdg-utils bluez fontawesome-fonts \
-                jetbrains-mono-fonts polkit-kde-agent-6 zenity gthumb ImageMagick
+                jetbrains-mono-fonts polkit-kde-agent-6 zenity gthumb ImageMagick \
+                python3-gobject
             ;;
         apk)
             printf '%s\n' \
@@ -145,7 +149,8 @@ packages_for_pm() {
                 pipewire pipewire-pulse wireplumber pavucontrol wl-clipboard \
                 cliphist libnotify network-manager-applet grim slurp curl \
                 hyprpicker swappy xdg-utils bluez fontawesome-fonts \
-                ttf-jetbrains-mono polkit-kde-agent zenity gthumb imagemagick
+                ttf-jetbrains-mono polkit-kde-agent zenity gthumb imagemagick \
+                py3-gobject3
             ;;
     esac
 }
@@ -233,7 +238,14 @@ copy_file() {
         if [ "$src_real" = "$dest_real" ]; then
             return 0
         fi
-        backup_path "$dest"
+        
+        # Prevent backups for .desktop files to avoid duplication in launchers
+        if [[ "$dest" == *.desktop ]]; then
+            log "Updating: ${WHITE}$(basename "$src")${NC}"
+            run rm -f "$dest"
+        else
+            backup_path "$dest"
+        fi
     fi
 
     log "Copying: ${WHITE}$(basename "$src")${NC} -> ${WHITE}$dest${NC}"
@@ -264,10 +276,11 @@ copy_dir_contents() {
 patch_installed_paths() {
     file="$1"
     [ -f "$file" ] || return 0
+    # Replace literal /home/watashi and literal $HOME with the actual $HOME value
     run sed -i \
         -e "s#/home/watashi#$HOME#g" \
-        -e "s#~/.config/hypr/launcher.sh#~/.config/waybar/launcher.sh#g" \
-        -e "s#~/.config/hypr/clipboard-history.sh#~/.config/waybar/clipboard-history.sh#g" \
+        -e "s#\$HOME#$HOME#g" \
+        -e "s#~/.config#$HOME/.config#g" \
         "$file"
 }
 
@@ -286,34 +299,75 @@ install_configs() {
         audio-input.sh audio-output.sh clipboard-history.sh
         clipboard-listener.sh launcher.sh menu.sh minimize.sh restart-waybar.sh
         screenshot.sh spotify-art.sh spotify-info.sh spotify-playstate.sh
-        wallpaper.sh power-menu.sh theme-selector.sh
+        wallpaper.sh power-menu.sh theme-selector.sh aiko.sh
     )
 
     log "${MAGENTA}Installing Waybar configs...${NC}"
     for file in "${waybar_files[@]}"; do
         copy_file "$SOURCE_DIR/waybar/$file" "$waybar_dir/$file"
+        patch_installed_paths "$waybar_dir/$file"
     done
 
     log "${MAGENTA}Installing helper scripts...${NC}"
     for file in "${scripts[@]}"; do
         copy_file "$SOURCE_DIR/scripts/$file" "$waybar_dir/$file"
+        patch_installed_paths "$waybar_dir/$file"
     done
+
+    log "${MAGENTA}Installing Installer itself...${NC}"
+    copy_file "$SOURCE_DIR/install.sh" "$waybar_dir/install.sh"
+    copy_dir_contents "$SOURCE_DIR/scripts" "$waybar_dir/scripts"
+    
+    # Patch all scripts in the scripts/ subfolder too
+    find "$waybar_dir/scripts" -type f -name "*.sh" -exec sed -i "s#/home/watashi#$HOME#g;s#\$HOME#$HOME#g;s#~/.config#$HOME/.config#g" {} +
 
     log "${MAGENTA}Installing Themes...${NC}"
     copy_dir_contents "$SOURCE_DIR/themes" "$waybar_dir/themes"
+    # Patch paths in themes just in case
+    find "$waybar_dir/themes" -type f -name "*.css" -exec sed -i "s#/home/watashi#$HOME#g;s#\$HOME#$HOME#g;s#~/.config#$HOME/.config#g" {} +
 
     log "${MAGENTA}Installing Mako and Wofi...${NC}"
     copy_dir_contents "$SOURCE_DIR/configs/mako" "$mako_dir"
     copy_dir_contents "$SOURCE_DIR/configs/wofi" "$wofi_dir"
+    patch_installed_paths "$mako_dir/config"
+    patch_installed_paths "$wofi_dir/config"
+    patch_installed_paths "$wofi_dir/style.css"
 
+    log "${MAGENTA}Installing Widgets...${NC}"
+    copy_dir_contents "$SOURCE_DIR/widgets" "$waybar_dir/widgets"
+    find "$waybar_dir/widgets" -type f \( -name "*.sh" -o -name "*.css" \) -exec sed -i "s#/home/watashi#$HOME#g;s#\$HOME#$HOME#g;s#~/.config#$HOME/.config#g" {} +
+
+    log "${MAGENTA}Installing Assets...${NC}"
+    copy_dir_contents "$SOURCE_DIR/assets" "$waybar_dir/assets"
+
+    log "${MAGENTA}Installing Hyprland config...${NC}"
     if [ "$INSTALL_HYPR" -eq 1 ] && [ -f "$SOURCE_DIR/configs/hypr/hyprland.conf" ]; then
-        log "${MAGENTA}Installing Hyprland config...${NC}"
         copy_file "$SOURCE_DIR/configs/hypr/hyprland.conf" "$hypr_dir/hyprland.conf"
         patch_installed_paths "$hypr_dir/hyprland.conf"
     fi
 
-    patch_installed_paths "$waybar_dir/config.jsonc"
-    patch_installed_paths "$waybar_dir/config-left.jsonc"
+    log "${MAGENTA}Installing Desktop Entries...${NC}"
+    local app_dir="$HOME/.local/share/applications"
+    mkdir -p "$app_dir"
+    copy_dir_contents "$SOURCE_DIR/configs/applications" "$app_dir"
+
+    log "${MAGENTA}Installing Kitty and Fastfetch configs...${NC}"
+    mkdir -p "$HOME/.config/kitty" "$HOME/.config/fastfetch"
+    copy_dir_contents "$SOURCE_DIR/configs/kitty" "$HOME/.config/kitty"
+    copy_dir_contents "$SOURCE_DIR/configs/fastfetch" "$HOME/.config/fastfetch"
+    patch_installed_paths "$HOME/.config/fastfetch/config.jsonc"
+
+    # Add fastfetch to .bashrc if not present
+    if [ -f "$HOME/.bashrc" ] && ! grep -q "fastfetch" "$HOME/.bashrc"; then
+        log "Adding fastfetch to .bashrc..."
+        cat << 'EOF' >> "$HOME/.bashrc"
+
+# Auto-run fastfetch for AikoHyprSetup
+if [[ $- == *i* ]] && command -v fastfetch >/dev/null 2>&1; then
+    fastfetch
+fi
+EOF
+    fi
 
     log "${MAGENTA}Adjusting permissions...${NC}"
     run chmod +x "$waybar_dir"/*.sh
@@ -346,17 +400,19 @@ post_install_checks() {
 apply_changes() {
     log "${MAGENTA}Applying configurations...${NC}"
 
-    if [ -x "$HOME/.config/waybar/wallpaper.sh" ]; then
-        run "$HOME/.config/waybar/wallpaper.sh" apply
-    fi
+    local waybar_dir="$HOME/.config/waybar"
+    local local_restart="$SOURCE_DIR/scripts/restart-waybar.sh"
 
-    if [ -x "$HOME/.config/waybar/restart-waybar.sh" ]; then
-        run "$HOME/.config/waybar/restart-waybar.sh"
+    if [ -f "$local_restart" ]; then
+        log "Using source restart script for immediate application..."
+        run bash "$local_restart"
+    elif [ -x "$waybar_dir/restart-waybar.sh" ]; then
+        run "$waybar_dir/restart-waybar.sh"
     elif have waybar; then
         pkill waybar 2>/dev/null || true
-        waybar --config "$HOME/.config/waybar/config-left.jsonc" --style "$HOME/.config/waybar/style.css" &
-        waybar --config "$HOME/.config/waybar/config.jsonc" --style "$HOME/.config/waybar/style.css" &
-        waybar --config "$HOME/.config/waybar/config-bottom.jsonc" --style "$HOME/.config/waybar/style.css" &
+        waybar --config "$waybar_dir/config-left.jsonc" --style "$waybar_dir/style.css" &
+        waybar --config "$waybar_dir/config.jsonc" --style "$waybar_dir/style.css" &
+        waybar --config "$waybar_dir/config-bottom.jsonc" --style "$waybar_dir/style.css" &
     else
         warn "waybar not found."
     fi
@@ -462,6 +518,28 @@ action_theme_selector() {
     return 0
 }
 
+action_global_aiko() {
+    local aiko_src="$HOME/.config/waybar/aiko.sh"
+    local aiko_dest="/usr/local/bin/aiko"
+
+    if [ ! -f "$aiko_src" ]; then
+        error "Aiko script not found at $aiko_src. Please run 'Copy Configurations' first."
+        return 0
+    fi
+
+    log "Setting up 'aiko' as a global command..."
+    validate_sudo
+    sudo_cmd ln -sf "$aiko_src" "$aiko_dest"
+    sudo_cmd chmod +x "$aiko_dest"
+    
+    if have aiko; then
+        success "Global command 'aiko' is ready! Try running: aiko --help"
+    else
+        warn "Could not verify 'aiko' command. Check if /usr/local/bin is in your PATH."
+    fi
+    return 0
+}
+
 action_exit() {
     if [ -t 1 ]; then clear; fi
     log "Exiting..."
@@ -477,6 +555,7 @@ interactive_menu() {
         [5]="🔄  Apply Changes Now"
         [6]="🖼️   Update Wallpaper"
         [7]="🎨  Select Theme"
+        [8]="🌍  Make 'aiko' Global Command"
         [0]="✘   Exit"
     )
 
@@ -488,9 +567,10 @@ interactive_menu() {
         [5]="action_apply_changes"
         [6]="action_wallpaper_changer"
         [7]="action_theme_selector"
+        [8]="action_global_aiko"
         [0]="action_exit"
     )
-    local order=(1 2 3 4 5 6 7 0)
+    local order=(1 2 3 4 5 6 7 8 0)
     
     menu "" labels actions order
 }

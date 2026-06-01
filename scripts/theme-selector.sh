@@ -2,12 +2,30 @@
 set -euo pipefail
 
 # --- Paths ---
-REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-THEMES_DIR="$REPO_DIR/themes"
-WAYBAR_STYLE="$REPO_DIR/waybar/style.css"
-HYPR_CONF="$REPO_DIR/configs/hypr/hyprland.conf"
-WOFI_STYLE="$REPO_DIR/configs/wofi/style.css"
-MAKO_CONF="$REPO_DIR/configs/mako/config"
+# Get the real directory of the script, resolving symlinks
+SCRIPT_DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
+
+if [ -f "$SCRIPT_DIR/../aiko-ideas.md" ]; then
+    # Case: Running from the repository (scripts/ folder)
+    REPO_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+    THEMES_DIR="$REPO_DIR/themes"
+    WAYBAR_STYLE="$REPO_DIR/waybar/style.css"
+    HYPR_CONF="$REPO_DIR/configs/hypr/hyprland.conf"
+    WOFI_STYLE="$REPO_DIR/configs/wofi/style.css"
+    MAKO_CONF="$REPO_DIR/configs/mako/config"
+else
+    # Case: Running from ~/.config/waybar
+    if [[ "$SCRIPT_DIR" == */scripts ]]; then
+        REPO_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+    else
+        REPO_DIR="$SCRIPT_DIR"
+    fi
+    THEMES_DIR="$REPO_DIR/themes"
+    WAYBAR_STYLE="$REPO_DIR/style.css"
+    HYPR_CONF="$HOME/.config/hypr/hyprland.conf"
+    WOFI_STYLE="$HOME/.config/wofi/style.css"
+    MAKO_CONF="$HOME/.config/mako/config"
+fi
 
 # --- Utils ---
 log() {
@@ -117,13 +135,52 @@ sed -i "s/.*@theme:mako_text.*/text-color=$m_text # @theme:mako_text/" "$MAKO_CO
 sed -i "s/.*@theme:mako_border.*/border-color=$m_border # @theme:mako_border/" "$MAKO_CONF"
 sed -i "s/.*@theme:mako_rounding.*/border-radius=$m_rounding # @theme:mako_rounding/" "$MAKO_CONF"
 
+# --- 3.5 Apply Widget Themes ---
+log "Updating widgets..."
+while read -r line; do
+    var_part=$(echo "$line" | cut -d':' -f1 | tr -d '[:space:]*')
+    widget_name=${var_part#@widget-}
+    theme_file=$(echo "$line" | cut -d':' -f2- | sed 's/^ //;s/[[:space:]]*$//')
+
+    if [ -n "$widget_name" ] && [ -n "$theme_file" ]; then
+        widget_dir="$REPO_DIR/widgets/$widget_name"
+        if [ -d "$widget_dir" ]; then
+            source_theme="$widget_dir/themes/$theme_file"
+            if [ -f "$source_theme" ]; then
+                log "Linking theme for $widget_name: $theme_file"
+                rm -f "$widget_dir/theme.css"
+                ln -s "$source_theme" "$widget_dir/theme.css"
+            fi
+        fi
+    fi
+done < <(grep "@widget-" "$selected_file")
+
 # --- 4. Sync to ~/.config ---
 mkdir -p "$HOME/.config/waybar" "$HOME/.config/hypr" "$HOME/.config/wofi" "$HOME/.config/mako"
 
-cp "$WAYBAR_STYLE" "$HOME/.config/waybar/style.css"
-cp "$HYPR_CONF" "$HOME/.config/hypr/hyprland.conf"
-cp "$WOFI_STYLE" "$HOME/.config/wofi/style.css"
-cp "$MAKO_CONF" "$HOME/.config/mako/config"
+# Helper to copy only if source and dest are different
+safe_cp() {
+    src="$1"
+    dest="$2"
+    [ -f "$src" ] || return 0
+    if [ "$(realpath -m "$src")" != "$(realpath -m "$dest")" ]; then
+        cp "$src" "$dest"
+    fi
+}
+
+safe_cp "$WAYBAR_STYLE" "$HOME/.config/waybar/style.css"
+safe_cp "$HYPR_CONF" "$HOME/.config/hypr/hyprland.conf"
+safe_cp "$WOFI_STYLE" "$HOME/.config/wofi/style.css"
+safe_cp "$MAKO_CONF" "$HOME/.config/mako/config"
+
+# Sync widgets
+if [ -d "$REPO_DIR/widgets" ]; then
+    mkdir -p "$HOME/.config/waybar/widgets"
+    # Only copy if we are not already in the config directory
+    if [ "$(realpath -m "$REPO_DIR/widgets")" != "$(realpath -m "$HOME/.config/waybar/widgets")" ]; then
+        cp -a "$REPO_DIR/widgets/." "$HOME/.config/waybar/widgets/"
+    fi
+fi
 
 # --- 5. Refresh ---
 if command -v hyprctl >/dev/null 2>&1; then

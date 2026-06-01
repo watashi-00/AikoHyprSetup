@@ -31,6 +31,43 @@ log "Preparing build directory..."
 mkdir -p "$BUILD_DIR/waybar"
 mkdir -p "$BUILD_DIR/scripts"
 mkdir -p "$BUILD_DIR/configs"
+mkdir -p "$BUILD_DIR/widgets"
+
+# 2.5 Build Python Widgets
+# Try to find pyinstaller (via uv or global)
+PYINSTALLER_CMD=""
+if command -v uv >/dev/null 2>&1; then
+    log "uv detected. Checking for PyInstaller..."
+    # Check if pyinstaller tool is installed in uv
+    if uv tool list | grep -q "pyinstaller"; then
+        PYINSTALLER_CMD="uv tool run pyinstaller"
+    else
+        log "PyInstaller not found in uv tools. Trying to run via 'uv run'..."
+        PYINSTALLER_CMD="uv run pyinstaller"
+    fi
+elif command -v pyinstaller >/dev/null 2>&1; then
+    PYINSTALLER_CMD="pyinstaller"
+fi
+
+if [ -n "$PYINSTALLER_CMD" ]; then
+    log "Compiling Python widgets with: $PYINSTALLER_CMD"
+    
+    # Aiko-Note
+    if [ -f "widgets/aiko-note/aiko-note.py" ]; then
+        log "Compiling Aiko-Note..."
+        $PYINSTALLER_CMD --noconfirm --onefile --windowed \
+            --name "aiko-note-bin" \
+            --distpath "$BUILD_DIR/widgets/aiko-note" \
+            --workpath "/tmp/pyinstaller-build" \
+            --specpath "/tmp/pyinstaller-specs" \
+            "widgets/aiko-note/aiko-note.py"
+        
+        # Clean up temporary build files
+        rm -rf "/tmp/pyinstaller-build" "/tmp/pyinstaller-specs"
+    fi
+else
+    log "${YELLOW}[!] PyInstaller not found. Skipping widget compilation. Python will be required to run them.${NC}"
+fi
 
 # 3. Copy essential files
 log "Copying essential files..."
@@ -45,7 +82,16 @@ cp waybar/* "$BUILD_DIR/waybar/"
 cp scripts/* "$BUILD_DIR/scripts/"
 
 # System configs
-cp -r configs/* "$BUILD_DIR/configs/"
+cp -r configs/hypr "$BUILD_DIR/configs/"
+cp -r configs/mako "$BUILD_DIR/configs/"
+cp -r configs/wofi "$BUILD_DIR/configs/"
+cp -r configs/applications "$BUILD_DIR/configs/"
+cp -r configs/kitty "$BUILD_DIR/configs/"
+cp -r configs/fastfetch "$BUILD_DIR/configs/"
+
+# Widgets (Copying everything, excluding python files if binaries exist)
+cp -r widgets/* "$BUILD_DIR/widgets/"
+find "$BUILD_DIR/widgets" -name "__pycache__" -type d -exec rm -rf {} +
 
 # 4. Create package
 log "Compressing files into ${OUTPUT_FILE}..."
