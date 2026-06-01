@@ -28,36 +28,6 @@
 * {
     font-family: "JetBrainsMono Nerd Font", sans-serif;
     font-size: 13px;
-... User modified the `new_string` content to be: /*
- @name: Cyber Blue
- @author: Aiko
- @hypr-active-border: rgba(00ffffff) rgba(0000ffff) 45deg
- @hypr-inactive-border: rgba(001133aa)
- @hypr-gaps-in: 2
- @hypr-gaps-out: 5
- @hypr-rounding: 0
- @hypr-active-opacity: 1.0
- @hypr-inactive-opacity: 0.8
- @wofi-bg: rgba(2, 4, 15, 0.98)
- @wofi-border: rgba(0, 255, 255, 0.5)
- @wofi-text: #00ffff
- @wofi-accent: rgba(0, 80, 160, 0.9)
- @mako-bg: #010410
- @mako-text: #00ffff
- @mako-border: #00ffff
- @mako-rounding: 0
- @widget-aiko-note: cyber-blue.css
- @widget-aiko-player: cyber-blue.css
- @widget-aiko-clock: pink-anime.css
- @widget-aiko-usercard: pink-anime.css
- @widget-aiko-weather: pink-anime.css
- @widget-aiko-list: cyber-blue.css
- @widget-aiko-sys: cyber-blue.css
-*/
-
-* {
-    font-family: "JetBrainsMono Nerd Font", sans-serif;
-    font-size: 13px;
     font-weight: 800;
     color: #00ffff;
 }
@@ -122,6 +92,7 @@ window#waybar.bottom {
 }
 
 window#waybar.left {
+    min-width: 64px;
     background: #010410;
     border-radius: 0;
     border-right: 2px solid #00ffff;
@@ -217,10 +188,10 @@ image#album-art {
 #custom-launcher-code, #custom-launcher-settings, #custom-launcher-menu {
     color: #00ffff;
     border-radius: 0;
+    margin: 0;
 }
 
 #custom-launcher-menu {
     color: #00ffff;
     text-shadow: 0 0 10px #00ffff;
 }
-.
