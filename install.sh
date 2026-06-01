@@ -256,7 +256,7 @@ copy_file() {
     fi
 
     log "Copying: ${WHITE}$(basename "$src")${NC} -> ${WHITE}$dest${NC}"
-    run cp -L "$src" "$dest"
+    run cp -P "$src" "$dest"
     COPIED_FILES=$((COPIED_FILES + 1))
 }
 
@@ -272,7 +272,7 @@ copy_dir_contents() {
         if [ -d "$src" ] && [ ! -L "$src" ]; then
             [ -e "$dest" ] && backup_path "$dest"
             log "Copying directory: ${WHITE}$(basename "$src")${NC}"
-            run cp -aL "$src" "$dest"
+            run cp -a "$src" "$dest"
             COPIED_FILES=$((COPIED_FILES + 1))
         else
             copy_file "$src" "$dest"
