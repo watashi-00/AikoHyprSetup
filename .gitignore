@@ -6,3 +6,10 @@ widgets/*/theme.css
 __pycache__/
 *.py[cod]
 *$py.class
+
+# Build artifacts
+dist/
+build/
+*.tar.gz
+*.tar.xz
+*.zip
