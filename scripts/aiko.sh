@@ -101,11 +101,11 @@ case "${1:-}" in
         fi
         ;;
     --edit-usercard)
-        CONFIG_FILE="$PROJECT_ROOT/widgets/aiko-usercard/usercard.json"
-        if [ -f "$CONFIG_FILE" ]; then
-            ${EDITOR:-nano} "$CONFIG_FILE"
+        EDITOR_SCRIPT="$PROJECT_ROOT/widgets/aiko-usercard/aiko-usercard-editor.py"
+        if [ -f "$EDITOR_SCRIPT" ]; then
+            python3 "$EDITOR_SCRIPT"
         else
-            echo "Error: User Card config not found at $CONFIG_FILE"
+            echo "Error: User Card editor not found at $EDITOR_SCRIPT"
         fi
         ;;
     --restart)

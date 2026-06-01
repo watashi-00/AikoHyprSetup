@@ -3,6 +3,7 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk, GdkPixbuf
 import os
 import json
+import cairo
 
 class AikoUserCardEditor(Gtk.Window):
     def __init__(self):
@@ -99,14 +100,36 @@ class AikoUserCardEditor(Gtk.Window):
         container.pack_start(entry, False, False, 0)
         return entry
 
+    def get_circular_pixbuf(self, pixbuf):
+        if not pixbuf: return None
+        width = pixbuf.get_width()
+        height = pixbuf.get_height()
+        
+        surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, width, height)
+        context = cairo.Context(surface)
+        
+        # Circle path
+        radius = min(width, height) / 2
+        context.arc(width / 2, height / 2, radius, 0, 2 * 3.14159)
+        context.clip()
+        
+        Gdk.cairo_set_source_pixbuf(context, pixbuf, 0, 0)
+        context.paint()
+        
+        return Gdk.pixbuf_get_from_surface(surface, 0, 0, width, height)
+
     def update_avatar_preview(self, rel_path):
         full_path = os.path.join(self.project_root, rel_path)
         if not os.path.exists(full_path):
             full_path = os.path.join(self.script_dir, "../../assets/aiko-icon.svg")
         
         try:
-            pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(full_path, 60, 60, True)
-            self.avatar_preview.set_from_pixbuf(pixbuf)
+            pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(full_path, 80, 80, True)
+            circular = self.get_circular_pixbuf(pixbuf)
+            if circular:
+                self.avatar_preview.set_from_pixbuf(circular)
+            else:
+                self.avatar_preview.set_from_pixbuf(pixbuf)
         except: pass
 
     def on_avatar_browse(self, btn):

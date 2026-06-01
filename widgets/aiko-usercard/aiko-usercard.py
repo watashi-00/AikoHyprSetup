@@ -4,6 +4,7 @@ from gi.repository import Gtk, Gdk, GLib, Pango, GdkPixbuf
 import os
 import sys
 import json
+import cairo
 
 class AikoUserCard(Gtk.Window):
     def __init__(self):
@@ -52,7 +53,9 @@ class AikoUserCard(Gtk.Window):
 
         try:
             pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(avatar_path, 110, 110, True)
-            self.avatar_image = Gtk.Image.new_from_pixbuf(pixbuf)
+            circular_pixbuf = self.get_circular_pixbuf(pixbuf)
+            
+            self.avatar_image = Gtk.Image.new_from_pixbuf(circular_pixbuf)
             self.avatar_image.set_name("usercard-avatar")
             
             avatar_event = Gtk.EventBox()
@@ -141,6 +144,24 @@ class AikoUserCard(Gtk.Window):
             self.set_visual(visual)
 
         self.show_all()
+
+    def get_circular_pixbuf(self, pixbuf):
+        if not pixbuf: return None
+        width = pixbuf.get_width()
+        height = pixbuf.get_height()
+        
+        surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, width, height)
+        context = cairo.Context(surface)
+        
+        # Circle path
+        radius = min(width, height) / 2
+        context.arc(width / 2, height / 2, radius, 0, 2 * 3.14159)
+        context.clip()
+        
+        Gdk.cairo_set_source_pixbuf(context, pixbuf, 0, 0)
+        context.paint()
+        
+        return Gdk.pixbuf_get_from_surface(surface, 0, 0, width, height)
 
     def load_config(self):
         config_path = os.path.join(self.script_dir, "usercard.json")
