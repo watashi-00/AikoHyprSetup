@@ -3,27 +3,29 @@
 # icon-gen.sh - Generates color-filtered icons for the taskbar
 # Usage: ./icon-gen.sh <hex_color> [app_name]
 
-COLOR_INPUT="$1"
+COLOR_INPUT="${1:-#ff8fbd}"
 APP_NAME="$2"
 
 # Paths
 BASE_CACHE_DIR="$HOME/.config/waybar/cache/icons"
 COLOR_HEX=$(echo "$COLOR_INPUT" | sed 's/#//g')
+[ -z "$COLOR_HEX" ] && COLOR_HEX="default"
 COLOR_CACHE_DIR="$BASE_CACHE_DIR/$COLOR_HEX"
 TARGET_THEME_DIR="$HOME/.local/share/icons/Aiko"
 ICON_SIZE="32x32"
 APPS_SUBDIR="$ICON_SIZE/apps"
-AIKO_ICON="$HOME/.config/waybar/assets/aiko-icon.svg"
 
 mkdir -p "$COLOR_CACHE_DIR/$APPS_SUBDIR"
 
 # Ensure the global theme link is correct
 if [ "$(readlink -f "$TARGET_THEME_DIR")" != "$(readlink -f "$COLOR_CACHE_DIR")" ]; then
+    echo "[icon-gen] Linking $TARGET_THEME_DIR to $COLOR_CACHE_DIR"
     rm -rf "$TARGET_THEME_DIR"
     ln -s "$COLOR_CACHE_DIR" "$TARGET_THEME_DIR"
 fi
 
 if [ ! -f "$COLOR_CACHE_DIR/index.theme" ]; then
+    echo "[icon-gen] Creating index.theme"
     cat <<EOF > "$COLOR_CACHE_DIR/index.theme"
 [Icon Theme]
 Name=Aiko
@@ -46,7 +48,7 @@ map_class_to_icon() {
         "code-oss"|"vscode"|"code") echo "code" ;;
         "org.gnome.nautilus"|"thunar") echo "system-file-manager" ;;
         "kitty") echo "terminal" ;;
-        "spotify") echo "spotify" ;;
+        "spotify"|"spotify-client") echo "spotify" ;;
         "org.kde.dolphin"|"dolphin") echo "system-file-manager" ;;
         "org.kde.discover"|"discover") echo "plasmadiscover" ;;
         *) echo "$class" ;;
@@ -62,7 +64,8 @@ find_icon_path() {
     )
     for dir in "${search_dirs[@]}"; do
         [ -d "$dir" ] || continue
-        local found=$(find "$dir" -maxdepth 10 -name "$name.svg" -o -name "$name.png" 2>/dev/null | grep -E "apps|scalable" | head -n 1)
+        # Find exactly the name or common variations
+        local found=$(find "$dir" -maxdepth 10 \( -name "$name.svg" -o -name "$name.png" -o -name "${name,,}.svg" -o -name "${name,,}.png" \) 2>/dev/null | grep -E "apps|scalable" | head -n 1)
         if [ -n "$found" ]; then echo "$found"; return 0; fi
     done
     return 1
@@ -76,6 +79,7 @@ process_icon() {
     local output_file="$COLOR_CACHE_DIR/$APPS_SUBDIR/$app_input.png"
     
     if [ -f "$output_file" ]; then
+        echo "[icon-gen] Icon already exists for $app_input"
         return 0
     fi
 
@@ -87,18 +91,39 @@ process_icon() {
     done
 
     if [ -n "$icon_path" ]; then
-        magick -background none "$icon_path" -resize 32x32 \
+        echo "[icon-gen] Processing $app_input using $icon_path"
+        if magick -background none "$icon_path" -resize 32x32 \
                -channel RGB -colorspace gray +channel \
-               -fill "$COLOR_INPUT" -tint 100 "$output_file" 2>/dev/null
-        notify-send -i "$AIKO_ICON" "Aiko Icons" "Generated themed icon for: $app_input" -t 2000
-        return 200
+               -fill "$COLOR_INPUT" -tint 100 "$output_file" 2>/dev/null; then
+            
+            sync "$output_file"
+            # Create a lowercase symlink for compatibility (e.g., Spotify -> spotify)
+            local lower_name="${app_input,,}"
+            if [ "$app_input" != "$lower_name" ]; then
+                ln -sf "$(basename "$output_file")" "$(dirname "$output_file")/$lower_name.png"
+            fi
+            return 200
+        else
+            echo "[icon-gen] Magick failed for $app_input"
+            return 1
+        fi
     else
+        echo "[icon-gen] No icon found for $app_input, using fallback"
         local letter=$(echo "${app_input:0:1}" | tr '[:lower:]' '[:upper:]' | head -c 1)
-        magick -size 32x32 xc:none -fill "$COLOR_INPUT" -draw "roundrectangle 2,2 30,30 8,8" \
+        if magick -size 32x32 xc:none -fill "$COLOR_INPUT" -draw "roundrectangle 2,2 30,30 8,8" \
                -fill white -pointsize 20 -gravity center -annotate +0+0 "$letter" \
-               "$output_file" 2>/dev/null
-        notify-send -i "$AIKO_ICON" "Aiko Icons" "Generated fallback icon for: $app_input" -t 2000
-        return 200
+               "$output_file" 2>/dev/null; then
+            
+            # Create a lowercase symlink for fallback too
+            local lower_name="${app_input,,}"
+            if [ "$app_input" != "$lower_name" ]; then
+                ln -sf "$(basename "$output_file")" "$(dirname "$output_file")/$lower_name.png"
+            fi
+            return 200
+        else
+            echo "[icon-gen] Fallback magick failed for $app_input"
+            return 1
+        fi
     fi
 }
 
