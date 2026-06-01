@@ -28,12 +28,17 @@ class AikoSys(Gtk.Window):
         self.main_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
         self.add(self.main_vbox)
 
+        # Style context for the main container (where the border/bg lives)
+        self.container = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20)
+        self.container.set_name("main-container")
+        self.main_vbox.pack_start(self.container, True, True, 0)
+
         self.stats_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=15)
         self.stats_box.set_margin_top(25)
         self.stats_box.set_margin_bottom(25)
         self.stats_box.set_margin_start(25)
         self.stats_box.set_margin_end(25)
-        self.main_vbox.pack_start(self.stats_box, True, True, 0)
+        self.container.pack_start(self.stats_box, True, True, 0)
 
         # Initialize progress bars and labels
         self.resources = {}
@@ -95,48 +100,55 @@ class AikoSys(Gtk.Window):
             self.stats_box.remove(widgets["row"])
         self.disk_rows = {}
 
-        # Detect disks (root and any other mounted partitions that look like physical disks)
-        partitions = psutil.disk_partitions()
+        # Detect disks (all physical partitions)
+        partitions = psutil.disk_partitions(all=False)
         seen_mounts = set()
         
         for part in partitions:
+            # Only include physical devices and avoid duplicates
+            if not part.device.startswith('/dev/'): continue
             if part.mountpoint in seen_mounts: continue
-            # Filter for common physical mount points or root
-            if part.mountpoint == '/' or (part.mountpoint.startswith('/run/media/') or part.mountpoint.startswith('/mnt/')):
-                try:
-                    usage = psutil.disk_usage(part.mountpoint)
-                    name = f"Disk ({part.mountpoint})" if part.mountpoint != '/' else "Disk (/)"
-                    
-                    row_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=5)
-                    header_hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
-                    
-                    icon_label = Gtk.Label(label="󰋊")
-                    icon_label.set_name("resource-icon")
-                    header_hbox.pack_start(icon_label, False, False, 0)
+            
+            # Skip read-only or small system partitions like /boot if preferred
+            if part.mountpoint == '/boot' or part.mountpoint.startswith('/boot/'): continue
 
-                    name_label = Gtk.Label(label=name)
-                    name_label.set_name("resource-name")
-                    header_hbox.pack_start(name_label, False, False, 0)
+            try:
+                usage = psutil.disk_usage(part.mountpoint)
+                # Filter out very small partitions (< 1GB) to keep UI clean
+                if usage.total < 1024**3: continue
 
-                    value_label = Gtk.Label(label="0/0 GiB")
-                    value_label.set_name("resource-value")
-                    header_hbox.pack_end(value_label, False, False, 0)
+                name = f"Disk ({part.mountpoint})"
+                
+                row_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=5)
+                header_hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+                
+                icon_label = Gtk.Label(label="󰋊")
+                icon_label.set_name("resource-icon")
+                header_hbox.pack_start(icon_label, False, False, 0)
 
-                    row_vbox.pack_start(header_hbox, False, False, 0)
+                name_label = Gtk.Label(label=name)
+                name_label.set_name("resource-name")
+                header_hbox.pack_start(name_label, False, False, 0)
 
-                    progress = Gtk.ProgressBar()
-                    progress.set_name("resource-progress")
-                    row_vbox.pack_start(progress, False, False, 0)
+                value_label = Gtk.Label(label="0/0 GiB")
+                value_label.set_name("resource-value")
+                header_hbox.pack_end(value_label, False, False, 0)
 
-                    self.stats_box.pack_start(row_vbox, False, False, 0)
-                    self.disk_rows[part.mountpoint] = {
-                        "progress": progress, 
-                        "value": value_label, 
-                        "row": row_vbox
-                    }
-                    seen_mounts.add(part.mountpoint)
-                except:
-                    continue
+                row_vbox.pack_start(header_hbox, False, False, 0)
+
+                progress = Gtk.ProgressBar()
+                progress.set_name("resource-progress")
+                row_vbox.pack_start(progress, False, False, 0)
+
+                self.stats_box.pack_start(row_vbox, False, False, 0)
+                self.disk_rows[part.mountpoint] = {
+                    "progress": progress, 
+                    "value": value_label, 
+                    "row": row_vbox
+                }
+                seen_mounts.add(part.mountpoint)
+            except:
+                continue
 
     def update_stats(self):
         # CPU
