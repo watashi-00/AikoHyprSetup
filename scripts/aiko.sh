@@ -34,6 +34,7 @@ Options:
   --clock           Open the Aiko-Clock widget
   --weather         Open the Aiko-Weather widget
   --usercard        Open the Aiko-UserCard widget
+  --edit-usercard   Edit the User Card information
   --restart         Restart Waybar and refresh configs
 
 Examples:
