@@ -292,7 +292,6 @@ install_configs() {
 
     waybar_files=(
         config.jsonc config-bottom.jsonc config-left.jsonc config-screenshot.jsonc
-        style.css
     )
 
     scripts=(
