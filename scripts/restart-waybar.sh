@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+# Paths
+WAYBAR_DIR="$HOME/.config/waybar"
+STYLE_CSS="$WAYBAR_DIR/style.css"
+SCRIPTS_DIR="$WAYBAR_DIR/scripts"
+
 # Kill all running Waybar instances and listeners
 killall waybar || true
 pkill -f icon-listener.sh || true
@@ -8,25 +13,43 @@ pkill -f clipboard-listener.sh || true
 # Wait a moment to ensure processes are closed
 sleep 0.5
 
-# Apply wallpaper (static or animated)
-if [ -x $HOME/.config/waybar/wallpaper.sh ]; then
-    $HOME/.config/waybar/wallpaper.sh apply
+# --- Theme & Icon Sync ---
+# Find which theme is currently active via style.css symlink
+if [ -L "$STYLE_CSS" ]; then
+    ACTIVE_THEME=$(readlink -f "$STYLE_CSS")
+    if [ -f "$ACTIVE_THEME" ]; then
+        # Extract accent color for icons
+        ACCENT_COLOR=$(grep "@mako-border" "$ACTIVE_THEME" | cut -d':' -f2 | tr -d '[:space:]')
+        [ -z "$ACCENT_COLOR" ] && ACCENT_COLOR="#ff8fbd"
+        
+        echo "Syncing icons and colors for active theme: $(basename "$ACTIVE_THEME")"
+        
+        # Run icon generator
+        if [ -f "$SCRIPTS_DIR/icon-gen.sh" ]; then
+            bash "$SCRIPTS_DIR/icon-gen.sh" "$ACCENT_COLOR"
+        fi
+        
+        # Sync fastfetch
+        if [ -f "$SCRIPTS_DIR/sync-fastfetch.py" ]; then
+            python3 "$SCRIPTS_DIR/sync-fastfetch.py"
+        fi
+    fi
 fi
 
-# Start the three instances with a specific order to help Hyprland alignment
-# 1. Left Bar
-nohup waybar --config "$HOME/.config/waybar/config-left.jsonc" --style "$HOME/.config/waybar/style.css" >/dev/null 2>&1 &
-sleep 0.4
+# Apply wallpaper (static or animated)
+if [ -x "$WAYBAR_DIR/wallpaper.sh" ]; then
+    "$WAYBAR_DIR/wallpaper.sh" apply
+fi
 
-# 2. Top Bar
-nohup waybar --config "$HOME/.config/waybar/config.jsonc" --style "$HOME/.config/waybar/style.css" >/dev/null 2>&1 &
+# Start the three instances
+nohup waybar --config "$WAYBAR_DIR/config-left.jsonc" --style "$STYLE_CSS" >/dev/null 2>&1 &
 sleep 0.4
-
-# 3. Bottom Bar
-nohup waybar --config "$HOME/.config/waybar/config-bottom.jsonc" --style "$HOME/.config/waybar/style.css" >/dev/null 2>&1 &
+nohup waybar --config "$WAYBAR_DIR/config.jsonc" --style "$STYLE_CSS" >/dev/null 2>&1 &
+sleep 0.4
+nohup waybar --config "$WAYBAR_DIR/config-bottom.jsonc" --style "$STYLE_CSS" >/dev/null 2>&1 &
 
 # Restart Listeners
-nohup "$HOME/.config/waybar/scripts/icon-listener.sh" >/dev/null 2>&1 &
-nohup "$HOME/.config/waybar/scripts/clipboard-listener.sh" >/dev/null 2>&1 &
+nohup "$SCRIPTS_DIR/icon-listener.sh" >/dev/null 2>&1 &
+nohup "$SCRIPTS_DIR/clipboard-listener.sh" >/dev/null 2>&1 &
 
 echo "Waybars and Listeners restarted successfully!"
