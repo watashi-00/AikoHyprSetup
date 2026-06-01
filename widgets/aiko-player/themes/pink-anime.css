@@ -1,55 +1,57 @@
 #aiko-player-window {
-    background-color: rgba(30, 32, 35, 0.95);
+    background-color: rgba(30, 32, 35, 0.96);
     border: 2px solid #ff8fbd;
-    border-radius: 20px;
+    border-radius: 24px;
 }
 
 #player-art {
     border-radius: 12px;
-    border: 1px solid rgba(255, 143, 189, 0.3);
+    border: none;
 }
 
 #player-title {
     color: #ff8fbd;
-    font-size: 22px;
-    font-weight: 800;
+    font-size: 20px;
+    font-weight: 900;
+    margin-bottom: 2px;
 }
 
 #player-artist {
     color: #e6e1ea;
-    font-size: 16px;
-    opacity: 0.8;
+    font-size: 15px;
+    font-weight: 700;
+    opacity: 0.9;
 }
 
 #player-album {
     color: #e6e1ea;
-    font-size: 14px;
+    font-size: 13px;
+    font-weight: 500;
     opacity: 0.6;
-    font-style: italic;
 }
 
 #player-heart {
     color: #ff8fbd;
-    font-size: 24px;
-    margin-right: 5px;
+    font-size: 28px; /* Larger heart */
 }
 
 #player-time {
     color: #e6e1ea;
-    font-size: 12px;
-    opacity: 0.7;
+    font-size: 11px;
+    font-weight: 700;
+    opacity: 0.6;
 }
 
 /* Progress Bar (Scale) */
 scale#player-progress contents trough {
-    background-color: rgba(255, 255, 255, 0.1);
-    border-radius: 5px;
+    background-color: rgba(255, 143, 189, 0.15); /* Pinkish trough */
+    border-radius: 4px;
     min-height: 8px;
 }
 
 scale#player-progress contents trough highlight {
-    background-color: #ff8fbd;
-    border-radius: 5px;
+    background-color: #ff8fbd; /* Solid pink highlight */
+    border-radius: 4px;
 }
 
 scale#player-progress contents trough slider {
@@ -65,10 +67,11 @@ scale#player-progress contents trough slider {
     background-color: #ff8fbd;
     color: #1e2023;
     border-radius: 30px;
-    min-width: 60px;
-    min-height: 60px;
-    font-size: 28px;
+    min-width: 54px;
+    min-height: 54px;
+    font-size: 24px;
     border: none;
+    transition: all 0.2s ease;
 }
 
 #player-btn-main:hover {
@@ -77,11 +80,12 @@ scale#player-progress contents trough slider {
 
 #player-btn-small {
     background: transparent;
-    color: #ff8fbd;
-    font-size: 24px;
+    color: #ffffff;
+    font-size: 26px; /* Larger secondary buttons */
     border: none;
+    transition: all 0.2s ease;
 }
 
 #player-btn-small:hover {
-    color: #ffb3d1;
+    color: #ff8fbd;
 }
