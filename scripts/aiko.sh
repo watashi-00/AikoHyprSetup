@@ -33,6 +33,8 @@ Options:
   --note            Open the Aiko-Note widget
   --clock           Open the Aiko-Clock widget
   --weather         Open the Aiko-Weather widget
+  --usercard        Open the Aiko-UserCard widget
+  --edit-usercard   Edit the User Card information
   --restart         Restart Waybar and refresh configs
 
 Examples:
@@ -89,6 +91,21 @@ case "${1:-}" in
             bash "$PROJECT_ROOT/widgets/aiko-weather/aiko-weather.sh"
         else
             echo "Error: Aiko-Weather widget not found."
+        fi
+        ;;
+    --usercard)
+        if [ -f "$PROJECT_ROOT/widgets/aiko-usercard/aiko-usercard.sh" ]; then
+            bash "$PROJECT_ROOT/widgets/aiko-usercard/aiko-usercard.sh"
+        else
+            echo "Error: Aiko-UserCard widget not found."
+        fi
+        ;;
+    --edit-usercard)
+        EDITOR_SCRIPT="$PROJECT_ROOT/widgets/aiko-usercard/aiko-usercard-editor.py"
+        if [ -f "$EDITOR_SCRIPT" ]; then
+            python3 "$EDITOR_SCRIPT"
+        else
+            echo "Error: User Card editor not found at $EDITOR_SCRIPT"
         fi
         ;;
     --restart)
