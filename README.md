@@ -33,6 +33,31 @@ cd AikoHyprSetup
 ./install.sh
 ```
 
+## ✨ Features & Aiko CLI
+
+AikoHyprSetup comes with a powerful global CLI command and a suite of interactive Python widgets that run right on your desktop.
+
+Once installed, you can use the `aiko` command from anywhere to manage your environment:
+
+```bash
+aiko --help         # Show all available commands
+aiko --theme        # Open the interactive Theme Selector
+aiko --wallpaper    # Open the interactive Wallpaper Selector
+aiko --diag         # Run system health and dependencies diagnostics
+aiko --restart      # Reload Waybar and Hyprland
+```
+
+### 🧩 Interactive Widgets
+The setup includes rich, standalone floating widgets for Waybar. You can trigger them from the Waybar interface or via the CLI:
+*   `aiko --note` : A sticky note app for quick thoughts.
+*   `aiko --clock` : A beautiful oversized desktop clock.
+*   `aiko --player` : A dedicated media player controller with cover art.
+*   `aiko --usercard` : A customizable profile card (`aiko --edit-usercard` to configure).
+*   `aiko --sys` : A system resource monitor (`aiko --edit-logo` to configure your distro logo).
+*   `aiko --weather` & `aiko --list` : Weather and To-Do list integrations.
+
+*Pro tip: Use `aiko --all` to launch the full widget dashboard at once!*
+
 ## 🛠️ Structure and Locations
 Repo Path: `./` | System Path: `~/.config/waybar/`
 
