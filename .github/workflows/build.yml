@@ -1,0 +1,47 @@
+name: Build and Package
+
+on:
+  push:
+    branches:
+      - master
+      - main
+  pull_request:
+    branches:
+      - master
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Bash Syntax Check
+        run: find . -type f -name "*.sh" -not -path "*/.git/*" -exec bash -n {} +
+
+      - name: Run Python Syntax Check
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3
+          find . -type f -name "*.py" -not -path "*/.git/*" -exec python3 -m py_compile {} +
+
+      - name: Package Build Archive
+        run: |
+          # Create a directory for the release package
+          mkdir -p build/AikoHyprSetup
+          
+          # Copy all necessary directories and files, preserving symlinks
+          cp -a configs scripts themes waybar widgets assets install.sh README.md LICENSE build/AikoHyprSetup/ 2>/dev/null || true
+          
+          # Create a tarball of the package
+          cd build
+          tar -czvf AikoHyprSetup-latest.tar.gz AikoHyprSetup/
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AikoHyprSetup-Build
+          path: build/AikoHyprSetup-latest.tar.gz
+          retention-days: 14
