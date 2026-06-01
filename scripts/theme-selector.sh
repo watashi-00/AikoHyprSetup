@@ -140,12 +140,10 @@ fi
 if command -v hyprctl >/dev/null 2>&1; then hyprctl reload >/dev/null 2>&1 || true; fi
 if command -v makoctl >/dev/null 2>&1; then makoctl reload >/dev/null 2>&1 || true; fi
 
-if [ -x "$REPO_DIR/scripts/restart-waybar.sh" ]; then
-    nohup "$REPO_DIR/scripts/restart-waybar.sh" >/dev/null 2>&1 &
-else
-    pkill waybar || true
-    sleep 0.5
-    nohup waybar >/dev/null 2>&1 &
+# Automatically restart Waybar to apply new theme
+RESTART_SCRIPT="$REPO_DIR/scripts/restart-waybar.sh"
+if [ -f "$RESTART_SCRIPT" ]; then
+    bash "$RESTART_SCRIPT"
 fi
 
 log "Global theme applied successfully!"
