@@ -36,6 +36,7 @@ Options:
   --usercard        Open the Aiko-UserCard widget
   --player          Open the Aiko-Player widget
   --list            Open the Aiko-List widget
+  --sys             Open the Aiko-System widget
   --edit-usercard   Edit the User Card information
   --restart         Restart Waybar and refresh configs
 
@@ -86,6 +87,13 @@ case "${1:-}" in
             bash "$PROJECT_ROOT/widgets/aiko-list/aiko-list.sh"
         else
             echo "Error: Aiko-List widget not found."
+        fi
+        ;;
+    --sys)
+        if [ -f "$PROJECT_ROOT/widgets/aiko-sys/aiko-sys.sh" ]; then
+            bash "$PROJECT_ROOT/widgets/aiko-sys/aiko-sys.sh"
+        else
+            echo "Error: Aiko-System widget not found."
         fi
         ;;
     --clock)
