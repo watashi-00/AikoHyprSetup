@@ -10,6 +10,13 @@ trap cleanup_term EXIT
 
 # --- Initial Settings ---
 SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [ -f "$SOURCE_DIR/waybar/config.jsonc" ]; then
+    WAYBAR_SOURCE_DIR="$SOURCE_DIR/waybar"
+elif [ -f "$SOURCE_DIR/config.jsonc" ]; then
+    WAYBAR_SOURCE_DIR="$SOURCE_DIR"
+else
+    WAYBAR_SOURCE_DIR="$SOURCE_DIR/waybar"
+fi
 INSTALL_PACKAGES=1
 INSTALL_HYPR=1
 FORCE=0
@@ -311,7 +318,7 @@ install_configs() {
 
     log "${MAGENTA}Installing Waybar configs...${NC}"
     for file in "${waybar_files[@]}"; do
-        copy_file "$SOURCE_DIR/waybar/$file" "$waybar_dir/$file"
+        copy_file "$WAYBAR_SOURCE_DIR/$file" "$waybar_dir/$file"
         patch_installed_paths "$waybar_dir/$file"
     done
 
@@ -480,6 +487,50 @@ show_summary() {
     echo "=============================="
 }
 
+cleanup_generated_backups() {
+    local search_dirs=(
+        "$HOME/.config/waybar"
+        "$HOME/.config/hypr"
+        "$HOME/.config/wofi"
+        "$HOME/.config/mako"
+        "$HOME/.config/kitty"
+        "$HOME/.config/fastfetch"
+        "$HOME/.local/share/applications"
+    )
+    local -a backups=()
+    local dir
+
+    log "Scanning for generated backup files..."
+    for dir in "${search_dirs[@]}"; do
+        [ -d "$dir" ] || continue
+        while IFS= read -r -d '' item; do
+            backups+=("$item")
+        done < <(find "$dir" \( -type f -o -type l -o -type d \) -name '*.bak-*' -print0)
+    done
+
+    if [ "${#backups[@]}" -eq 0 ]; then
+        success "No generated backup files found."
+        return 0
+    fi
+
+    printf "\n${BOLD}${YELLOW}Found %d backup item(s):${NC}\n" "${#backups[@]}"
+    printf '%s\n' "${backups[@]}"
+    echo
+
+    if ! confirm "Delete all generated backup files listed above?" "n"; then
+        log "Cleanup cancelled."
+        return 0
+    fi
+
+    for dir in "${search_dirs[@]}"; do
+        [ -d "$dir" ] || continue
+        find "$dir" \( -type f -o -type l -o -type d \) -name '*.bak-*' -exec rm -rf -- {} +
+    done
+
+    success "Generated backup files removed."
+    return 0
+}
+
 prompt_apply() {
     if confirm "Apply changes and restart Waybar now?"; then
         apply_changes
@@ -598,6 +649,11 @@ action_diagnostics() {
     return 0
 }
 
+action_cleanup_backups() {
+    cleanup_generated_backups
+    return 0
+}
+
 action_exit() {
     if [ -t 1 ]; then clear; fi
     log "Exiting..."
@@ -614,7 +670,8 @@ interactive_menu() {
         [6]="🔄  Restart Waybar"
         [7]="🔍  Check System Health"
         [8]="🆙  Update Setup (Git Pull)"
-        [9]="🩺  Environment Diagnostics"
+        [9]="🗑️   Clean Generated Backups"
+        [10]="🩺  Environment Diagnostics"
         [0]="✘   Exit"
     )
 
@@ -627,10 +684,11 @@ interactive_menu() {
         [6]="action_restart_waybar"
         [7]="action_check_health"
         [8]="action_git_pull"
-        [9]="action_diagnostics"
+        [9]="action_cleanup_backups"
+        [10]="action_diagnostics"
         [0]="action_exit"
     )
-    local order=(1 2 3 4 5 6 7 8 9 0)
+    local order=(1 2 3 4 5 6 7 8 9 10 0)
     
     menu "" labels actions order
 }
