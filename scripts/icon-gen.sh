@@ -13,6 +13,7 @@ COLOR_CACHE_DIR="$BASE_CACHE_DIR/$COLOR_HEX"
 TARGET_THEME_DIR="$HOME/.local/share/icons/Aiko"
 ICON_SIZE="32x32"
 APPS_SUBDIR="$ICON_SIZE/apps"
+AIKO_ICON="$HOME/.config/waybar/assets/aiko-icon.svg"
 
 mkdir -p "$COLOR_CACHE_DIR/$APPS_SUBDIR"
 
@@ -61,7 +62,6 @@ find_icon_path() {
     )
     for dir in "${search_dirs[@]}"; do
         [ -d "$dir" ] || continue
-        # Search for SVG or PNG
         local found=$(find "$dir" -maxdepth 10 -name "$name.svg" -o -name "$name.png" 2>/dev/null | grep -E "apps|scalable" | head -n 1)
         if [ -n "$found" ]; then echo "$found"; return 0; fi
     done
@@ -72,11 +72,9 @@ process_icon() {
     local app_input="$1"
     [ -z "$app_input" ] && return 1
     
-    # Try multiple class variants for better matching
     local variants=("$app_input" "${app_input,,}" "${app_input#org.kde.}")
     local output_file="$COLOR_CACHE_DIR/$APPS_SUBDIR/$app_input.png"
     
-    # If icon already exists for this exact class, skip
     if [ -f "$output_file" ]; then
         return 0
     fi
@@ -92,13 +90,14 @@ process_icon() {
         magick -background none "$icon_path" -resize 32x32 \
                -channel RGB -colorspace gray +channel \
                -fill "$COLOR_INPUT" -tint 100 "$output_file" 2>/dev/null
-        return 200 # Signal that a new icon was created
+        notify-send -i "$AIKO_ICON" "Aiko Icons" "Generated themed icon for: $app_input" -t 2000
+        return 200
     else
-        # Fallback: Draw a letter icon
         local letter=$(echo "${app_input:0:1}" | tr '[:lower:]' '[:upper:]' | head -c 1)
         magick -size 32x32 xc:none -fill "$COLOR_INPUT" -draw "roundrectangle 2,2 30,30 8,8" \
                -fill white -pointsize 20 -gravity center -annotate +0+0 "$letter" \
                "$output_file" 2>/dev/null
+        notify-send -i "$AIKO_ICON" "Aiko Icons" "Generated fallback icon for: $app_input" -t 2000
         return 200
     fi
 }
@@ -107,7 +106,6 @@ if [ -n "$APP_NAME" ]; then
     process_icon "$APP_NAME"
     exit $?
 else
-    # Batch processing for all running apps
     NEW_ICONS=0
     RUNNING_APPS=$(hyprctl clients -j | jq -r '.[].class' | sort -u)
     for a in $RUNNING_APPS; do 
