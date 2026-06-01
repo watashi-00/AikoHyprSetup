@@ -19,20 +19,20 @@ class AikoSys(Gtk.Window):
         self.set_default_size(360, 400)
         self.set_keep_above(True)
         self.set_position(Gtk.WindowPosition.CENTER)
+        self.set_name("aiko-sys-window")
 
         # CSS setup
         self.load_css()
 
         # Main Container
-        self.main_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20)
-        self.main_vbox.set_name("main-container")
-        self.main_vbox.set_margin_top(25)
-        self.main_vbox.set_margin_bottom(25)
-        self.main_vbox.set_margin_start(25)
-        self.main_vbox.set_margin_end(25)
+        self.main_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
         self.add(self.main_vbox)
 
         self.stats_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=15)
+        self.stats_box.set_margin_top(25)
+        self.stats_box.set_margin_bottom(25)
+        self.stats_box.set_margin_start(25)
+        self.stats_box.set_margin_end(25)
         self.main_vbox.pack_start(self.stats_box, True, True, 0)
 
         # Initialize progress bars and labels
