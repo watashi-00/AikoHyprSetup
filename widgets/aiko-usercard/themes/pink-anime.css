@@ -1,0 +1,73 @@
+#aiko-usercard-window {
+    background-color: rgba(30, 32, 35, 0.95);
+    border: 2px solid #ff8fbd;
+    border-radius: 20px;
+}
+
+#usercard-avatar-container {
+    border: 2px solid #ff8fbd;
+    border-radius: 60px; /* Circular effect */
+}
+
+#usercard-avatar {
+    border-radius: 50px;
+}
+
+#usercard-name {
+    color: #ff8fbd;
+    font-family: "JetBrainsMono Nerd Font", sans-serif;
+    font-size: 24px;
+    font-weight: 800;
+}
+
+#usercard-handle {
+    color: #e6e1ea;
+    font-family: "JetBrainsMono Nerd Font", sans-serif;
+    font-size: 14px;
+    opacity: 0.7;
+}
+
+#usercard-tag {
+    color: #ff8fbd;
+    font-family: "JetBrainsMono Nerd Font", sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+#usercard-country {
+    color: #ff8fbd;
+    font-family: "JetBrainsMono Nerd Font", sans-serif;
+    font-size: 14px;
+}
+
+#usercard-quote-box {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+}
+
+#usercard-quote-text {
+    color: #e6e1ea;
+    font-family: "JetBrainsMono Nerd Font", sans-serif;
+    font-size: 14px;
+    font-style: italic;
+}
+
+#usercard-quote-icon {
+    color: #ff8fbd;
+    font-size: 16px;
+}
+
+/* Bottom Tags Styling */
+#usercard-bottom-tag-container {
+    background-color: rgba(255, 255, 255, 0.07);
+    border-radius: 8px;
+    padding: 4px 12px;
+}
+
+#usercard-bottom-tag {
+    color: #e6e1ea;
+    font-family: "JetBrainsMono Nerd Font", sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    opacity: 0.8;
+}
