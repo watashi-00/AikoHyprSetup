@@ -5,13 +5,22 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
 
 if [ -f "$SCRIPT_DIR/../aiko-ideas.md" ]; then
+    # Case: Running from the repository
     REPO_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+    WAYBAR_STYLE="$REPO_DIR/waybar/style.css"
+    LINK_PREFIX="../themes"
 else
-    REPO_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+    # Case: Running from ~/.config/waybar
+    if [[ "$SCRIPT_DIR" == */scripts ]]; then
+        REPO_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+    else
+        REPO_DIR="$SCRIPT_DIR"
+    fi
+    WAYBAR_STYLE="$REPO_DIR/style.css"
+    LINK_PREFIX="themes"
 fi
 
 THEMES_DIR="$REPO_DIR/themes"
-WAYBAR_STYLE="$REPO_DIR/waybar/style.css"
 HYPR_CONF="$HOME/.config/hypr/hyprland.conf"
 WOFI_STYLE="$HOME/.config/wofi/style.css"
 MAKO_CONF="$HOME/.config/mako/config"
@@ -47,7 +56,7 @@ log "Applying theme: $selected_name"
 
 # --- 1. Apply Waybar Style (Relative Symlink) ---
 rm -f "$WAYBAR_STYLE"
-ln -sf "../themes/$(basename "$selected_file")" "$WAYBAR_STYLE"
+ln -sf "$LINK_PREFIX/$(basename "$selected_file")" "$WAYBAR_STYLE"
 
 # --- 2. Dynamic Patcher (The "100% Editable" Engine) ---
 # This engine looks for lines ending with '@theme:tag' and updates them 
@@ -123,8 +132,10 @@ if [ -f "$REPO_DIR/scripts/icon-gen.sh" ]; then
 fi
 
 # --- 6. Sync and Refresh ---
-# (Ensure ~/.config/waybar/style.css is updated)
-cp "$WAYBAR_STYLE" "$HOME/.config/waybar/style.css"
+# Only copy if we are not already in the target directory
+if [ "$(realpath -m "$WAYBAR_STYLE")" != "$(realpath -m "$HOME/.config/waybar/style.css")" ]; then
+    cp -d "$WAYBAR_STYLE" "$HOME/.config/waybar/style.css"
+fi
 
 if command -v hyprctl >/dev/null 2>&1; then hyprctl reload >/dev/null 2>&1 || true; fi
 if command -v makoctl >/dev/null 2>&1; then makoctl reload >/dev/null 2>&1 || true; fi
