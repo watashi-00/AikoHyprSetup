@@ -468,9 +468,7 @@ show_summary() {
 }
 
 prompt_apply() {
-    printf "\nApply changes now? (y/n): "
-    read -r choice
-    if [[ "$choice" =~ ^[Yy]$ ]]; then
+    if confirm "Apply changes now?"; then
         apply_changes
     fi
 }
@@ -496,6 +494,7 @@ action_install_packages() {
 action_install_configs() {
     install_configs
     show_summary
+    prompt_apply
     return 130
 }
 
@@ -563,7 +562,7 @@ action_global_aiko() {
 action_exit() {
     if [ -t 1 ]; then clear; fi
     log "Exiting..."
-    exit 0
+    return 127
 }
 
 interactive_menu() {

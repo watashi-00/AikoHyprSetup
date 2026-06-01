@@ -98,6 +98,11 @@ menu() {
                     return 0
                 fi
                 
+                # Check if it was an exit/quit action
+                if [ "$action_status" -eq 127 ]; then
+                    exit 0
+                fi
+
                 printf "\n${WHITE}Press any key to return to the menu...${NC}"
                 read -rsn1
             fi
@@ -105,5 +110,33 @@ menu() {
             printf "${RED}Invalid option!${NC}\n"
             sleep 1
         fi
+    done
+}
+
+# Usability utility for Y/N prompts
+confirm() {
+    local prompt="$1"
+    local default="${2:-y}"
+    local response
+
+    while true; do
+        if [[ "$default" == "y" ]]; then
+            printf "%b %s [Y/n]: %b" "${CYAN}${BOLD}" "$prompt" "${NC}"
+        else
+            printf "%b %s [y/N]: %b" "${CYAN}${BOLD}" "$prompt" "${NC}"
+        fi
+        
+        read -r response
+        response=$(echo "$response" | tr '[:upper:]' '[:lower:]')
+        
+        if [[ -z "$response" ]]; then
+            response="$default"
+        fi
+
+        case "$response" in
+            y|yes) return 0 ;;
+            n|no) return 1 ;;
+            *) printf "${RED}Please enter 'y' or 'n'.${NC}\n" ;;
+        esac
     done
 }
