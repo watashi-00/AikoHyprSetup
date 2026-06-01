@@ -2,40 +2,69 @@
 
 A highly aesthetic Pink Anime configuration for Hyprland and Waybar, featuring interactive automation scripts and a seamless user experience.
 
+## 📦 Pre-built Artifacts (GitHub Actions)
+
+If you don't want to clone the repository manually, you can download the latest automated build generated directly from the `master` branch.
+
+1. Go to the [Actions tab](https://github.com/watashi-00/AikoHyprSetup/actions) in this repository.
+2. Click on the latest successful **Build and Package** workflow run.
+3. Scroll down to the **Artifacts** section and download `AikoHyprSetup-Builds`.
+
+This artifact contains three formats (`.tar.gz`, `.tar.xz`, and `.zip`). Extract your preferred format and run the installer:
+
+**For `.tar.gz`:**
+```bash
+tar -xzf AikoHyprSetup-*.tar.gz
+cd AikoHyprSetup
+./install.sh
+```
+
+**For `.tar.xz`:**
+```bash
+tar -xf AikoHyprSetup-*.tar.xz
+cd AikoHyprSetup
+./install.sh
+```
+
+**For `.zip`:**
+```bash
+unzip AikoHyprSetup-*.zip
+cd AikoHyprSetup
+./install.sh
+```
 
 ## 🛠️ Structure and Locations
 Repo Path: `./` | System Path: `~/.config/waybar/`
 
-*   **`config.jsonc`**: Main configuration file (Top Bar). Defines modules like clock, battery, and spotify.
-*   **`config-bottom.jsonc`**: Bottom bar configuration (dock/pill style).
-*   **`config-left.jsonc`**: Left sidebar configuration (experimental).
-*   **`config-screenshot.jsonc`**: Simplified floating bar used during screenshots or HUD.
-*   **`style.css`**: Global CSS for all bars. Controls colors, animations, and the "pink anime" look.
-*   **`restart-waybar.sh`**: Script to kill and restart Waybar applying all configurations.
+*   **`waybar/config.jsonc`**: Main configuration file (Top Bar). Defines modules like clock, battery, and spotify.
+*   **`waybar/config-bottom.jsonc`**: Bottom bar configuration (dock/pill style).
+*   **`waybar/config-left.jsonc`**: Left sidebar configuration (experimental).
+*   **`waybar/config-screenshot.jsonc`**: Simplified floating bar used during screenshots or HUD.
+*   **`themes/style.css`**: Global CSS for all bars. Controls colors, animations, and the "pink anime" look.
+*   **`scripts/restart-waybar.sh`**: Script to kill and restart Waybar applying all configurations.
 
 ### 🎵 Media & Audio Scripts
-*   **`spotify-art.sh`**: Downloads and displays the current album art.
-*   **`spotify-info.sh`**: Returns "Artist - Title" for the main module.
-*   **`spotify-playstate.sh`**: Dynamic Play/Pause icons.
-*   **`audio-output.sh`** & **`audio-input.sh`**: Volume/Mute display and control for outputs and microphones.
+*   **`scripts/spotify-art.sh`**: Downloads and displays the current album art.
+*   **`scripts/spotify-info.sh`**: Returns "Artist - Title" for the main module.
+*   **`scripts/spotify-playstate.sh`**: Dynamic Play/Pause icons.
+*   **`scripts/audio-output.sh`** & **`scripts/audio-input.sh`**: Volume/Mute display and control for outputs and microphones.
 
 ## 🚀 Hyprland & System
-*   **`hypr-config/hyprland.conf`**: Backup of the main Hyprland configuration (binds, window rules).
-*   **`hyprland.conf.sample`**: Example base configuration.
-*   **`minimize.sh`**: Script to manage window "minimization" in Hyprland.
-*   **`screenshot.sh`**: Shortcut for taking screenshots (fullscreen or area) using `grim` and `slurp`.
+*   **`configs/hypr/hyprland.conf`**: Base Hyprland configuration (binds, window rules).
+*   **`scripts/minimize.sh`**: Script to manage window "minimization" in Hyprland.
+*   **`scripts/screenshot.sh`**: Shortcut for taking screenshots (fullscreen or area) using `grim` and `slurp`.
 
 ## 📂 Other Apps (Backups)
-*   **`mako-config/config`**: Mako configuration (lightweight notifications).
-*   **`wofi-config/config`**: Base Wofi configuration.
-*   **`wofi-config/style.css`**: Wofi menu styling. This is a real file, not a symlink.
-*   **`launcher.sh`**: Opens Wofi as an app launcher.
-*   **`clipboard-history.sh`**: Opens clipboard history via Wofi (`cliphist`).
-*   **`clipboard-listener.sh`**: Logs clipboard to `cliphist` using `wl-paste --watch`.
+*   **`configs/mako/config`**: Mako configuration (lightweight notifications).
+*   **`configs/wofi/config`**: Base Wofi configuration.
+*   **`configs/wofi/style.css`**: Wofi menu styling. This is a real file, not a symlink.
+*   **`scripts/launcher.sh`**: Opens Wofi as an app launcher.
+*   **`scripts/clipboard-history.sh`**: Opens clipboard history via Wofi (`cliphist`).
+*   **`scripts/clipboard-listener.sh`**: Logs clipboard to `cliphist` using `wl-paste --watch`.
 
 ## 🔧 Maintenance
 *   **`install.sh`**: Universal installer. Detects package managers, installs dependencies, copies payloads, and creates backups.
-*   **`update-backups.sh`**: Script to sync system files (`~/.config/...`) back to this repository.
+*   **`scripts/update-backups.sh`**: Script to sync system files (`~/.config/...`) back to this repository.
 
 ---
 
@@ -80,9 +109,9 @@ The installer:
 *   Installs packages one by one and continues if a name doesn't exist in that distro version.
 *   Copies:
     *   Waybar files to `~/.config/waybar/`;
-    *   `hypr-config/hyprland.conf` to `~/.config/hypr/hyprland.conf`;
-    *   `mako-config/*` to `~/.config/mako/`;
-    *   `wofi-config/*` to `~/.config/wofi/`.
+    *   `configs/hypr/hyprland.conf` to `~/.config/hypr/hyprland.conf`;
+    *   `configs/mako/*` to `~/.config/mako/`;
+    *   `configs/wofi/*` to `~/.config/wofi/`.
 *   Creates a timestamped backup before replacing existing files.
 *   Normalizes old paths like `/home/watashi` to the user's `$HOME`.
 *   Marks `.sh` scripts as executable.
@@ -107,12 +136,15 @@ This directory is now the package root. To distribute, maintain this structure:
 ```text
 .
 ├── install.sh
-├── config*.jsonc
-├── style.css
-├── *.sh
-├── hypr-config/
-├── mako-config/
-└── wofi-config/
+├── build.sh
+├── README.md
+├── LICENSE
+├── configs/
+├── scripts/
+├── themes/
+├── waybar/
+├── widgets/
+└── assets/
 ```
 
 Important rules:
@@ -120,7 +152,7 @@ Important rules:
 *   Do not use absolute paths from your user in source files.
 *   Do not version symlinks pointing outside the package.
 *   Everything Hyprland calls directly must exist in the package or be installed as a dependency.
-*   External configs go into subfolders (`hypr-config`, `mako-config`, `wofi-config`) and `install.sh` decides the final destination.
+*   External configs go into the `configs/` subfolder and `install.sh` decides the final destination.
 
 ---
-*Updated on 05/30/2026.*
+*Updated on June 1, 2026.*
