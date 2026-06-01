@@ -1,7 +1,11 @@
 #aiko-sys-window {
+    background-color: transparent;
+}
+
+#main-container {
     background-color: rgba(30, 32, 35, 0.95);
     border: 2px solid #ff8fbd;
-    border-radius: 20px;
+    border-radius: 15px; /* Match Hyprland rounding */
 }
 
 #resource-icon {
