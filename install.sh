@@ -10,6 +10,7 @@ trap cleanup_term EXIT
 
 # --- Initial Settings ---
 SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ISSUES="https://github.com/watashi-00/AikoHyprSetup/issues"
 if [ -f "$SOURCE_DIR/waybar/config.jsonc" ]; then
     WAYBAR_SOURCE_DIR="$SOURCE_DIR/waybar"
 elif [ -f "$SOURCE_DIR/config.jsonc" ]; then
@@ -25,6 +26,7 @@ DRY_RUN=0
 # --- Colors and Style ---
 NC=$'\e[0m'
 BOLD=$'\e[1m'
+UNDERLINE=$'\e[4m'
 RED=$'\e[0;31m'
 GREEN=$'\e[0;32m'
 YELLOW=$'\e[1;33m'
@@ -71,9 +73,9 @@ success() {
 warn() {
     printf "${YELLOW}[$WARN]${NC} %s\n" "$*" >&2
 }
-
 error() {
     printf "${RED}[$ERROR]${NC} %s\n" "$*" >&2
+    printf "${YELLOW}[$INFO]${NC} Report issues at: ${UNDERLINE}${REPO_ISSUES}${NC}\n" >&2
 }
 
 die() {
