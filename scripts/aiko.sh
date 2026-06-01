@@ -99,6 +99,14 @@ case "${1:-}" in
             echo "Error: Aiko-UserCard widget not found."
         fi
         ;;
+    --edit-usercard)
+        CONFIG_FILE="$PROJECT_ROOT/widgets/aiko-usercard/usercard.json"
+        if [ -f "$CONFIG_FILE" ]; then
+            ${EDITOR:-nano} "$CONFIG_FILE"
+        else
+            echo "Error: User Card config not found at $CONFIG_FILE"
+        fi
+        ;;
     --restart)
         if [ -f "$PROJECT_ROOT/scripts/restart-waybar.sh" ]; then
             bash "$PROJECT_ROOT/scripts/restart-waybar.sh"

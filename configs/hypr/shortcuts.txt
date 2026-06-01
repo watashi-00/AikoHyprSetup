@@ -15,6 +15,7 @@ WIDGETS
 SUPER + T           Open Aiko Clock
 SUPER + W           Open Aiko Weather
 SUPER + U           Open Aiko User Card
+aiko --edit-usercard Edit User Card Info
 SUPER + Y           Open Clipboard History
 
 MEDIA & AUDIO
