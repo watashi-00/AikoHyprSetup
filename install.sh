@@ -350,6 +350,8 @@ install_configs() {
     local app_dir="$HOME/.local/share/applications"
     mkdir -p "$app_dir"
     copy_dir_contents "$SOURCE_DIR/configs/applications" "$app_dir"
+    # Patch paths in desktop entries
+    find "$app_dir" -type f -name "aiko-*.desktop" -exec sed -i "s#/home/watashi#$HOME#g;s#\$HOME#$HOME#g" {} +
 
     log "${MAGENTA}Installing Kitty and Fastfetch configs...${NC}"
     mkdir -p "$HOME/.config/kitty" "$HOME/.config/fastfetch"
@@ -383,7 +385,7 @@ EOF
     fi
 
     log "${MAGENTA}Adjusting permissions...${NC}"
-    run chmod +x "$waybar_dir"/*.sh
+    find "$waybar_dir" -type f -name "*.sh" -exec chmod +x {} +
 
     log "${MAGENTA}Generating initial themed icons (Pink Anime default)...${NC}"
     if [ -x "$waybar_dir/icon-gen.sh" ]; then
