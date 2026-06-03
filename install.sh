@@ -9,7 +9,10 @@ trap cleanup_term EXIT
 # -----------------------------
 
 # --- Initial Settings ---
-SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Resolve the REAL directory of this script to handle symlinks and different call locations
+REAL_PATH="$(readlink -f "${BASH_SOURCE[0]}")"
+SOURCE_DIR="$(cd "$(dirname "$REAL_PATH")" && pwd)"
+
 REPO_ISSUES="https://github.com/watashi-00/AikoHyprSetup/issues"
 if [ -f "$SOURCE_DIR/waybar/config.jsonc" ]; then
     WAYBAR_SOURCE_DIR="$SOURCE_DIR/waybar"
@@ -51,8 +54,10 @@ RELOAD="🔄"
 if [ -f "$SOURCE_DIR/scripts/menu.sh" ]; then
     # shellcheck disable=SC1091
     source "$SOURCE_DIR/scripts/menu.sh"
+elif [ -f "$SOURCE_DIR/menu.sh" ]; then
+    source "$SOURCE_DIR/menu.sh"
 else
-    echo "Error: menu.sh not found in $SOURCE_DIR/scripts"
+    echo "Error: menu.sh not found in $SOURCE_DIR/scripts or $SOURCE_DIR"
     exit 1
 fi
 
@@ -279,7 +284,10 @@ copy_dir_contents() {
     find "$src_dir" -mindepth 1 -maxdepth 1 | while IFS= read -r src; do
         dest="$dest_dir/$(basename "$src")"
         if [ -d "$src" ] && [ ! -L "$src" ]; then
-            [ -e "$dest" ] && backup_path "$dest"
+            # If destination exists, backup it before copying new directory
+            if [ -d "$dest" ] && [ ! -L "$dest" ]; then
+                backup_path "$dest"
+            fi
             log "Copying directory: ${WHITE}$(basename "$src")${NC}"
             run cp -a "$src" "$dest"
             COPIED_FILES=$((COPIED_FILES + 1))
@@ -342,51 +350,51 @@ install_configs() {
         config.jsonc config-bottom.jsonc config-left.jsonc config-screenshot.jsonc
     )
 
-    scripts=(
-        audio-input.sh audio-output.sh clipboard-history.sh
-        clipboard-listener.sh launcher.sh menu.sh minimize.sh restart-waybar.sh
-        screenshot.sh spotify-art.sh spotify-info.sh spotify-playstate.sh
-        wallpaper.sh power-menu.sh theme-selector.sh aiko.sh icon-gen.sh
-        sync-fastfetch.py
-    )
-
     log "${MAGENTA}Installing Waybar configs...${NC}"
     for file in "${waybar_files[@]}"; do
-        copy_file "$WAYBAR_SOURCE_DIR/$file" "$waybar_dir/$file"
-        patch_installed_paths "$waybar_dir/$file"
+        if [ -f "$WAYBAR_SOURCE_DIR/$file" ]; then
+            copy_file "$WAYBAR_SOURCE_DIR/$file" "$waybar_dir/$file"
+            patch_installed_paths "$waybar_dir/$file"
+        fi
     done
 
     log "${MAGENTA}Installing helper scripts...${NC}"
-    for file in "${scripts[@]}"; do
-        copy_file "$SOURCE_DIR/scripts/$file" "$waybar_dir/$file"
-        patch_installed_paths "$waybar_dir/$file"
-    done
+    if [ -d "$SOURCE_DIR/scripts" ]; then
+        find "$SOURCE_DIR/scripts" -maxdepth 1 -type f \( -name "*.sh" -o -name "*.py" \) | while read -r script_src; do
+            copy_file "$script_src" "$waybar_dir/$(basename "$script_src")"
+            patch_installed_paths "$waybar_dir/$(basename "$script_src")"
+        done
+    fi
 
     log "${MAGENTA}Installing Installer itself...${NC}"
-    copy_file "$SOURCE_DIR/install.sh" "$waybar_dir/install.sh"
-    copy_dir_contents "$SOURCE_DIR/scripts" "$waybar_dir/scripts"
+    copy_file "$REAL_PATH" "$waybar_dir/install.sh"
     
-    # Patch all scripts in the scripts/ subfolder too
-    find "$waybar_dir/scripts" -type f -name "*.sh" -exec sed -i "s#/home/watashi#$HOME#g;s#\$HOME#$HOME#g;s#~/.config#$HOME/.config#g" {} +
+    if [ -d "$SOURCE_DIR/scripts" ]; then
+        copy_dir_contents "$SOURCE_DIR/scripts" "$waybar_dir/scripts"
+        find "$waybar_dir/scripts" -type f -exec sed -i "s#/home/watashi#$HOME#g;s#\$HOME#$HOME#g;s#~/.config#$HOME/.config#g" {} +
+    fi
 
     log "${MAGENTA}Installing Themes...${NC}"
-    copy_dir_contents "$SOURCE_DIR/themes" "$waybar_dir/themes"
-    # Patch paths in themes just in case
-    find "$waybar_dir/themes" -type f -name "*.css" -exec sed -i "s#/home/watashi#$HOME#g;s#\$HOME#$HOME#g;s#~/.config#$HOME/.config#g" {} +
+    if [ -d "$SOURCE_DIR/themes" ]; then
+        copy_dir_contents "$SOURCE_DIR/themes" "$waybar_dir/themes"
+        find "$waybar_dir/themes" -type f -name "*.css" -exec sed -i "s#/home/watashi#$HOME#g;s#\$HOME#$HOME#g;s#~/.config#$HOME/.config#g" {} +
+    fi
 
     log "${MAGENTA}Installing Mako and Wofi...${NC}"
-    copy_dir_contents "$SOURCE_DIR/configs/mako" "$mako_dir"
-    copy_dir_contents "$SOURCE_DIR/configs/wofi" "$wofi_dir"
+    [ -d "$SOURCE_DIR/configs/mako" ] && copy_dir_contents "$SOURCE_DIR/configs/mako" "$mako_dir"
+    [ -d "$SOURCE_DIR/configs/wofi" ] && copy_dir_contents "$SOURCE_DIR/configs/wofi" "$wofi_dir"
     patch_installed_paths "$mako_dir/config"
     patch_installed_paths "$wofi_dir/config"
     patch_installed_paths "$wofi_dir/style.css"
 
     log "${MAGENTA}Installing Widgets...${NC}"
-    copy_dir_contents "$SOURCE_DIR/widgets" "$waybar_dir/widgets"
-    find "$waybar_dir/widgets" -type f \( -name "*.sh" -o -name "*.css" -o -name "*.py" \) -exec sed -i "s#/home/watashi#$HOME#g;s#\$HOME#$HOME#g;s#~/.config#$HOME/.config#g" {} +
+    if [ -d "$SOURCE_DIR/widgets" ]; then
+        copy_dir_contents "$SOURCE_DIR/widgets" "$waybar_dir/widgets"
+        find "$waybar_dir/widgets" -type f \( -name "*.sh" -o -name "*.css" -o -name "*.py" \) -exec sed -i "s#/home/watashi#$HOME#g;s#\$HOME#$HOME#g;s#~/.config#$HOME/.config#g" {} +
+    fi
 
     log "${MAGENTA}Installing Assets...${NC}"
-    copy_dir_contents "$SOURCE_DIR/assets" "$waybar_dir/assets"
+    [ -d "$SOURCE_DIR/assets" ] && copy_dir_contents "$SOURCE_DIR/assets" "$waybar_dir/assets"
 
     log "${MAGENTA}Installing Hyprland config...${NC}"
     if [ "$INSTALL_HYPR" -eq 1 ] && [ -d "$SOURCE_DIR/configs/hypr" ]; then
@@ -409,14 +417,15 @@ install_configs() {
     log "${MAGENTA}Installing Desktop Entries...${NC}"
     local app_dir="$HOME/.local/share/applications"
     mkdir -p "$app_dir"
-    copy_dir_contents "$SOURCE_DIR/configs/applications" "$app_dir"
-    # Patch paths in desktop entries
-    find "$app_dir" -type f -name "aiko-*.desktop" -exec sed -i "s#/home/watashi#$HOME#g;s#\$HOME#$HOME#g" {} +
+    if [ -d "$SOURCE_DIR/configs/applications" ]; then
+        copy_dir_contents "$SOURCE_DIR/configs/applications" "$app_dir"
+        find "$app_dir" -type f -name "aiko-*.desktop" -exec sed -i "s#/home/watashi#$HOME#g;s#\$HOME#$HOME#g" {} +
+    fi
 
     log "${MAGENTA}Installing Kitty and Fastfetch configs...${NC}"
     mkdir -p "$HOME/.config/kitty" "$HOME/.config/fastfetch"
-    copy_dir_contents "$SOURCE_DIR/configs/kitty" "$HOME/.config/kitty"
-    copy_dir_contents "$SOURCE_DIR/configs/fastfetch" "$HOME/.config/fastfetch"
+    [ -d "$SOURCE_DIR/configs/kitty" ] && copy_dir_contents "$SOURCE_DIR/configs/kitty" "$HOME/.config/kitty"
+    [ -d "$SOURCE_DIR/configs/fastfetch" ] && copy_dir_contents "$SOURCE_DIR/configs/fastfetch" "$HOME/.config/fastfetch"
     patch_installed_paths "$HOME/.config/fastfetch/config.jsonc"
 
     log "${MAGENTA}Creating default theme links...${NC}"
@@ -428,7 +437,7 @@ install_configs() {
     for widget in aiko-note aiko-player aiko-clock aiko-usercard aiko-weather aiko-list aiko-sys; do
         local w_dir="$waybar_dir/widgets/$widget"
         if [ -d "$w_dir" ] && [ ! -f "$w_dir/theme.css" ]; then
-            run ln -sf "themes/pink-anime.css" "$w_dir/theme.css"
+            (cd "$w_dir" && run ln -sf "themes/pink-anime.css" "theme.css")
         fi
     done
 
@@ -620,14 +629,41 @@ action_restart_waybar() {
 
 action_git_pull() {
     if [ -d "$SOURCE_DIR/.git" ]; then
-        log "Updating AikoHyprSetup from GitHub..."
+        log "Updating AikoHyprSetup from GitHub in: $SOURCE_DIR"
         if git -C "$SOURCE_DIR" pull; then
             success "Update successful! Please restart the installer if needed."
         else
             error "Failed to pull updates. Check your connection or git status."
         fi
     else
-        warn "Not a git repository. Skip update."
+        warn "Source at $SOURCE_DIR is not a git repository."
+        if command -v curl >/dev/null 2>&1 && command -v unzip >/dev/null 2>&1; then
+            printf "${YELLOW}[?]${NC} Do you want to download the latest version from GitHub? (y/N): "
+            read -r confirm
+            if [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]]; then
+                TEMP_DIR=$(mktemp -d)
+                log "Downloading latest master archive..."
+                if curl -L https://github.com/watashi-00/AikoHyprSetup/archive/refs/heads/master.zip -o "$TEMP_DIR/update.zip"; then
+                    log "Extracting to $SOURCE_DIR..."
+                    unzip -o -q "$TEMP_DIR/update.zip" -d "$TEMP_DIR"
+                    EXTRACTED_DIR=$(find "$TEMP_DIR" -maxdepth 1 -type d -name "AikoHyprSetup-*" | head -n 1)
+                    if [ -d "$EXTRACTED_DIR" ]; then
+                        # Copy all files from extracted dir to current SOURCE_DIR
+                        cp -rf "$EXTRACTED_DIR"/* "$SOURCE_DIR/"
+                        success "Update successful! Source files updated."
+                        printf "${YELLOW}[!]${NC} Please restart the installer to use the new version.\n"
+                        exit 0
+                    else
+                        error "Could not find extracted directory."
+                    fi
+                else
+                    error "Failed to download update."
+                fi
+                rm -rf "$TEMP_DIR"
+            fi
+        else
+            warn "Non-git updates require 'curl' and 'unzip'. Please update manually."
+        fi
     fi
     return 0
 }

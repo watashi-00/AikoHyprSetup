@@ -33,10 +33,10 @@ class AikoNote(Gtk.Window):
         self.main_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
         self.add(self.main_vbox)
 
-        # Styled Container
-        self.container = Gtk.Overlay()
-        self.container.set_name("main-container")
-        self.main_vbox.pack_start(self.container, True, True, 0)
+        # Styled Container - Renamed to avoid GObject property conflict
+        self.styled_container = Gtk.Overlay()
+        self.styled_container.set_name("main-container")
+        self.main_vbox.pack_start(self.styled_container, True, True, 0)
 
         # Content Box inside Overlay
         content_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=5)
@@ -44,7 +44,7 @@ class AikoNote(Gtk.Window):
         content_vbox.set_margin_bottom(20)
         content_vbox.set_margin_start(20)
         content_vbox.set_margin_end(20)
-        self.container.add(content_vbox)
+        self.styled_container.add(content_vbox)
 
         # Title
         title_label = Gtk.Label(label="Notes")
@@ -82,7 +82,7 @@ class AikoNote(Gtk.Window):
         self.cat_image.set_margin_bottom(-5)
         
         self.update_cat_icon()
-        self.container.add_overlay(self.cat_image)
+        self.styled_container.add_overlay(self.cat_image)
 
         # Event connections
         self.connect("destroy", Gtk.main_quit)
@@ -106,13 +106,16 @@ class AikoNote(Gtk.Window):
             color = Gdk.RGBA()
             color.parse("#ff8fbd")
         
-        # Construct hex string from components to avoid direct field assignment
-        # which can fail with 'field is not writable' on some systems
-        hex_color = "#{:02x}{:02x}{:02x}".format(
-            int(color.red * 255),
-            int(color.green * 255),
-            int(color.blue * 255)
-        )
+        # Accessing components safely
+        try:
+            r, g, b = color.red, color.green, color.blue
+            hex_color = "#{:02x}{:02x}{:02x}".format(
+                int(r * 255),
+                int(g * 255),
+                int(b * 255)
+            )
+        except Exception:
+            hex_color = "#ff8fbd"
 
         try:
             with open(svg_path, "r") as f:

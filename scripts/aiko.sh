@@ -1,11 +1,9 @@
 #!/usr/bin/env bash
 # aiko - Global CLI for AikoHyprSetup management
 
-VERSION="1.0.0"
+VERSION="1.0.2"
 
 # --- Terminal Cleanup Trap ---
-# Ensures focus tracking and bracketed paste are disabled on exit
-# to prevent ^[[I and ^[[O leaking into the prompt.
 cleanup() {
     printf "\e[?1004l\e[?2004l"
 }
@@ -13,19 +11,19 @@ trap cleanup EXIT
 # -----------------------------
 
 # Get the real directory of the script, resolving symlinks
-SCRIPT_DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
+# This is where the script IS, even if called via a symlink in /usr/local/bin
+REAL_SCRIPT_PATH="$(readlink -f "${BASH_SOURCE[0]}")"
+SCRIPT_DIR="$(cd "$(dirname "$REAL_SCRIPT_PATH")" && pwd)"
 
 # Resolve the project root directory
-if [ -f "$SCRIPT_DIR/../aiko-ideas.md" ]; then
-    # Case: Running from the repository (scripts/ folder)
+# If we are in ~/.config/waybar or ~/.config/waybar/scripts, the root is ~/.config/waybar
+if [[ "$SCRIPT_DIR" == */scripts ]]; then
     PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+elif [ -f "$SCRIPT_DIR/config.jsonc" ] || [ -f "$SCRIPT_DIR/waybar/config.jsonc" ]; then
+    PROJECT_ROOT="$SCRIPT_DIR"
 else
-    # Case: Running from $HOME/.config/waybar
-    if [[ "$SCRIPT_DIR" == */scripts ]]; then
-        PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-    else
-        PROJECT_ROOT="$SCRIPT_DIR"
-    fi
+    # Fallback to standard location
+    PROJECT_ROOT="$HOME/.config/waybar"
 fi
 
 show_help() {
@@ -38,6 +36,7 @@ Options:
   -h, --help        Show this help message
   -v, --version     Show version information
   --install         Run the installation script
+  --update          Update AikoHyprSetup (git pull)
   --wallpaper       Open the wallpaper selector
   --theme           Open the theme selector
   --note            Open the Aiko-Note widget
@@ -73,18 +72,64 @@ case "${1:-}" in
             echo "Error: install.sh not found in $PROJECT_ROOT"
         fi
         ;;
+    --update)
+        if [ -d "$PROJECT_ROOT/.git" ]; then
+            echo "Updating AikoHyprSetup via git..."
+            git -C "$PROJECT_ROOT" pull
+        else
+            echo "Non-git installation detected. Checking for updates on GitHub..."
+            if command -v curl >/dev/null 2>&1 && command -v unzip >/dev/null 2>&1; then
+                # Fetch remote version
+                REMOTE_VERSION=$(curl -sSL https://raw.githubusercontent.com/watashi-00/AikoHyprSetup/master/scripts/aiko.sh | grep '^VERSION=' | cut -d '"' -f 2)
+                
+                if [ -z "$REMOTE_VERSION" ]; then
+                    echo "Error: Could not check for updates. Please check your connection."
+                elif [ "$REMOTE_VERSION" == "$VERSION" ]; then
+                    echo "You are already using the latest version ($VERSION)."
+                else
+                    echo "A new version is available: $REMOTE_VERSION (Current: $VERSION)"
+                    echo "Downloading and installing the update..."
+                    
+                    TEMP_DIR=$(mktemp -d)
+                    if curl -L https://github.com/watashi-00/AikoHyprSetup/archive/refs/heads/master.zip -o "$TEMP_DIR/update.zip"; then
+                        echo "Extracting..."
+                        unzip -q "$TEMP_DIR/update.zip" -d "$TEMP_DIR"
+                        EXTRACTED_DIR=$(find "$TEMP_DIR" -maxdepth 1 -type d -name "AikoHyprSetup-*" | head -n 1)
+                        
+                        if [ -f "$EXTRACTED_DIR/install.sh" ]; then
+                            echo "Running installer..."
+                            # Run with --no-packages to speed up configuration update
+                            bash "$EXTRACTED_DIR/install.sh" --no-packages
+                        else
+                            echo "Error: install.sh not found in update package."
+                        fi
+                    else
+                        echo "Error: Failed to download update."
+                    fi
+                    rm -rf "$TEMP_DIR"
+                fi
+            else
+                echo "Error: 'curl' and 'unzip' are required for non-git updates."
+                echo "Please update manually from: https://github.com/watashi-00/AikoHyprSetup"
+            fi
+        fi
+        ;;
     --wallpaper)
-        if [ -f "$PROJECT_ROOT/scripts/wallpaper.sh" ]; then
-            bash "$PROJECT_ROOT/scripts/wallpaper.sh" select
-        elif [ -f "$PROJECT_ROOT/wallpaper.sh" ]; then
-             "$PROJECT_ROOT/wallpaper.sh" select
+        script="$PROJECT_ROOT/scripts/wallpaper.sh"
+        [ ! -f "$script" ] && script="$PROJECT_ROOT/wallpaper.sh"
+        if [ -f "$script" ]; then
+            bash "$script" select
+        else
+            echo "Error: wallpaper.sh not found."
         fi
         ;;
     --theme)
-        if [ -f "$PROJECT_ROOT/scripts/theme-selector.sh" ]; then
-            bash "$PROJECT_ROOT/scripts/theme-selector.sh"
-        elif [ -f "$PROJECT_ROOT/theme-selector.sh" ]; then
-             "$PROJECT_ROOT/theme-selector.sh"
+        script="$PROJECT_ROOT/scripts/theme-selector.sh"
+        [ ! -f "$script" ] && script="$PROJECT_ROOT/theme-selector.sh"
+        if [ -f "$script" ]; then
+            bash "$script"
+        else
+            echo "Error: theme-selector.sh not found."
         fi
         ;;
     --note)
@@ -149,8 +194,10 @@ case "${1:-}" in
         done
         ;;
     --diag)
-        if [ -f "$PROJECT_ROOT/scripts/diagnostics.sh" ]; then
-            bash "$PROJECT_ROOT/scripts/diagnostics.sh"
+        script="$PROJECT_ROOT/scripts/diagnostics.sh"
+        [ ! -f "$script" ] && script="$PROJECT_ROOT/diagnostics.sh"
+        if [ -f "$script" ]; then
+            bash "$script"
         else
             echo "Error: Diagnostics script not found."
         fi
@@ -176,10 +223,12 @@ case "${1:-}" in
         fi
         ;;
     --restart)
-        if [ -f "$PROJECT_ROOT/scripts/restart-waybar.sh" ]; then
-            bash "$PROJECT_ROOT/scripts/restart-waybar.sh"
-        elif [ -f "$PROJECT_ROOT/restart-waybar.sh" ]; then
-             "$PROJECT_ROOT/restart-waybar.sh"
+        script="$PROJECT_ROOT/scripts/restart-waybar.sh"
+        [ ! -f "$script" ] && script="$PROJECT_ROOT/restart-waybar.sh"
+        if [ -f "$script" ]; then
+            bash "$script"
+        else
+            echo "Error: restart-waybar.sh not found."
         fi
         ;;
     *)

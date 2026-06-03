@@ -52,4 +52,14 @@ nohup waybar --config "$WAYBAR_DIR/config-bottom.jsonc" --style "$STYLE_CSS" >/d
 nohup "$SCRIPTS_DIR/icon-listener.sh" >/dev/null 2>&1 &
 nohup "$SCRIPTS_DIR/clipboard-listener.sh" >/dev/null 2>&1 &
 
-echo "Waybars and Listeners restarted successfully!"
+# Restart Aiko Widgets if they were running
+widgets=("aiko-clock" "aiko-weather" "aiko-note" "aiko-player" "aiko-list" "aiko-sys" "aiko-usercard")
+for widget in "${widgets[@]}"; do
+    if pgrep -f "$widget.py" >/dev/null || pgrep -f "$widget-bin" >/dev/null; then
+        echo "Restarting $widget..."
+        pkill -f "$widget.py" || true
+        pkill -f "$widget-bin" || true
+        # Start it back using its launcher script
+        nohup bash "$WAYBAR_DIR/widgets/$widget/$widget.sh" >/dev/null 2>&1 &
+    fi
+done

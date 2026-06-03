@@ -2,25 +2,30 @@
 
 This document contains a brainstorming list of "mini-apps" and widgets to be developed for the AikoHyprSetup environment. These components should integrate seamlessly with the dynamic theme system, utilizing Wofi, custom GTK scripts, or floating terminals.
 
-## 1. Aiko-Note
-A minimal, floating quick-note application (like a sticky note).
-*   **Concept**: A borderless, themeable window that allows rapid text entry and saves state automatically.
-*   **Implementation Idea**: A simple Python/GTK script or a heavily customized `wofi` input field.
-
-## 2. Aiko-Sys
-A system status monitor dashboard.
-*   **Concept**: A popup panel showing detailed CPU, RAM, GPU usage, and temperatures, styled consistently with the active theme.
-*   **Implementation Idea**: A bash script utilizing `top`, `free`, and `sensors`, piped into a formatted `wofi` or `yad` dialog.
-
-## 3. Aiko-Search
+## 1. Aiko-Search
 An advanced search utility.
 *   **Concept**: Goes beyond standard application launching. Allows direct web searches (e.g., prefixing with `g:` for Google, `y:` for YouTube) or file finding.
 *   **Implementation Idea**: Wrapping `wofi` with a custom bash script that parses the input and determines the action.
 
-## 4. Aiko-Calendar
+## 2. Aiko-Calendar
 An interactive, theme-aware calendar.
 *   **Concept**: A visual calendar popup, possibly linked to the Waybar clock module.
 *   **Implementation Idea**: Utilizing `cal` or a Python script to generate a formatted grid, displayed in a centered floating window.
+
+## 3. Aiko-Timer
+A minimalist countdown and Pomodoro timer.
+*   **Concept**: A small, floating timer for productivity, with notifications when time is up.
+*   **Implementation Idea**: A Python/GTK script with a simple progress ring or a floating terminal running a custom timer script.
+
+## 4. Aiko-Bluetooth
+A streamlined Bluetooth device manager.
+*   **Concept**: Quickly connect/disconnect known devices without opening a full settings app.
+*   **Implementation Idea**: A `wofi` menu wrapping `bluetoothctl` for scanning and managing connections.
+
+## 5. Aiko-Recorder
+A simple screen and audio recording interface.
+*   **Concept**: A tiny control panel to start/stop recording, select areas, and toggle microphone.
+*   **Implementation Idea**: Wrapping `wf-recorder` or `gpu-screen-recorder` with a custom floating UI.
 
 ---
 *Feel free to add more ideas here as the project evolves.*
