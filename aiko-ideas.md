@@ -12,5 +12,20 @@ An interactive, theme-aware calendar.
 *   **Concept**: A visual calendar popup, possibly linked to the Waybar clock module.
 *   **Implementation Idea**: Utilizing `cal` or a Python script to generate a formatted grid, displayed in a centered floating window.
 
+## 3. Aiko-Timer
+A minimalist countdown and Pomodoro timer.
+*   **Concept**: A small, floating timer for productivity, with notifications when time is up.
+*   **Implementation Idea**: A Python/GTK script with a simple progress ring or a floating terminal running a custom timer script.
+
+## 4. Aiko-Bluetooth
+A streamlined Bluetooth device manager.
+*   **Concept**: Quickly connect/disconnect known devices without opening a full settings app.
+*   **Implementation Idea**: A `wofi` menu wrapping `bluetoothctl` for scanning and managing connections.
+
+## 5. Aiko-Recorder
+A simple screen and audio recording interface.
+*   **Concept**: A tiny control panel to start/stop recording, select areas, and toggle microphone.
+*   **Implementation Idea**: Wrapping `wf-recorder` or `gpu-screen-recorder` with a custom floating UI.
+
 ---
 *Feel free to add more ideas here as the project evolves.*
