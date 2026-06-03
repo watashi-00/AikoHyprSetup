@@ -3,12 +3,10 @@
     "logo": {
         "source": "$HOME/.config/waybar/assets/aiko-frame.txt",
         "type": "auto",
-        "width": 30,
-        "height": 25,
         "padding": {
             "top": 0,
-            "left": 10,
-            "right": 2
+            "left": 2,
+            "right": 0
         }
     },
     "display": {
@@ -24,6 +22,7 @@
         }
     },
     "modules": [
+        "break",
         "title",
         "separator",
         {

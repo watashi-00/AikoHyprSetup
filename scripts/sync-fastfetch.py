@@ -24,20 +24,22 @@ def get_theme_color(waybar_dir):
 
 def calculate_padding(ascii_path):
     if not os.path.exists(ascii_path):
-        return 10
+        return 5
     try:
         with open(ascii_path, 'r') as f:
             lines = f.readlines()
         if not lines:
-            return 10
+            return 5
         max_width = max(len(line.rstrip()) for line in lines)
-        if max_width > 50: return 0
-        elif max_width > 40: return 2
+        # We want at least 2 cells of gap. 
+        # Fastfetch padding is added to the logo's width.
+        if max_width > 50: return 2
+        elif max_width > 40: return 3
         elif max_width > 30: return 4
-        elif max_width > 20: return 8
-        else: return 12
+        elif max_width > 20: return 6
+        else: return 10
     except:
-        return 10
+        return 5
 
 def sync_fastfetch():
     config_dir = os.path.expanduser("~/.config/fastfetch")
@@ -82,6 +84,7 @@ def sync_fastfetch():
 
     data["logo"]["color"]["1"] = color
     data["logo"]["padding"]["left"] = padding
+    data["logo"]["padding"]["right"] = 0
 
     # Save Config
     try:
