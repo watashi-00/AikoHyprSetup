@@ -3,17 +3,22 @@
 
 VERSION="1.0.4"
 
-# --- Terminal Cleanup Trap ---
-cleanup() {
-    printf "\e[?1004l\e[?2004l"
-}
-trap cleanup EXIT
-# -----------------------------
-
 # Get the real directory of the script, resolving symlinks
-# This is where the script IS, even if called via a symlink in /usr/local/bin
 REAL_SCRIPT_PATH="$(readlink -f "${BASH_SOURCE[0]}")"
 SCRIPT_DIR="$(cd "$(dirname "$REAL_SCRIPT_PATH")" && pwd)"
+
+# --- Load Central Utility Library ---
+LIB_UTILS="$SCRIPT_DIR/lib/utils.sh"
+if [ -f "$LIB_UTILS" ]; then
+    # shellcheck disable=SC1091
+    source "$LIB_UTILS"
+else
+    echo "Error: utility library not found at $LIB_UTILS"
+    exit 1
+fi
+
+AIKO_LOG_COMPONENT="aiko"
+aiko_init_term
 
 # Resolve the project root directory
 # If we are in ~/.config/waybar or ~/.config/waybar/scripts, the root is ~/.config/waybar
@@ -70,7 +75,7 @@ case "${1:-}" in
         if [ -f "$PROJECT_ROOT/install.sh" ]; then
             bash "$PROJECT_ROOT/install.sh"
         else
-            echo "Error: install.sh not found in $PROJECT_ROOT"
+            error "install.sh not found in $PROJECT_ROOT"
         fi
         ;;
     --gpu)
@@ -78,16 +83,16 @@ case "${1:-}" in
         if [ -f "$GPU_LOCAL" ]; then
             exec sudo bash "$GPU_LOCAL"
         else
-            echo "GPU Setup not found locally. Downloading and running from GitHub..."
-            if ! command -v git >/dev/null 2>&1; then
-                echo "Error: 'git' is required to download the GPU Setup Manager."
+            log "GPU Setup not found locally. Downloading and running from GitHub..."
+            if ! have git; then
+                error "'git' is required to download the GPU Setup Manager."
                 exit 1
             fi
             TEMP_GPU=$(mktemp -d)
             if git clone --depth 1 https://github.com/watashi-00/gpu_setup.git "$TEMP_GPU"; then
                 exec sudo bash "$TEMP_GPU/setup.sh"
             else
-                echo "Error: Failed to download GPU Setup Manager."
+                error "Failed to download GPU Setup Manager."
                 rm -rf "$TEMP_GPU"
                 exit 1
             fi
@@ -95,43 +100,43 @@ case "${1:-}" in
         ;;
     --update)
         if [ -d "$PROJECT_ROOT/.git" ]; then
-            echo "Updating AikoHyprSetup via git..."
+            log "Updating AikoHyprSetup via git..."
             git -C "$PROJECT_ROOT" pull
         else
-            echo "Non-git installation detected. Checking for updates on GitHub..."
-            if command -v curl >/dev/null 2>&1 && command -v unzip >/dev/null 2>&1; then
+            warn "Non-git installation detected. Checking for updates on GitHub..."
+            if have curl && have unzip; then
                 # Fetch remote version
                 REMOTE_VERSION=$(curl -sSL https://raw.githubusercontent.com/watashi-00/AikoHyprSetup/master/scripts/aiko.sh | grep '^VERSION=' | cut -d '"' -f 2)
                 
                 if [ -z "$REMOTE_VERSION" ]; then
-                    echo "Error: Could not check for updates. Please check your connection."
+                    error "Could not check for updates. Please check your connection."
                 elif [ "$REMOTE_VERSION" == "$VERSION" ]; then
-                    echo "You are already using the latest version ($VERSION)."
+                    log "You are already using the latest version ($VERSION)."
                 else
-                    echo "A new version is available: $REMOTE_VERSION (Current: $VERSION)"
-                    echo "Downloading and installing the update..."
+                    log "A new version is available: $REMOTE_VERSION (Current: $VERSION)"
+                    log "Downloading and installing the update..."
                     
                     TEMP_DIR=$(mktemp -d)
                     if curl -L https://github.com/watashi-00/AikoHyprSetup/archive/refs/heads/master.zip -o "$TEMP_DIR/update.zip"; then
-                        echo "Extracting..."
+                        log "Extracting..."
                         unzip -q "$TEMP_DIR/update.zip" -d "$TEMP_DIR"
                         EXTRACTED_DIR=$(find "$TEMP_DIR" -maxdepth 1 -type d -name "AikoHyprSetup-*" | head -n 1)
                         
                         if [ -f "$EXTRACTED_DIR/install.sh" ]; then
-                            echo "Running installer..."
+                            log "Running installer..."
                             # Run with --no-packages to speed up configuration update
                             bash "$EXTRACTED_DIR/install.sh" --no-packages
                         else
-                            echo "Error: install.sh not found in update package."
+                            error "install.sh not found in update package."
                         fi
                     else
-                        echo "Error: Failed to download update."
+                        error "Failed to download update."
                     fi
                     rm -rf "$TEMP_DIR"
                 fi
             else
-                echo "Error: 'curl' and 'unzip' are required for non-git updates."
-                echo "Please update manually from: https://github.com/watashi-00/AikoHyprSetup"
+                error "'curl' and 'unzip' are required for non-git updates."
+                log "Please update manually from: https://github.com/watashi-00/AikoHyprSetup"
             fi
         fi
         ;;
@@ -141,7 +146,7 @@ case "${1:-}" in
         if [ -f "$script" ]; then
             bash "$script" select
         else
-            echo "Error: wallpaper.sh not found."
+            error "wallpaper.sh not found."
         fi
         ;;
     --theme)
@@ -150,65 +155,65 @@ case "${1:-}" in
         if [ -f "$script" ]; then
             bash "$script"
         else
-            echo "Error: theme-selector.sh not found."
+            error "theme-selector.sh not found."
         fi
         ;;
     --note)
         if [ -f "$PROJECT_ROOT/widgets/aiko-note/aiko-note.sh" ]; then
             bash "$PROJECT_ROOT/widgets/aiko-note/aiko-note.sh"
         else
-            echo "Error: Aiko-Note widget not found."
+            error "Aiko-Note widget not found."
         fi
         ;;
     --list)
         if [ -f "$PROJECT_ROOT/widgets/aiko-list/aiko-list.sh" ]; then
             bash "$PROJECT_ROOT/widgets/aiko-list/aiko-list.sh"
         else
-            echo "Error: Aiko-List widget not found."
+            error "Aiko-List widget not found."
         fi
         ;;
     --sys)
         if [ -f "$PROJECT_ROOT/widgets/aiko-sys/aiko-sys.sh" ]; then
             bash "$PROJECT_ROOT/widgets/aiko-sys/aiko-sys.sh"
         else
-            echo "Error: Aiko-System widget not found."
+            error "Aiko-System widget not found."
         fi
         ;;
     --clock)
         if [ -f "$PROJECT_ROOT/widgets/aiko-clock/aiko-clock.sh" ]; then
             bash "$PROJECT_ROOT/widgets/aiko-clock/aiko-clock.sh"
         else
-            echo "Error: Aiko-Clock widget not found."
+            error "Aiko-Clock widget not found."
         fi
         ;;
     --weather)
         if [ -f "$PROJECT_ROOT/widgets/aiko-weather/aiko-weather.sh" ]; then
             bash "$PROJECT_ROOT/widgets/aiko-weather/aiko-weather.sh"
         else
-            echo "Error: Aiko-Weather widget not found."
+            error "Aiko-Weather widget not found."
         fi
         ;;
     --usercard)
         if [ -f "$PROJECT_ROOT/widgets/aiko-usercard/aiko-usercard.sh" ]; then
             bash "$PROJECT_ROOT/widgets/aiko-usercard/aiko-usercard.sh"
         else
-            echo "Error: Aiko-UserCard widget not found."
+            error "Aiko-UserCard widget not found."
         fi
         ;;
     --player)
         if [ -f "$PROJECT_ROOT/widgets/aiko-player/aiko-player.sh" ]; then
             bash "$PROJECT_ROOT/widgets/aiko-player/aiko-player.sh"
         else
-            echo "Error: Aiko-Player widget not found."
+            error "Aiko-Player widget not found."
         fi
         ;;
     --all)
-        echo "Launching all Aiko widgets..."
+        log "Launching all Aiko widgets..."
         widgets=("aiko-clock" "aiko-weather" "aiko-note" "aiko-player" "aiko-list" "aiko-sys" "aiko-usercard")
         for widget in "${widgets[@]}"; do
             script="$PROJECT_ROOT/widgets/$widget/$widget.sh"
             if [ -f "$script" ]; then
-                echo "  -> Starting $widget"
+                log "  -> Starting $widget"
                 bash "$script" &
                 sleep 0.2
             fi
@@ -220,7 +225,7 @@ case "${1:-}" in
         if [ -f "$script" ]; then
             bash "$script"
         else
-            echo "Error: Diagnostics script not found."
+            error "Diagnostics script not found."
         fi
         ;;
     --edit-usercard)
@@ -228,19 +233,19 @@ case "${1:-}" in
         if [ -f "$EDITOR_SCRIPT" ]; then
             python3 "$EDITOR_SCRIPT"
         else
-            echo "Error: User Card editor not found at $EDITOR_SCRIPT"
+            error "User Card editor not found at $EDITOR_SCRIPT"
         fi
         ;;
     --edit-logo)
         LOGO_EDITOR="$PROJECT_ROOT/widgets/aiko-sys/aiko-logo-editor.py"
         if [ -f "$LOGO_EDITOR" ]; then
             python3 "$LOGO_EDITOR"
-            if command -v fastfetch >/dev/null 2>&1; then
+            if have fastfetch; then
                 clear
                 fastfetch
             fi
         else
-            echo "Error: Logo editor not found at $LOGO_EDITOR"
+            error "Logo editor not found at $LOGO_EDITOR"
         fi
         ;;
     --restart)
@@ -249,12 +254,12 @@ case "${1:-}" in
         if [ -f "$script" ]; then
             bash "$script"
         else
-            echo "Error: restart-waybar.sh not found."
+            error "restart-waybar.sh not found."
         fi
         ;;
     *)
         if [ -n "${1:-}" ]; then
-            echo "Unknown option: $1"
+            error "Unknown option: $1"
             show_help
             exit 1
         else

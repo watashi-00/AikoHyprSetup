@@ -4,6 +4,18 @@ set -euo pipefail
 # --- Paths ---
 SCRIPT_DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
 
+# --- Load Central Utility Library ---
+LIB_UTILS="$SCRIPT_DIR/lib/utils.sh"
+if [ -f "$LIB_UTILS" ]; then
+    # shellcheck disable=SC1091
+    source "$LIB_UTILS"
+else
+    echo "Error: utility library not found at $LIB_UTILS"
+    exit 1
+fi
+
+AIKO_LOG_COMPONENT="theme"
+
 if [ -f "$SCRIPT_DIR/../aiko-ideas.md" ]; then
     # Case: Running from the repository
     REPO_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
@@ -24,10 +36,6 @@ THEMES_DIR="$REPO_DIR/themes"
 HYPR_CONF="$HOME/.config/hypr/hyprland.conf"
 WOFI_STYLE="$HOME/.config/wofi/style.css"
 MAKO_CONF="$HOME/.config/mako/config"
-
-# --- Utils ---
-log() { printf "\e[34m[theme]\e[0m %s\n" "$*"; }
-error() { printf "\e[31m[error]\e[0m %s\n" "$*" >&2; }
 
 # --- Selection ---
 [ ! -d "$THEMES_DIR" ] && error "Themes directory not found" && exit 1
