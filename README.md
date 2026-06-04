@@ -2,15 +2,15 @@
 
 A versatile, highly aesthetic, and fully customizable environment for Hyprland and Waybar. Featuring multiple visual styles, interactive Python widgets, and a modular automation engine for a seamless desktop experience.
 
-## 📦 Pre-built Artifacts (GitHub Actions)
+## 📦 Pre-built Artifacts (GitHub Releases)
 
-If you don't want to clone the repository manually, you can download the latest automated build generated directly from the `master` branch.
+If you don't want to clone the repository manually, you can download the latest stable build from the [Releases page](https://github.com/watashi-00/AikoHyprSetup/releases).
 
-1. Go to the [Actions tab](https://github.com/watashi-00/AikoHyprSetup/actions) in this repository.
-2. Click on the latest successful **Build and Package** workflow run.
-3. Scroll down to the **Artifacts** section and download `AikoHyprSetup-Builds`.
+1. Go to the **Latest Release**.
+2. Scroll down to the **Assets** section.
+3. Download the version that suits you (`.tar.gz`, `.tar.xz`, or `.zip`).
 
-This artifact contains three formats (`.tar.gz`, `.tar.xz`, and `.zip`). Extract your preferred format and run the installer:
+Extract your preferred format and run the installer:
 
 **For `.tar.gz`:**
 ```bash
@@ -61,6 +61,14 @@ The setup includes rich, standalone floating widgets for Waybar. They are now po
 *   `aiko --weather` & `aiko --list` : Weather and To-Do list integrations.
 
 *Pro tip: Use `aiko --all` to launch the full widget dashboard at once!*
+
+## 🤝 Contributing
+
+Contributions are welcome! To maintain project stability, we use a structured workflow:
+
+1.  **Default Branch**: The `test` branch is our default development branch. All Pull Requests should target `test`.
+2.  **Protected Master**: The `master` branch is protected and reserved for stable releases. Merges to `master` require a Pull Request and at least one approving review.
+3.  **Community Standards**: Please read our [Code of Conduct](CODE_OF_CONDUCT.md) and [Contributing Guidelines](CONTRIBUTING.md) before submitting.
 
 ## 🛠️ Structure and Locations
 Repo Path: `./` | System Path: `~/.config/waybar/`
@@ -182,4 +190,4 @@ Important rules:
 *   External configs go into the `configs/` subfolder and `install.sh` decides the final destination.
 
 ---
-*Updated on June 1, 2026.*
+*Updated on June 4, 2026.*
