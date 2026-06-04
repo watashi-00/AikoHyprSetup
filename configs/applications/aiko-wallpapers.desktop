@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=Aiko Wallpapers
 Comment=Change desktop wallpaper
-Exec=@HOME@/.config/waybar/scripts/wallpaper.sh select
+Exec=aiko --wallpaper
 Icon=@HOME@/.config/waybar/assets/aiko-icon.svg
 Terminal=false
 Type=Application

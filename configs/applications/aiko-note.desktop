@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=Aiko Note
 Comment=Simple floating notes widget
-Exec=@HOME@/.config/waybar/widgets/aiko-note/aiko-note.sh
+Exec=aiko --note
 Icon=@HOME@/.config/waybar/assets/aiko-icon.svg
 Terminal=false
 Type=Application

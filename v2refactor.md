@@ -12,10 +12,11 @@
 *   Replaced hardcoded home paths in source files with `@HOME@` placeholder.
 *   Core scripts now use standardized variables instead of independent resolution logic.
 
-## 🚧 Step 3: Structural & Design Refactor (IN PROGRESS)
-*   **Installer Modularization**: Split `install.sh` into smaller functional scripts (packages, configs, health).
-*   **Widget Launcher Optimization**: Create a unified launcher script to replace the redundant `.sh` files in each widget folder.
-*   **Configuration Library**: Create a shared helper for reading/writing config files consistently.
+## ✅ Step 3: Structural & Design Refactor (COMPLETED)
+*   **Installer Modularization**: Split `install.sh` into smaller functional scripts in `scripts/lib/` (`system.sh`, `packages.sh`, `configs.sh`, `health.sh`).
+*   **Unified Widget Launcher**: Created `scripts/lib/widget_launcher.sh` which handles all widgets, including toggling and fallbacks.
+*   **Cleaned Launchers**: Updated all `.desktop` files and Hyprland keybindings to use the global `aiko` command.
+*   **Reduced Boilerplate**: Removed all redundant `.sh` files from widget directories.
 
 ## 🔜 Step 4: Final Standardization & UX
 *   Refactor smaller helper scripts in `scripts/`.

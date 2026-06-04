@@ -144,64 +144,33 @@ case "${1:-}" in
         fi
         ;;
     --note)
-        if [ -f "$AIKO_WIDGETS/aiko-note/aiko-note.sh" ]; then
-            bash "$AIKO_WIDGETS/aiko-note/aiko-note.sh"
-        else
-            error "Aiko-Note widget not found."
-        fi
+        bash "$AIKO_SCRIPTS/lib/widget_launcher.sh" "aiko-note"
         ;;
     --list)
-        if [ -f "$AIKO_WIDGETS/aiko-list/aiko-list.sh" ]; then
-            bash "$AIKO_WIDGETS/aiko-list/aiko-list.sh"
-        else
-            error "Aiko-List widget not found."
-        fi
+        bash "$AIKO_SCRIPTS/lib/widget_launcher.sh" "aiko-list"
         ;;
     --sys)
-        if [ -f "$AIKO_WIDGETS/aiko-sys/aiko-sys.sh" ]; then
-            bash "$AIKO_WIDGETS/aiko-sys/aiko-sys.sh"
-        else
-            error "Aiko-System widget not found."
-        fi
+        bash "$AIKO_SCRIPTS/lib/widget_launcher.sh" "aiko-sys"
         ;;
     --clock)
-        if [ -f "$AIKO_WIDGETS/aiko-clock/aiko-clock.sh" ]; then
-            bash "$AIKO_WIDGETS/aiko-clock/aiko-clock.sh"
-        else
-            error "Aiko-Clock widget not found."
-        fi
+        bash "$AIKO_SCRIPTS/lib/widget_launcher.sh" "aiko-clock"
         ;;
     --weather)
-        if [ -f "$AIKO_WIDGETS/aiko-weather/aiko-weather.sh" ]; then
-            bash "$AIKO_WIDGETS/aiko-weather/aiko-weather.sh"
-        else
-            error "Aiko-Weather widget not found."
-        fi
+        bash "$AIKO_SCRIPTS/lib/widget_launcher.sh" "aiko-weather"
         ;;
     --usercard)
-        if [ -f "$AIKO_WIDGETS/aiko-usercard/aiko-usercard.sh" ]; then
-            bash "$AIKO_WIDGETS/aiko-usercard/aiko-usercard.sh"
-        else
-            error "Aiko-UserCard widget not found."
-        fi
+        bash "$AIKO_SCRIPTS/lib/widget_launcher.sh" "aiko-usercard"
         ;;
     --player)
-        if [ -f "$AIKO_WIDGETS/aiko-player/aiko-player.sh" ]; then
-            bash "$AIKO_WIDGETS/aiko-player/aiko-player.sh"
-        else
-            error "Aiko-Player widget not found."
-        fi
+        bash "$AIKO_SCRIPTS/lib/widget_launcher.sh" "aiko-player"
         ;;
     --all)
         log "Launching all Aiko widgets..."
         widgets=("aiko-clock" "aiko-weather" "aiko-note" "aiko-player" "aiko-list" "aiko-sys" "aiko-usercard")
         for widget in "${widgets[@]}"; do
-            script="$AIKO_WIDGETS/$widget/$widget.sh"
-            if [ -f "$script" ]; then
-                log "  -> Starting $widget"
-                bash "$script" &
-                sleep 0.2
-            fi
+            log "  -> Starting $widget"
+            bash "$AIKO_SCRIPTS/lib/widget_launcher.sh" "$widget"
+            sleep 0.1
         done
         ;;
     --diag)

@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=Aiko User Card
 Comment=Profile and quick info card
-Exec=@HOME@/.config/waybar/widgets/aiko-usercard/aiko-usercard.sh
+Exec=aiko --usercard
 Icon=contact-new-symbolic
 Terminal=false
 Type=Application

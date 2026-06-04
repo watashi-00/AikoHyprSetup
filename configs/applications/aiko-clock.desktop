@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=Aiko Clock
 Comment=AikoHyprSetup Clock Widget
-Exec=@HOME@/.config/waybar/widgets/aiko-clock/aiko-clock.sh
+Exec=aiko --clock
 Icon=@HOME@/.config/waybar/assets/cat-icon.svg
 Terminal=false
 Type=Application

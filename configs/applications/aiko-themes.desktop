@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=Aiko Themes
 Comment=Select global theme for AikoHyprSetup
-Exec=@HOME@/.config/waybar/scripts/theme-selector.sh
+Exec=aiko --theme
 Icon=@HOME@/.config/waybar/assets/aiko-icon.svg
 Terminal=false
 Type=Application

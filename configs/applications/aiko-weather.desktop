@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=Aiko Weather
 Comment=AikoHyprSetup Weather Widget
-Exec=@HOME@/.config/waybar/widgets/aiko-weather/aiko-weather.sh
+Exec=aiko --weather
 Icon=@HOME@/.config/waybar/assets/cat-icon.svg
 Terminal=false
 Type=Application
