@@ -1,0 +1,57 @@
+#aiko-monitors-window {
+    background-color: transparent;
+}
+
+#main-container {
+    background-color: rgba(2, 4, 15, 0.95);
+    border: 2px solid #00ffff;
+    border-radius: 0;
+}
+
+#header-title {
+    color: #00ffff;
+    font-size: 20px;
+    font-weight: 900;
+    text-shadow: 0 0 5px #00ffff;
+}
+
+#monitor-row {
+    background-color: rgba(0, 255, 255, 0.05);
+    border: 1px solid #004466;
+    border-radius: 0;
+    padding: 10px;
+}
+
+#monitor-name {
+    color: #00ffff;
+    font-size: 16px;
+    font-weight: 900;
+}
+
+#monitor-details {
+    color: #00ffff;
+    font-size: 13px;
+    opacity: 0.8;
+}
+
+#rotation-label {
+    color: #00ffff;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+combobox button {
+    background-color: rgba(0, 255, 255, 0.1);
+    color: #00ffff;
+    border: 1px solid #00ffff;
+    border-radius: 0;
+    padding: 5px;
+}
+
+#apply-button {
+    background-color: #00ffff;
+    color: #02040f;
+    font-weight: 900;
+    border-radius: 0;
+    padding: 10px;
+}

@@ -2,8 +2,15 @@
 set -euo pipefail
 
 # --- Initial Settings ---
-REAL_PATH="$(readlink -f "${BASH_SOURCE[0]}")"
-SOURCE_DIR_LOCAL="$(cd "$(dirname "$REAL_PATH")" && pwd)"
+# Use BASH_SOURCE[0] if available (when run as script), fallback to $0
+SCRIPT_REF="${BASH_SOURCE[0]:-$0}"
+REAL_PATH="$(readlink -f "$SCRIPT_REF" 2>/dev/null || echo "$SCRIPT_REF")"
+SOURCE_DIR_LOCAL="$(cd "$(dirname "$REAL_PATH")" && pwd 2>/dev/null || pwd)"
+
+# Force AIKO_ROOT to the current installer directory to ensure modules 
+# are loaded from the downloaded package and not from an old installation.
+export AIKO_ROOT="$SOURCE_DIR_LOCAL"
+export AIKO_SCRIPTS="$AIKO_ROOT/scripts"
 
 # --- Load Central Utility Library ---
 LIB_UTILS="$SOURCE_DIR_LOCAL/scripts/lib/utils.sh"
@@ -84,7 +91,32 @@ show_summary() {
     printf "${CYAN}Packages installed:${NC}  %d\n" "$INSTALLED_PKGS"
     printf "${CYAN}Files copied:${NC}       %d\n" "$COPIED_FILES"
     printf "${CYAN}Backups created:${NC}    %d\n" "$BACKUPS_CREATED"
+    
+    if have fastfetch; then
+        printf "${CYAN}Fastfetch Status:${NC}   ${GREEN}Ready${NC}\n"
+    fi
+
     echo "=============================="
+}
+
+validate_prerequisites() {
+    local required=(git curl sudo bash mktemp realpath)
+    local missing=()
+    local cmd
+
+    for cmd in "${required[@]}"; do
+        if ! have "$cmd"; then
+            missing+=("$cmd")
+        fi
+    done
+
+    if [ "${#missing[@]}" -gt 0 ]; then
+        warn "Missing required tools: ${missing[*]}"
+        warn "Some installer actions may not work correctly until these are installed."
+        return 1
+    fi
+
+    return 0
 }
 
 # Menu Action Functions
@@ -180,6 +212,11 @@ action_theme_selector() {
     else
         warn "Theme selector script not found."
     fi
+    return 0
+}
+
+action_monitor_config() {
+    bash "$AIKO_SCRIPTS/lib/widget_launcher.sh" "aiko-monitors"
     return 0
 }
 
@@ -279,14 +316,16 @@ submenu_customization() {
     declare -A labels=(
         [1]="🖼️   Change Wallpaper"
         [2]="🎨  Change Theme"
+        [3]="🖥️   Monitor Configuration"
         [0]="⬅   Back"
     )
     declare -A actions=(
         [1]="action_wallpaper_changer"
         [2]="action_theme_selector"
+        [3]="action_monitor_config"
         [0]="menu_back"
     )
-    local order=(1 2 0)
+    local order=(1 2 3 0)
     menu "Desktop Customization" labels actions order
 }
 
@@ -312,6 +351,10 @@ submenu_maintenance() {
 }
 
 interactive_menu() {
+    if ! validate_prerequisites; then
+        log "Prerequisite validation detected missing tools. Some menu actions may be limited."
+    fi
+
     declare -A labels=(
         [1]="📦  Installation & Updates"
         [2]="🎨  Desktop Customization"

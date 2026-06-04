@@ -80,7 +80,14 @@ def sync_fastfetch():
 
     # Update Data
     color = get_theme_color(waybar_dir)
-    padding = calculate_padding(ascii_path)
+    
+    # Check if we are using the default logo or a custom one
+    source = data.get("logo", {}).get("source", "auto")
+    
+    if source == "auto":
+        padding = 2 # Default padding for distro logos
+    else:
+        padding = calculate_padding(ascii_path)
 
     data["logo"]["color"]["1"] = color
     data["logo"]["padding"]["left"] = padding

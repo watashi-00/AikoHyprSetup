@@ -4,7 +4,7 @@
 # Sourced by main scripts for consistent behavior and reduced redundancy.
 
 # --- Version ---
-export AIKO_VERSION="2.1.1"
+export AIKO_VERSION="2.1.8"
 
 # --- Colors ---
 export NC=$'\e[0m'
@@ -34,36 +34,34 @@ export ICON_RELOAD="🔄"
 # Detects the root of the AikoHyprSetup installation or repository.
 # Exports: AIKO_ROOT, AIKO_SCRIPTS, AIKO_WIDGETS, AIKO_THEMES, AIKO_ASSETS
 get_aiko_paths() {
-    # If AIKO_ROOT is already set and exists, don't re-detect (allows overrides)
+    # If AIKO_ROOT is already set and exists, we use it, but we MUST still export subdirs
     if [ -n "${AIKO_ROOT:-}" ] && [ -d "$AIKO_ROOT" ]; then
+        export AIKO_SCRIPTS="$AIKO_ROOT/scripts"
+        export AIKO_WIDGETS="$AIKO_ROOT/widgets"
+        export AIKO_THEMES="$AIKO_ROOT/themes"
+        export AIKO_ASSETS="$AIKO_ROOT/assets"
+        export AIKO_CONFIGS="$AIKO_ROOT/configs"
         return 0
     fi
 
-    # BASH_SOURCE[1] is the script that sourced this library
-    local caller_path="${BASH_SOURCE[1]:-$0}"
-    local caller_dir
-    caller_dir="$(cd "$(dirname "$(readlink -f "$caller_path")")" && pwd)"
+    # 1. First, find where this library (utils.sh) is actually located
+    local lib_dir
+    lib_dir="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
+    
+    # 2. Derive root from lib_dir (assuming it's in scripts/lib/)
+    local potential_root
+    potential_root="$(cd "$lib_dir/../.." && pwd)"
 
     local installed_path="$HOME/.config/waybar"
 
     # Detection Priority:
-    # 1. Check if the caller script itself is already in the standard installed location
-    if [[ "$caller_dir" == "$installed_path"* ]]; then
+    # 1. If we are running inside a valid repository structure (like a temp update dir)
+    if [ -f "$potential_root/install.sh" ] && [ -d "$potential_root/waybar" ]; then
+        export AIKO_ROOT="$potential_root"
+    # 2. Check if the caller script is already in the standard installed location
+    elif [[ "${BASH_SOURCE[1]:-$0}" == "$installed_path"* ]]; then
         export AIKO_ROOT="$installed_path"
-    # 2. Check if we are running from the repository root (look for marker files in caller dir)
-    elif [ -f "$caller_dir/install.sh" ] && [ -d "$caller_dir/waybar" ]; then
-        export AIKO_ROOT="$caller_dir"
-    # 3. Check if caller is in scripts/ or widgets/ and find root from there
-    elif [[ "$caller_dir" == */scripts ]] || [[ "$caller_dir" == */widgets/* ]]; then
-        if [[ "$caller_dir" == */widgets/* ]]; then
-            export AIKO_ROOT="$(cd "$caller_dir/../.." && pwd)"
-        else
-            export AIKO_ROOT="$(cd "$caller_dir/.." && pwd)"
-        fi
-    # 4. Fallback to current working directory if it looks like a repo
-    elif [ -f "$(pwd)/install.sh" ] && [ -d "$(pwd)/waybar" ]; then
-        export AIKO_ROOT="$(pwd)"
-    # 5. Final fallback to standard installation path
+    # 3. Final fallback to standard installation path
     else
         export AIKO_ROOT="$installed_path"
     fi

@@ -221,13 +221,15 @@ install_configs() {
 
     log "${MAGENTA}Creating default theme links...${NC}"
     # Use relative links for portability
-    [ ! -f "$waybar_dest/style.css" ] && run ln -sf "themes/pink-anime.css" "$waybar_dest/style.css"
+    if [ ! -L "$waybar_dest/style.css" ] && [ ! -f "$waybar_dest/style.css" ]; then
+        run ln -sf "themes/pink-anime.css" "$waybar_dest/style.css"
+    fi
     
     # Widget theme links
     local widget
-    for widget in aiko-note aiko-player aiko-clock aiko-usercard aiko-weather aiko-list aiko-sys; do
+    for widget in aiko-note aiko-player aiko-clock aiko-usercard aiko-weather aiko-list aiko-sys aiko-monitors; do
         local w_dir="$waybar_dest/widgets/$widget"
-        if [ -d "$w_dir" ] && [ ! -f "$w_dir/theme.css" ]; then
+        if [ -d "$w_dir" ] && [ ! -L "$w_dir/theme.css" ] && [ ! -f "$w_dir/theme.css" ]; then
             (cd "$w_dir" && run ln -sf "themes/pink-anime.css" "theme.css")
         fi
     done
@@ -257,11 +259,12 @@ EOF
 
     log "${MAGENTA}Generating initial themed icons (Pink Anime default)...${NC}"
     if [ -x "$waybar_dest/scripts/icon-gen.sh" ]; then
-        run "$waybar_dest/scripts/icon-gen.sh" "#ff8fbd"
+        # Run in background to avoid blocking
+        "$waybar_dest/scripts/icon-gen.sh" "#ff8fbd" >/dev/null 2>&1 &
     fi
 
     log "${MAGENTA}Syncing Fastfetch logo properties...${NC}"
-    if [ -x "$waybar_dest/sync-fastfetch.py" ]; then
-        run "$waybar_dest/sync-fastfetch.py"
+    if [ -x "$waybar_dest/scripts/sync-fastfetch.py" ]; then
+        run "$waybar_dest/scripts/sync-fastfetch.py"
     fi
 }

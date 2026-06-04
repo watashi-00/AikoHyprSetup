@@ -33,9 +33,10 @@ BIN_FILE="$WIDGET_DIR/$WIDGET_NAME-bin"
 
 # --- 1. Toggle Logic ---
 # Check if already running by checking for the python script name
-if pgrep -f "$WIDGET_NAME.py" > /dev/null || pgrep -x "$WIDGET_NAME-bin" > /dev/null; then
+# Use -f for bin matching to handle process names > 15 chars
+if pgrep -f "$WIDGET_NAME.py" > /dev/null || pgrep -f "$WIDGET_NAME-bin" > /dev/null; then
     pkill -f "$WIDGET_NAME.py" || true
-    pkill -x "$WIDGET_NAME-bin" || true
+    pkill -f "$WIDGET_NAME-bin" || true
     exit 0
 fi
 

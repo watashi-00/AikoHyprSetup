@@ -32,6 +32,7 @@ Options:
   --update          Update AikoHyprSetup (git pull)
   --wallpaper       Open the wallpaper selector
   --theme           Open the theme selector
+  --monitors        Open the Monitor configuration widget
   --note            Open the Aiko-Note widget
   --clock           Open the Aiko-Clock widget
   --weather         Open the Aiko-Weather widget
@@ -65,7 +66,7 @@ case "${1:-}" in
         show_help
         ;;
     -v|--version)
-        echo "Aiko CLI v$AIKO_VERSION"
+        echo "Aiko CLI v$AIKO_VERSION (Hash: ${AIKO_HASH:-none})"
         ;;
     --install)
         if [ -f "$AIKO_ROOT/install.sh" ]; then
@@ -101,15 +102,30 @@ case "${1:-}" in
         else
             warn "Non-git installation detected. Checking for updates on GitHub..."
             if have curl && have unzip; then
-                # Fetch remote version
-                REMOTE_VERSION=$(curl -sSL https://raw.githubusercontent.com/watashi-00/AikoHyprSetup/master/scripts/lib/utils.sh | grep '^export AIKO_VERSION=' | cut -d '"' -f 2)
+                # Fetch remote version from GitHub (using cache-buster to ensure fresh data)
+                REMOTE_VERSION=$(curl -sSL "https://raw.githubusercontent.com/watashi-00/AikoHyprSetup/master/scripts/lib/utils.sh?$(date +%s)" | grep '^export AIKO_VERSION=' | cut -d '"' -f 2)
                 
+                # Fetch latest commit hash from GitHub API
+                REMOTE_HASH=$(curl -s "https://api.github.com/repos/watashi-00/AikoHyprSetup/commits/master" | grep -m1 '"sha":' | cut -d'"' -f4 | cut -c1-7)
+                
+                # Get local hash if available
+                LOCAL_HASH_FILE="$AIKO_ROOT/.version_hash"
+                LOCAL_HASH=""
+                [ -f "$LOCAL_HASH_FILE" ] && LOCAL_HASH=$(cat "$LOCAL_HASH_FILE")
+
                 if [ -z "$REMOTE_VERSION" ]; then
                     error "Could not check for updates. Please check your connection."
-                elif [ "$REMOTE_VERSION" == "$AIKO_VERSION" ]; then
+                # Only say "latest version" if both Version AND Hash match (and Hash file exists)
+                elif [ "$REMOTE_VERSION" == "$AIKO_VERSION" ] && [ -n "$LOCAL_HASH" ] && [ "$REMOTE_HASH" == "$LOCAL_HASH" ]; then
                     log "You are already using the latest version ($AIKO_VERSION)."
                 else
-                    log "A new version is available: $REMOTE_VERSION (Current: $AIKO_VERSION)"
+                    # Decide what message to show
+                    if [ "$REMOTE_VERSION" != "$AIKO_VERSION" ]; then
+                        log "A new version is available: $REMOTE_VERSION (Current: $AIKO_VERSION)"
+                    elif [ "$REMOTE_HASH" != "$LOCAL_HASH" ]; then
+                        log "A hotfix or synchronization update is available (Hash: $REMOTE_HASH)"
+                    fi
+                    
                     log "Downloading and installing the update..."
                     
                     TEMP_DIR=$(mktemp -d)
@@ -120,8 +136,10 @@ case "${1:-}" in
                         
                         if [ -f "$EXTRACTED_DIR/install.sh" ]; then
                             log "Running installer..."
-                            # Run with --no-packages to speed up configuration update
                             bash "$EXTRACTED_DIR/install.sh" --no-packages
+                            
+                            # Store the new hash for future checks
+                            echo "$REMOTE_HASH" > "$LOCAL_HASH_FILE"
                         else
                             error "install.sh not found in update package."
                         fi
@@ -176,6 +194,9 @@ case "${1:-}" in
             error "theme-selector.sh not found."
         fi
         ;;
+    --monitors)
+        bash "$AIKO_SCRIPTS/lib/widget_launcher.sh" "aiko-monitors"
+        ;;
     --note)
         bash "$AIKO_SCRIPTS/lib/widget_launcher.sh" "aiko-note"
         ;;
@@ -199,7 +220,7 @@ case "${1:-}" in
         ;;
     --all)
         log "Launching all Aiko widgets..."
-        widgets=("aiko-clock" "aiko-weather" "aiko-note" "aiko-player" "aiko-list" "aiko-sys" "aiko-usercard")
+        widgets=("aiko-clock" "aiko-weather" "aiko-note" "aiko-player" "aiko-list" "aiko-sys" "aiko-usercard" "aiko-monitors")
         for widget in "${widgets[@]}"; do
             log "  -> Starting $widget"
             bash "$AIKO_SCRIPTS/lib/widget_launcher.sh" "$widget"
