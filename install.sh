@@ -731,6 +731,11 @@ action_diagnostics() {
     return 0
 }
 
+action_gpu_setup() {
+    log "GPU Setup functionality is coming soon!"
+    return 0
+}
+
 action_cleanup_backups() {
     cleanup_generated_backups
     return 0
@@ -754,6 +759,7 @@ interactive_menu() {
         [8]="🆙  Update Setup (Git Pull)"
         [9]="🗑️   Clean Generated Backups"
         [10]="🩺  Environment Diagnostics"
+        [11]="🎮  GPU Setup"
         [0]="✘   Exit"
     )
 
@@ -768,9 +774,10 @@ interactive_menu() {
         [8]="action_git_pull"
         [9]="action_cleanup_backups"
         [10]="action_diagnostics"
+        [11]="action_gpu_setup"
         [0]="action_exit"
     )
-    local order=(1 2 3 4 5 6 7 8 9 10 0)
+    local order=(1 2 3 4 5 6 7 8 9 10 11 0)
     
     menu "" labels actions order
 }
