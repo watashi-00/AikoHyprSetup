@@ -102,8 +102,8 @@ case "${1:-}" in
         else
             warn "Non-git installation detected. Checking for updates on GitHub..."
             if have curl && have unzip; then
-                # Fetch remote version from GitHub
-                REMOTE_VERSION=$(curl -sSL https://raw.githubusercontent.com/watashi-00/AikoHyprSetup/master/scripts/lib/utils.sh | grep '^export AIKO_VERSION=' | cut -d '"' -f 2)
+                # Fetch remote version from GitHub (using cache-buster to ensure fresh data)
+                REMOTE_VERSION=$(curl -sSL "https://raw.githubusercontent.com/watashi-00/AikoHyprSetup/master/scripts/lib/utils.sh?$(date +%s)" | grep '^export AIKO_VERSION=' | cut -d '"' -f 2)
                 
                 # Fetch latest commit hash from GitHub API
                 REMOTE_HASH=$(curl -s "https://api.github.com/repos/watashi-00/AikoHyprSetup/commits/master" | grep -m1 '"sha":' | cut -d'"' -f4 | cut -c1-7)
