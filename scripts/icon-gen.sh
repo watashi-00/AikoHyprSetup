@@ -16,6 +16,7 @@ ICON_SIZE="32x32"
 APPS_SUBDIR="$ICON_SIZE/apps"
 
 mkdir -p "$COLOR_CACHE_DIR/$APPS_SUBDIR"
+mkdir -p "$(dirname "$TARGET_THEME_DIR")"
 
 # Ensure the global theme link is correct
 if [ "$(readlink -f "$TARGET_THEME_DIR")" != "$(readlink -f "$COLOR_CACHE_DIR")" ]; then
@@ -128,13 +129,6 @@ if [ -n "$APP_NAME" ]; then
 else
     NEW_ICONS=0
     RUNNING_APPS=$(hyprctl clients -j | jq -r '.[].class' | sort -u)
-    for a in $RUNNING_APPS; do 
-        process_icon "$a"
-        [ $? -eq 200 ] && NEW_ICONS=1
-    done
-    [ $NEW_ICONS -eq 1 ] && exit 200 || exit 0
-fi
-_APPS=$(hyprctl clients -j | jq -r '.[].class' | sort -u)
     for a in $RUNNING_APPS; do 
         process_icon "$a"
         [ $? -eq 200 ] && NEW_ICONS=1

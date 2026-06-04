@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # aiko - Global CLI for AikoHyprSetup management
 
-VERSION="1.0.2"
+VERSION="1.0.3"
 
 # --- Terminal Cleanup Trap ---
 cleanup() {
