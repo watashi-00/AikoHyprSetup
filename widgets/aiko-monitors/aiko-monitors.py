@@ -105,7 +105,10 @@ class AikoMonitors(Gtk.Window):
     def create_monitor_row(self, mon):
         row_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
         row_vbox.set_name("monitor-row")
-        row_vbox.set_padding(10)
+        row_vbox.set_margin_top(10)
+        row_vbox.set_margin_bottom(10)
+        row_vbox.set_margin_start(10)
+        row_vbox.set_margin_end(10)
         
         # Monitor Info
         name_label = Gtk.Label()
