@@ -99,6 +99,26 @@ show_summary() {
     echo "=============================="
 }
 
+validate_prerequisites() {
+    local required=(git curl sudo bash mktemp realpath)
+    local missing=()
+    local cmd
+
+    for cmd in "${required[@]}"; do
+        if ! have "$cmd"; then
+            missing+=("$cmd")
+        fi
+    done
+
+    if [ "${#missing[@]}" -gt 0 ]; then
+        warn "Missing required tools: ${missing[*]}"
+        warn "Some installer actions may not work correctly until these are installed."
+        return 1
+    fi
+
+    return 0
+}
+
 # Menu Action Functions
 action_full_setup() {
     log "Starting full setup..."
@@ -331,6 +351,10 @@ submenu_maintenance() {
 }
 
 interactive_menu() {
+    if ! validate_prerequisites; then
+        log "Prerequisite validation detected missing tools. Some menu actions may be limited."
+    fi
+
     declare -A labels=(
         [1]="📦  Installation & Updates"
         [2]="🎨  Desktop Customization"

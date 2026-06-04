@@ -25,6 +25,18 @@ post_install_checks() {
 
     if [ "${#missing_required[@]}" -gt 0 ]; then
         warn "Critical binaries still missing: ${missing_required[*]}"
+
+        local pm
+        pm="$(pm_detect)"
+        if [ "$pm" != unknown ]; then
+            if confirm "Attempt to install missing packages automatically now?" "n"; then
+                install_packages
+            else
+                warn "Missing packages were not installed. Run './install.sh' to install them later."
+            fi
+        else
+            warn "No supported package manager detected for auto-fix. Install missing dependencies manually."
+        fi
     fi
 }
 
