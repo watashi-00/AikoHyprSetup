@@ -220,6 +220,26 @@ action_theme_selector() {
     return 0
 }
 
+action_profile_export() {
+    local profile_script="$AIKO_SCRIPTS/profile-manager.sh"
+    if [ -f "$profile_script" ]; then
+        bash "$profile_script" export
+    else
+        warn "Profile manager script not found."
+    fi
+    return 0
+}
+
+action_profile_import() {
+    local profile_script="$AIKO_SCRIPTS/profile-manager.sh"
+    if [ -f "$profile_script" ]; then
+        bash "$profile_script" import
+    else
+        warn "Profile manager script not found."
+    fi
+    return 0
+}
+
 action_monitor_config() {
     bash "$AIKO_SCRIPTS/lib/widget_launcher.sh" "aiko-monitors"
     return 0
@@ -321,16 +341,20 @@ submenu_customization() {
     declare -A labels=(
         [1]="🖼️   Change Wallpaper"
         [2]="🎨  Change Theme"
-        [3]="🖥️   Monitor Configuration"
+        [3]="�  Export Configuration Profile"
+        [4]="📥  Import Configuration Profile"
+        [5]="🖥️   Monitor Configuration"
         [0]="⬅   Back"
     )
     declare -A actions=(
         [1]="action_wallpaper_changer"
         [2]="action_theme_selector"
-        [3]="action_monitor_config"
+        [3]="action_profile_export"
+        [4]="action_profile_import"
+        [5]="action_monitor_config"
         [0]="menu_back"
     )
-    local order=(1 2 3 0)
+    local order=(1 2 3 4 5 0)
     menu "Desktop Customization" labels actions order
 }
 
