@@ -261,7 +261,7 @@ EOF
     fi
 
     log "${MAGENTA}Syncing Fastfetch logo properties...${NC}"
-    if [ -x "$waybar_dest/sync-fastfetch.py" ]; then
-        run "$waybar_dest/sync-fastfetch.py"
+    if [ -x "$waybar_dest/scripts/sync-fastfetch.py" ]; then
+        run "$waybar_dest/scripts/sync-fastfetch.py"
     fi
 }
