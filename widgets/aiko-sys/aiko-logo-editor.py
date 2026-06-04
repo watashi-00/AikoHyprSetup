@@ -191,6 +191,9 @@ class AikoLogoEditor(Gtk.Window):
         if "logo" not in self.config_data:
             self.config_data["logo"] = {}
         
+        # Set source to our custom ASCII file
+        self.config_data["logo"]["source"] = self.ascii_path
+
         # Set color
         if "color" not in self.config_data["logo"]:
             self.config_data["logo"]["color"] = {}
@@ -206,7 +209,7 @@ class AikoLogoEditor(Gtk.Window):
         try:
             with open(self.config_path, 'w') as f:
                 json.dump(self.config_data, f, indent=4)
-            print(f"Saved logo settings: Color={hex_color}, Padding={ideal_padding}")
+            print(f"Saved logo settings: Source={self.ascii_path}, Color={hex_color}, Padding={ideal_padding}")
             Gtk.main_quit()
         except Exception as e:
             print(f"Error saving fastfetch config: {e}")
