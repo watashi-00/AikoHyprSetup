@@ -4,8 +4,7 @@
     "height": 52,
     "spacing": 8,
     "margin-top": 8,
-    "margin-left": 18,
-    "margin-right": 18,
+    "fixed-center": true,
 
     "modules-left": ["hyprland/workspaces", "image#album-art", "group/spotify-info", "cava"],
     "modules-center": [],
@@ -54,7 +53,8 @@
         "format": "<span color='#ffffff'>\uf028</span> {}", // @theme:waybar_accent
         "interval": 1,
         "exec": "$HOME/.config/waybar/scripts/audio-output.sh",
-        "on-click": "pavucontrol"
+        "on-click": "pavucontrol",
+        "on-click-right": "$HOME/.config/waybar/scripts/audio-output.sh --toggle"
     },
 
     "custom/audio-input": {
@@ -62,6 +62,7 @@
         "interval": 1,
         "exec": "$HOME/.config/waybar/scripts/audio-input.sh",
         "on-click": "pavucontrol -t 4",
+        "on-click-right": "$HOME/.config/waybar/scripts/audio-input.sh --toggle",
         "tooltip": false
     },
 
@@ -87,7 +88,7 @@
     },
 
     "clock": {
-        "format": "{:%I:%M %p}",
+        "format": "{:%I:%M %p - %a, %d %b}",
         "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
     },
 

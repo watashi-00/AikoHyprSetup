@@ -66,6 +66,26 @@ install_one_package() {
     local pm="$1"
     local pkg="$2"
 
+    # Specialized logic for Waybar on Arch Linux to ensure feature-rich version
+    if [ "$pm" = "pacman" ] && [ "$pkg" = "waybar" ]; then
+        if have yay; then
+            log "Attempting to install waybar-hyprland via yay..."
+            yay -S --needed --noconfirm waybar-hyprland && return 0
+        elif have paru; then
+            log "Attempting to install waybar-hyprland via paru..."
+            paru -S --needed --noconfirm waybar-hyprland && return 0
+        fi
+        # If no AUR helper, try official waybar but handle potential conflict
+        if sudo_cmd pacman -S --needed --noconfirm waybar; then
+            return 0
+        else
+            warn "Official waybar failed. Trying to resolve conflict..."
+            # Try to install providing waybar (often resolves conflicts with -git versions)
+            sudo_cmd pacman -S --needed --noconfirm waybar-hyprland || return 1
+        fi
+        return 0
+    fi
+
     case "$pm" in
         pacman) sudo_cmd pacman -S --needed --noconfirm "$pkg" ;;
         apt) sudo_cmd apt-get install -y "$pkg" ;;
@@ -98,6 +118,7 @@ install_packages() {
     fi
 
     case "$pm" in
+        pacman) sudo_cmd pacman -Sy ;;
         apt) sudo_cmd apt-get update ;;
         zypper) sudo_cmd zypper --non-interactive refresh ;;
         apk) sudo_cmd apk update ;;
@@ -107,14 +128,23 @@ install_packages() {
     while IFS= read -r pkg; do
         [ -n "$pkg" ] || continue
         printf "  ${CYAN}%s${NC} Checking/Installing: ${WHITE}%s${NC}..." "$ICON_PACKAGE" "$pkg"
-        if install_one_package "$pm" "$pkg" >/dev/null 2>&1; then
+        
+        # Create a temp file for error output
+        local err_log
+        err_log=$(mktemp)
+        
+        if install_one_package "$pm" "$pkg" >/dev/null 2>"$err_log"; then
             printf " ${GREEN}OK${NC}\n"
             INSTALLED_PKGS=$((INSTALLED_PKGS + 1))
         else
             printf " ${RED}FAILED${NC}\n"
+            local err_msg
+            err_msg=$(cat "$err_log" | tr '\n' ' ' | sed 's/  */ /g' | cut -c1-100)
+            [ -n "$err_msg" ] && echo "      ${RED}Error:${NC} $err_msg..."
             warn "Could not install '$pkg' via $pm."
             missing="${missing}${pkg} "
         fi
+        rm -f "$err_log"
     done < <(packages_for_pm "$pm")
 
     if [ -n "$missing" ]; then

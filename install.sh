@@ -91,6 +91,11 @@ show_summary() {
     printf "${CYAN}Packages installed:${NC}  %d\n" "$INSTALLED_PKGS"
     printf "${CYAN}Files copied:${NC}       %d\n" "$COPIED_FILES"
     printf "${CYAN}Backups created:${NC}    %d\n" "$BACKUPS_CREATED"
+    
+    if have fastfetch; then
+        printf "${CYAN}Fastfetch Status:${NC}   ${GREEN}Ready${NC}\n"
+    fi
+
     echo "=============================="
 }
 
