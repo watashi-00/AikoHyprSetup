@@ -632,7 +632,10 @@ action_git_pull() {
     if [ -d "$SOURCE_DIR/.git" ]; then
         log "Updating AikoHyprSetup from GitHub in: $SOURCE_DIR"
         if git -C "$SOURCE_DIR" pull; then
-            success "Update successful! Please restart the installer if needed."
+            success "Update successful!"
+            if confirm "Restart installer now to apply updates?" "y"; then
+                exec "$REAL_PATH"
+            fi
         else
             error "Failed to pull updates. Check your connection or git status."
         fi
@@ -652,7 +655,9 @@ action_git_pull() {
                         # Copy all files from extracted dir to current SOURCE_DIR
                         cp -rf "$EXTRACTED_DIR"/* "$SOURCE_DIR/"
                         success "Update successful! Source files updated."
-                        printf "${YELLOW}[!]${NC} Please restart the installer to use the new version.\n"
+                        if confirm "Restart installer now to apply updates?" "y"; then
+                            exec "$REAL_PATH"
+                        fi
                         exit 0
                     else
                         error "Could not find extracted directory."
