@@ -29,6 +29,14 @@ export ICON_CONFIG="🎨"
 export ICON_SEARCH="🔍"
 export ICON_RELOAD="🔄"
 
+# --- Exit Codes ---
+export AIKO_EXIT_SUCCESS=0
+export AIKO_EXIT_MENU_CONTINUE=2
+export AIKO_EXIT_MENU_BACK=130
+export AIKO_EXIT_QUIT=127
+export AIKO_EXIT_MISSING_MODULE=3
+export AIKO_EXIT_INVALID_OPTION=64
+
 # --- Path Resolution ---
 
 # Detects the root of the AikoHyprSetup installation or repository.
@@ -72,6 +80,7 @@ get_aiko_paths() {
     export AIKO_THEMES="$AIKO_ROOT/themes"
     export AIKO_ASSETS="$AIKO_ROOT/assets"
     export AIKO_CONFIGS="$AIKO_ROOT/configs"
+    export AIKO_LOG_FILE="$AIKO_ROOT/.aiko-setup.log"
 }
 
 # Automatically run path detection on source
@@ -91,11 +100,21 @@ _aiko_log_format() {
     local icon="$2"
     local msg="$3"
     local component="${AIKO_LOG_COMPONENT:-}"
-    
+    local timestamp
+    timestamp="$(date '+%Y-%m-%d %H:%M:%S')"
+    local line
+
     if [ -n "$component" ]; then
+        line="[$timestamp][$component] $icon $msg"
         printf "${color}[%s]${NC} %s %s\n" "$component" "$icon" "$msg"
     else
+        line="[$timestamp] $icon $msg"
         printf "${color}%s${NC} %s\n" "$icon" "$msg"
+    fi
+
+    if [ -n "${AIKO_LOG_FILE:-}" ]; then
+        mkdir -p "$(dirname "$AIKO_LOG_FILE")" 2>/dev/null || true
+        printf '%s\n' "$line" >> "$AIKO_LOG_FILE" 2>/dev/null || true
     fi
 }
 
@@ -105,8 +124,9 @@ warn() { _aiko_log_format "$YELLOW" "$ICON_WARN" "$*" >&2; }
 error() { _aiko_log_format "$RED" "$ICON_ERROR" "$*" >&2; }
 
 die() {
-    error "$*"
-    exit 1
+    local code="${2:-1}"
+    error "$1"
+    exit "$code"
 }
 
 # Confirmation Prompt
@@ -155,8 +175,14 @@ _aiko_error_handler() {
     local component="${AIKO_LOG_COMPONENT:-system}"
     
     # Ignore code 127/130 (Exit or Interrupt) and 2 (Clean Menu Exit)
-    if [ $exit_code -eq 127 ] || [ $exit_code -eq 130 ] || [ $exit_code -eq 2 ]; then
+    if [ "$exit_code" -eq "$AIKO_EXIT_QUIT" ] || [ "$exit_code" -eq "$AIKO_EXIT_MENU_BACK" ] || [ "$exit_code" -eq "$AIKO_EXIT_MENU_CONTINUE" ]; then
         return
+    fi
+
+    # Attempt rollback if install error handling is enabled.
+    trap '' ERR
+    if [ "${AIKO_ROLLBACK_ON_ERROR:-0}" -eq 1 ] && declare -f aiko_install_rollback > /dev/null; then
+        aiko_install_rollback || true
     fi
 
     echo

@@ -3,6 +3,9 @@
 # AikoHyprSetup V2 - Configuration Management
 # Handles file copying, backups, and path patching.
 
+GENERATED_BACKUPS=()
+CREATED_PATHS=()
+
 backup_path() {
     local target="$1"
     if [ -e "$target" ] || [ -L "$target" ]; then
@@ -11,6 +14,7 @@ backup_path() {
         local backup="${target}.bak-${stamp}"
         log "Backup: $(basename "$target") -> $(basename "$backup")"
         run mv "$target" "$backup"
+        GENERATED_BACKUPS+=("$backup")
         BACKUPS_CREATED=$((BACKUPS_CREATED + 1))
     fi
 }
@@ -37,7 +41,12 @@ copy_file() {
 
     run mkdir -p "$(dirname "$dest")"
 
+    local dest_existed=0
     if [ -e "$dest" ] || [ -L "$dest" ]; then
+        dest_existed=1
+    fi
+
+    if [ "$dest_existed" -eq 1 ]; then
         # Prevent backups for .desktop files to avoid duplication in launchers
         if [[ "$dest" == *.desktop ]]; then
             log "Updating: ${WHITE}$(basename "$src")${NC}"
@@ -49,6 +58,9 @@ copy_file() {
 
     log "Copying: ${WHITE}$(basename "$src")${NC} -> ${WHITE}$dest${NC}"
     run cp -P "$src" "$dest"
+    if [ "$dest_existed" -eq 0 ] && [ -e "$dest" ]; then
+        CREATED_PATHS+=("$dest")
+    fi
     COPIED_FILES=$((COPIED_FILES + 1))
 }
 
@@ -78,12 +90,19 @@ copy_dir_contents() {
 
         local dest="$dest_dir/$(basename "$src")"
         if [ -d "$src" ] && [ ! -L "$src" ]; then
+            local dest_existed=0
+            if [ -e "$dest" ] || [ -L "$dest" ]; then
+                dest_existed=1
+            fi
             # If destination exists, backup it before copying new directory
             if [ -d "$dest" ] && [ ! -L "$dest" ]; then
                 backup_path "$dest"
             fi
             log "Copying directory: ${WHITE}$(basename "$src")${NC}"
             run cp -a "$src" "$dest"
+            if [ "$dest_existed" -eq 0 ] && [ -e "$dest" ]; then
+                CREATED_PATHS+=("$dest")
+            fi
             COPIED_FILES=$((COPIED_FILES + 1))
         else
             copy_file "$src" "$dest"

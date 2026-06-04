@@ -14,7 +14,7 @@ fi
 
 # Return from the current menu. Useful for submenu "Back" actions.
 menu_back() {
-    return 130
+    return "$AIKO_EXIT_MENU_BACK"
 }
 
 _menu_build_default_order() {
@@ -112,12 +112,12 @@ menu() {
                 action_status="$?"
 
                 # 130 means "Return from this menu loop"
-                if [ "$action_status" -eq 130 ]; then
-                    return 2 # Standard code for exiting a menu level silently
+                if [ "$action_status" -eq "$AIKO_EXIT_MENU_BACK" ]; then
+                    return "$AIKO_EXIT_MENU_CONTINUE" # Standard code for exiting a menu level silently
                 fi
                 
                 # 2 means "Action complete, return to loop silently (Submenu just finished)"
-                if [ "$action_status" -eq 2 ]; then
+                if [ "$action_status" -eq "$AIKO_EXIT_MENU_CONTINUE" ]; then
                     continue
                 fi
 
