@@ -146,3 +146,31 @@ aiko_init_term() {
     # Ensure cleanup on exit
     trap aiko_cleanup_term EXIT
 }
+
+# --- Error Handling ---
+
+_aiko_error_handler() {
+    local exit_code=$?
+    local line_no=$1
+    local command="$2"
+    local component="${AIKO_LOG_COMPONENT:-system}"
+    
+    # Ignore code 127/130 (Exit or Interrupt)
+    if [ $exit_code -eq 127 ] || [ $exit_code -eq 130 ]; then
+        return
+    fi
+
+    echo
+    printf "${RED}[%s]${NC} ${BOLD}FATAL EXCEPTION:${NC} Command failed!\n" "$component" >&2
+    printf "    ${WHITE}Command:${NC}  $command\n" >&2
+    printf "    ${WHITE}Line:${NC}     $line_no\n" >&2
+    printf "    ${WHITE}Exit Code:${NC} $exit_code\n" >&2
+    echo
+    printf "${YELLOW}%s${NC} This might be a bug. Please report it.\n" "$ICON_INFO" >&2
+    echo
+}
+
+aiko_enable_err_handler() {
+    # Trap ERR to catch any command failure
+    trap '_aiko_error_handler $LINENO "$BASH_COMMAND"' ERR
+}

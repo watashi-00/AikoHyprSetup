@@ -31,6 +31,7 @@ done
 
 AIKO_LOG_COMPONENT="install"
 aiko_init_term
+aiko_enable_err_handler
 
 REPO_ISSUES="https://github.com/watashi-00/AikoHyprSetup/issues"
 
@@ -251,39 +252,79 @@ action_exit() {
     return 127
 }
 
-interactive_menu() {
+# Menu Sub-Navigation Functions
+submenu_install() {
     declare -A labels=(
         [1]="🚀  Full Setup (Recommended)"
         [2]="🎨  Update Configs & Widgets"
         [3]="📦  Install Packages Only"
-        [4]="🖼️   Change Wallpaper"
-        [5]="🎨  Change Theme"
-        [6]="🔄  Restart Waybar"
-        [7]="🔍  Check System Health"
-        [8]="🆙  Update Setup (Git Pull)"
-        [9]="🗑️   Clean Generated Backups"
-        [10]="🩺  Environment Diagnostics"
-        [11]="🎮  GPU Setup"
-        [0]="✘   Exit"
+        [4]="🆙  Update Setup (Git Pull)"
+        [5]="🎮  GPU Setup"
+        [0]="⬅   Back"
     )
-
     declare -A actions=(
         [1]="action_full_setup"
         [2]="action_update_configs"
         [3]="action_install_packages"
-        [4]="action_wallpaper_changer"
-        [5]="action_theme_selector"
-        [6]="action_restart_waybar"
-        [7]="action_check_health"
-        [8]="action_git_pull"
-        [9]="action_cleanup_backups"
-        [10]="action_diagnostics"
-        [11]="action_gpu_setup"
+        [4]="action_git_pull"
+        [5]="action_gpu_setup"
+        [0]="menu_back"
+    )
+    local order=(1 2 3 4 5 0)
+    menu "Installation & Updates" labels actions order
+}
+
+submenu_customization() {
+    declare -A labels=(
+        [1]="🖼️   Change Wallpaper"
+        [2]="🎨  Change Theme"
+        [0]="⬅   Back"
+    )
+    declare -A actions=(
+        [1]="action_wallpaper_changer"
+        [2]="action_theme_selector"
+        [0]="menu_back"
+    )
+    local order=(1 2 0)
+    menu "Desktop Customization" labels actions order
+}
+
+submenu_maintenance() {
+    declare -A labels=(
+        [1]="🔄  Restart Waybar"
+        [2]="🔍  Check System Health"
+        [3]="🩺  Environment Diagnostics"
+        [4]="🗑️   Clean Generated Backups"
+        [0]="⬅   Back"
+    )
+    declare -A actions=(
+        [1]="action_restart_waybar"
+        [2]="action_check_health"
+        [3]="action_diagnostics"
+        [4]="action_cleanup_backups"
+        [0]="menu_back"
+    )
+    local order=(1 2 3 4 0)
+    menu "Maintenance & Diagnostics" labels actions order
+}
+
+interactive_menu() {
+    declare -A labels=(
+        [1]="📦  Installation & Updates"
+        [2]="🎨  Desktop Customization"
+        [3]="🛠️   Maintenance & Tools"
+        [0]="✘   Exit"
+    )
+
+    declare -A actions=(
+        [1]="submenu_install"
+        [2]="submenu_customization"
+        [3]="submenu_maintenance"
         [0]="action_exit"
     )
-    local order=(1 2 3 4 5 6 7 8 9 10 11 0)
+    local order=(1 2 3 0)
     
-    menu "" labels actions order
+    menu "Main Menu" labels actions order
 }
 
 # --- CLI Options ---

@@ -17,6 +17,7 @@ fi
 
 AIKO_LOG_COMPONENT="aiko"
 aiko_init_term
+aiko_enable_err_handler
 
 show_help() {
     cat <<EOF
@@ -39,6 +40,11 @@ Options:
   --list            Open the Aiko-List widget
   --sys             Open the Aiko-System widget
   --all             Open all Aiko widgets at once
+  --launcher        Open application launcher (wofi)
+  --power           Open power menu
+  --clip            Open clipboard history
+  --screenshot      Open screenshot menu
+  --minimize        Minimize/Restore active window
   --diag            Run system environment diagnostics
   --edit-usercard   Edit the User Card information
   --edit-logo       Edit terminal ASCII logo color and spacing
@@ -126,6 +132,27 @@ case "${1:-}" in
                 log "Please update manually from: https://github.com/watashi-00/AikoHyprSetup"
             fi
         fi
+        ;;
+    --launcher)
+        [ -f "$AIKO_SCRIPTS/launcher.sh" ] && exec bash "$AIKO_SCRIPTS/launcher.sh"
+        ;;
+    --power)
+        [ -f "$AIKO_SCRIPTS/power-menu.sh" ] && exec bash "$AIKO_SCRIPTS/power-menu.sh"
+        ;;
+    --clip)
+        [ -f "$AIKO_SCRIPTS/clipboard-history.sh" ] && exec bash "$AIKO_SCRIPTS/clipboard-history.sh"
+        ;;
+    --screenshot)
+        [ -f "$AIKO_SCRIPTS/screenshot.sh" ] && exec bash "$AIKO_SCRIPTS/screenshot.sh" "${2:-menu}"
+        ;;
+    --minimize)
+        [ -f "$AIKO_SCRIPTS/minimize.sh" ] && exec bash "$AIKO_SCRIPTS/minimize.sh" "${2:-toggle}"
+        ;;
+    --clip-listener)
+        [ -f "$AIKO_SCRIPTS/clipboard-listener.sh" ] && exec bash "$AIKO_SCRIPTS/clipboard-listener.sh"
+        ;;
+    --icon-listener)
+        [ -f "$AIKO_SCRIPTS/icon-listener.sh" ] && exec bash "$AIKO_SCRIPTS/icon-listener.sh"
         ;;
     --wallpaper)
         script="$AIKO_SCRIPTS/wallpaper.sh"
