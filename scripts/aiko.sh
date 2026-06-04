@@ -74,7 +74,24 @@ case "${1:-}" in
         fi
         ;;
     --gpu)
-        echo "GPU Setup functionality is coming soon!"
+        GPU_LOCAL="$PROJECT_ROOT/../gpu_setup/setup.sh"
+        if [ -f "$GPU_LOCAL" ]; then
+            exec sudo bash "$GPU_LOCAL"
+        else
+            echo "GPU Setup not found locally. Downloading and running from GitHub..."
+            if ! command -v git >/dev/null 2>&1; then
+                echo "Error: 'git' is required to download the GPU Setup Manager."
+                exit 1
+            fi
+            TEMP_GPU=$(mktemp -d)
+            if git clone --depth 1 https://github.com/watashi-00/gpu_setup.git "$TEMP_GPU"; then
+                exec sudo bash "$TEMP_GPU/setup.sh"
+            else
+                echo "Error: Failed to download GPU Setup Manager."
+                rm -rf "$TEMP_GPU"
+                exit 1
+            fi
+        fi
         ;;
     --update)
         if [ -d "$PROJECT_ROOT/.git" ]; then
