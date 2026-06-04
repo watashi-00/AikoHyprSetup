@@ -34,8 +34,13 @@ export ICON_RELOAD="🔄"
 # Detects the root of the AikoHyprSetup installation or repository.
 # Exports: AIKO_ROOT, AIKO_SCRIPTS, AIKO_WIDGETS, AIKO_THEMES, AIKO_ASSETS
 get_aiko_paths() {
-    # If AIKO_ROOT is already set and exists, don't re-detect (allows overrides)
+    # If AIKO_ROOT is already set and exists, we use it, but we MUST still export subdirs
     if [ -n "${AIKO_ROOT:-}" ] && [ -d "$AIKO_ROOT" ]; then
+        export AIKO_SCRIPTS="$AIKO_ROOT/scripts"
+        export AIKO_WIDGETS="$AIKO_ROOT/widgets"
+        export AIKO_THEMES="$AIKO_ROOT/themes"
+        export AIKO_ASSETS="$AIKO_ROOT/assets"
+        export AIKO_CONFIGS="$AIKO_ROOT/configs"
         return 0
     fi
 
