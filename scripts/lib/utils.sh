@@ -5,7 +5,6 @@
 
 # --- Version ---
 export AIKO_VERSION="2.1.4"
-export AIKO_HASH="b083700"
 
 # --- Colors ---
 export NC=$'\e[0m'
