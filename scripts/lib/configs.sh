@@ -257,7 +257,8 @@ EOF
 
     log "${MAGENTA}Generating initial themed icons (Pink Anime default)...${NC}"
     if [ -x "$waybar_dest/scripts/icon-gen.sh" ]; then
-        run "$waybar_dest/scripts/icon-gen.sh" "#ff8fbd"
+        # icon-gen.sh may return 200 to signal new icons were generated; treat as success
+        run "$waybar_dest/scripts/icon-gen.sh" "#ff8fbd" || [ $? -eq 200 ]
     fi
 
     log "${MAGENTA}Syncing Fastfetch logo properties...${NC}"
