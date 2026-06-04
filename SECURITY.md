@@ -14,7 +14,7 @@ Only the latest version of AikoHyprSetup is currently supported for security upd
 If you discover a security vulnerability within AikoHyprSetup, please do not open a public issue. Instead, report it privately to the maintainer.
 
 ### Where to report?
-Please send an email to [INSERT EMAIL ADDRESS] or open a private security advisory on GitHub if available.
+Please send an email to @watashi-00/nova2948@gmail.com. or open a private security advisory on GitHub if available.
 
 ### What to include?
 *   A detailed description of the vulnerability.
