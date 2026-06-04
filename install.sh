@@ -53,6 +53,7 @@ INSTALL_PACKAGES=1
 INSTALL_HYPR=1
 FORCE=0
 DRY_RUN=0
+AIKO_ROLLBACK_ON_ERROR=1
 
 # --- Load Modular Menu ---
 if [ -f "$AIKO_SCRIPTS/menu.sh" ]; then
@@ -264,10 +265,15 @@ action_cleanup_backups() {
     return 0
 }
 
+action_restore_backups() {
+    restore_generated_backups
+    return 0
+}
+
 action_exit() {
     if [ -t 1 ]; then clear; fi
     log "Exiting..."
-    return 127
+    return "$AIKO_EXIT_QUIT"
 }
 
 # Submenu Navigation...
@@ -316,6 +322,7 @@ submenu_maintenance() {
         [3]="🩺  Environment Diagnostics"
         [4]="🧪  Codebase Self-Test"
         [5]="🗑️   Clean Generated Backups"
+        [6]="🛟  Restore Backups"
         [0]="⬅   Back"
     )
     declare -A actions=(
@@ -324,9 +331,10 @@ submenu_maintenance() {
         [3]="action_diagnostics"
         [4]="action_self_test"
         [5]="action_cleanup_backups"
+        [6]="action_restore_backups"
         [0]="menu_back"
     )
-    local order=(1 2 3 4 5 0)
+    local order=(1 2 3 4 5 6 0)
     menu "Maintenance & Diagnostics" labels actions order
 }
 
@@ -360,6 +368,7 @@ Options:
   --no-hypr      Do not install hyprland.conf in ~/.config/hypr.
   --force        Overwrite files without asking.
   --dry-run      Show actions without copying/installing.
+  --restore-backups  Restore generated backup files from the current config paths.
   -h, --help     Show this help.
 
 If run without options, opens the interactive menu.
@@ -373,6 +382,7 @@ if [ "$#" -gt 0 ]; then
             --no-hypr) INSTALL_HYPR=0 ;;
             --force) FORCE=1 ;;
             --dry-run) DRY_RUN=1 ;;
+            --restore-backups) action_restore_backups; exit 0 ;;
             -h|--help) usage; exit 0 ;;
             *) die "Unknown option: $1" ;;
         esac
