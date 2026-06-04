@@ -42,6 +42,31 @@ aiko_enable_err_handler
 
 REPO_ISSUES="https://github.com/watashi-00/AikoHyprSetup/issues"
 
+check_for_updates() {
+    if ! have curl; then
+        return 0
+    fi
+
+    log "Checking for updates..."
+    
+    local remote_version
+    remote_version=$(curl -s https://raw.githubusercontent.com/watashi-00/AikoHyprSetup/master/scripts/lib/utils.sh | grep -oP 'export AIKO_VERSION="\K[^"]+' | head -1)
+    
+    if [ -z "$remote_version" ]; then
+        return 0
+    fi
+
+    if [ "$remote_version" != "$AIKO_VERSION" ]; then
+        warn "A newer version ($remote_version) is available! Current: $AIKO_VERSION"
+        if confirm "Would you like to update now?" "y"; then
+            action_git_pull
+            exit 0
+        fi
+    else
+        log "You are running the latest version."
+    fi
+}
+
 # Logic for source files location (repo vs installed)
 if [ -f "$AIKO_ROOT/waybar/config.jsonc" ]; then
     AIKO_SOURCE_WAYBAR="$AIKO_ROOT/waybar"
@@ -360,6 +385,8 @@ Options:
   --no-hypr      Do not install hyprland.conf in ~/.config/hypr.
   --force        Overwrite files without asking.
   --dry-run      Show actions without copying/installing.
+  --restore-backups  Restore generated backup files from the current config paths.
+  --check-updates Manually check for updates and prompt if available.
   -h, --help     Show this help.
 
 If run without options, opens the interactive menu.
@@ -373,6 +400,8 @@ if [ "$#" -gt 0 ]; then
             --no-hypr) INSTALL_HYPR=0 ;;
             --force) FORCE=1 ;;
             --dry-run) DRY_RUN=1 ;;
+            --restore-backups) action_restore_backups; exit 0 ;;
+            --check-updates) check_for_updates; exit 0 ;;
             -h|--help) usage; exit 0 ;;
             *) die "Unknown option: $1" ;;
         esac
@@ -384,5 +413,6 @@ if [ "$#" -gt 0 ]; then
     post_install_checks
     show_summary
 else
+    check_for_updates
     interactive_menu
 fi

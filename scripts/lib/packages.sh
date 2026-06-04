@@ -125,9 +125,14 @@ install_packages() {
     esac
 
     missing=""
+    local total_packages
+    total_packages=$(packages_for_pm "$pm" | wc -l)
+    local package_index=0
+
     while IFS= read -r pkg; do
         [ -n "$pkg" ] || continue
-        printf "  ${CYAN}%s${NC} Checking/Installing: ${WHITE}%s${NC}..." "$ICON_PACKAGE" "$pkg"
+        package_index=$((package_index + 1))
+        printf "  ${CYAN}%s${NC} [%d/%d] Checking/Installing: ${WHITE}%s${NC}..." "$ICON_PACKAGE" "$package_index" "$total_packages" "$pkg"
         
         # Create a temp file for error output
         local err_log
