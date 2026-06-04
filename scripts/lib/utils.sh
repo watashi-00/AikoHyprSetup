@@ -4,7 +4,8 @@
 # Sourced by main scripts for consistent behavior and reduced redundancy.
 
 # --- Version ---
-export AIKO_VERSION="2.1.3"
+export AIKO_VERSION="2.1.4"
+export AIKO_HASH="b083700"
 
 # --- Colors ---
 export NC=$'\e[0m'
