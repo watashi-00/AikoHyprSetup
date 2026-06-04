@@ -247,9 +247,17 @@ EOF
     log "${MAGENTA}Adjusting permissions...${NC}"
     find "$waybar_dest" -type f -name "*.sh" -exec chmod +x {} +
 
+    log "${MAGENTA}Cleaning up legacy scripts from root...${NC}"
+    for legacy in icon-gen.sh restart-waybar.sh wallpaper.sh theme-selector.sh aiko.sh; do
+        if [ -f "$waybar_dest/$legacy" ] && [ ! -L "$waybar_dest/$legacy" ]; then
+            log "Removing legacy script: $legacy"
+            run rm -f "$waybar_dest/$legacy"
+        fi
+    done
+
     log "${MAGENTA}Generating initial themed icons (Pink Anime default)...${NC}"
-    if [ -x "$waybar_dest/icon-gen.sh" ]; then
-        run "$waybar_dest/icon-gen.sh" "#ff8fbd"
+    if [ -x "$waybar_dest/scripts/icon-gen.sh" ]; then
+        run "$waybar_dest/scripts/icon-gen.sh" "#ff8fbd"
     fi
 
     log "${MAGENTA}Syncing Fastfetch logo properties...${NC}"
