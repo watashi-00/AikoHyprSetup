@@ -732,8 +732,26 @@ action_diagnostics() {
 }
 
 action_gpu_setup() {
-    log "GPU Setup functionality is coming soon!"
-    return 0
+    local gpu_local="$SOURCE_DIR/../gpu_setup/setup.sh"
+    if [ -f "$gpu_local" ]; then
+        log "Handing over to local GPU Setup Manager..."
+        exec sudo bash "$gpu_local"
+    else
+        log "GPU Setup not found locally. Downloading and running from GitHub..."
+        if ! command -v git >/dev/null 2>&1; then
+            error "Error: 'git' is required to download the GPU Setup Manager."
+            return 1
+        fi
+        local temp_gpu
+        temp_gpu=$(mktemp -d)
+        if git clone --depth 1 https://github.com/watashi-00/gpu_setup.git "$temp_gpu"; then
+            exec sudo bash "$temp_gpu/setup.sh"
+        else
+            error "Failed to download GPU Setup Manager."
+            rm -rf "$temp_gpu"
+            return 1
+        fi
+    fi
 }
 
 action_cleanup_backups() {
