@@ -3,25 +3,18 @@
 # diagnostics.sh - System health check for AikoHyprSetup
 # Usage: ./diagnostics.sh
 
-# --- Colors ---
-NC=$'\e[0m'
-BOLD=$'\e[1m'
-RED=$'\e[0;31m'
-GREEN=$'\e[0;32m'
-YELLOW=$'\e[1;33m'
-BLUE=$'\e[0;34m'
-CYAN=$'\e[0;36m'
+SCRIPT_DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
+LIB_UTILS="$SCRIPT_DIR/lib/utils.sh"
 
-# Icons
-CHECK="✔"
-ERROR="✘"
-WARN="⚠"
-INFO="ℹ"
+if [ -f "$LIB_UTILS" ]; then
+    # shellcheck disable=SC1091
+    source "$LIB_UTILS"
+else
+    echo "Error: utility library not found at $LIB_UTILS"
+    exit 1
+fi
 
-log() { printf "${BLUE}[diag]${NC} %s\n" "$*"; }
-success() { printf "${GREEN}[$CHECK]${NC} %s\n" "$*"; }
-warn() { printf "${YELLOW}[$WARN]${NC} %s\n" "$*"; }
-err() { printf "${RED}[$ERROR]${NC} %s\n" "$*"; }
+AIKO_LOG_COMPONENT="diag"
 
 divider() {
     printf "${CYAN}--------------------------------------------------${NC}\n"
@@ -36,10 +29,10 @@ log "Checking core dependencies..."
 deps=(hyprland waybar socat magick jq playerctl python3)
 missing=()
 for d in "${deps[@]}"; do
-    if command -v "$d" >/dev/null 2>&1; then
+    if have "$d"; then
         success "$d found: $(command -v "$d")"
     else
-        err "$d NOT found"
+        error "$d NOT found"
         missing+=("$d")
     fi
 done
@@ -51,7 +44,7 @@ for m in "${py_modules[@]}"; do
     if python3 -c "import $m" >/dev/null 2>&1; then
         success "Python module '$m' OK"
     else
-        err "Python module '$m' MISSING"
+        error "Python module '$m' MISSING"
     fi
 done
 
@@ -62,7 +55,7 @@ for l in "${listeners[@]}"; do
     if pgrep -f "$l" >/dev/null; then
         success "$l is running"
     else
-        err "$l is NOT running"
+        error "$l is NOT running"
     fi
 done
 
@@ -71,7 +64,7 @@ log "Checking Hyprland environment..."
 if [ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]; then
     success "HYPRLAND_INSTANCE_SIGNATURE is set"
 else
-    err "HYPRLAND_INSTANCE_SIGNATURE is empty (Not in Hyprland?)"
+    error "HYPRLAND_INSTANCE_SIGNATURE is empty (Not in Hyprland?)"
 fi
 
 # --- 5. Filesystem & Links ---
@@ -80,7 +73,7 @@ waybar_dir="$HOME/.config/waybar"
 if [ -L "$waybar_dir/style.css" ]; then
     success "Global theme link: $(readlink "$waybar_dir/style.css")"
 else
-    err "Global theme link (style.css) MISSING"
+    error "Global theme link (style.css) MISSING"
 fi
 
 widgets=("aiko-note" "aiko-player" "aiko-clock" "aiko-usercard" "aiko-weather" "aiko-list" "aiko-sys")
@@ -93,7 +86,7 @@ for w in "${widgets[@]}"; do
             warn "Widget theme link ($w) MISSING"
         fi
     else
-        err "Widget folder ($w) MISSING"
+        error "Widget folder ($w) MISSING"
     fi
 done
 

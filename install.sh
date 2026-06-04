@@ -1,17 +1,24 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# --- Terminal Cleanup Trap ---
-cleanup_term() {
-    printf "\e[?1004l\e[?2004l"
-}
-trap cleanup_term EXIT
-# -----------------------------
-
 # --- Initial Settings ---
-# Resolve the REAL directory of this script to handle symlinks and different call locations
 REAL_PATH="$(readlink -f "${BASH_SOURCE[0]}")"
 SOURCE_DIR="$(cd "$(dirname "$REAL_PATH")" && pwd)"
+
+# --- Load Central Utility Library ---
+LIB_UTILS="$SOURCE_DIR/scripts/lib/utils.sh"
+[ ! -f "$LIB_UTILS" ] && LIB_UTILS="$SOURCE_DIR/lib/utils.sh"
+
+if [ -f "$LIB_UTILS" ]; then
+    # shellcheck disable=SC1091
+    source "$LIB_UTILS"
+else
+    echo "Error: utility library not found at $LIB_UTILS"
+    exit 1
+fi
+
+AIKO_LOG_COMPONENT="install"
+aiko_init_term
 
 REPO_ISSUES="https://github.com/watashi-00/AikoHyprSetup/issues"
 if [ -f "$SOURCE_DIR/waybar/config.jsonc" ]; then
