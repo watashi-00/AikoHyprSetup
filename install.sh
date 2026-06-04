@@ -162,6 +162,7 @@ action_git_pull() {
     return 0
 }
 
+# Wallpaper, theme and other modules...
 action_wallpaper_changer() {
     local wp_script="$AIKO_SCRIPTS/wallpaper.sh"
     if [ -f "$wp_script" ]; then
@@ -252,7 +253,7 @@ action_exit() {
     return 127
 }
 
-# Menu Sub-Navigation Functions
+# Submenu Navigation...
 submenu_install() {
     declare -A labels=(
         [1]="🚀  Full Setup (Recommended)"
@@ -360,6 +361,7 @@ if [ "$#" -gt 0 ]; then
     done
     [ "$INSTALL_PACKAGES" -eq 1 ] && install_packages
     install_configs
+    action_global_aiko "silent"
     post_install_checks
     show_summary
 else
