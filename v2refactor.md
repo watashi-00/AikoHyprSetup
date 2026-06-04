@@ -18,7 +18,8 @@
 *   **Cleaned Launchers**: Updated all `.desktop` files and Hyprland keybindings to use the global `aiko` command.
 *   **Reduced Boilerplate**: Removed all redundant `.sh` files from widget directories.
 
-## 🔜 Step 4: Final Standardization & UX
-*   Refactor smaller helper scripts in `scripts/`.
-*   Review all Python widgets for consistent error handling and path usage.
-*   Final testing and version bump to v2.0.0.
+## ✅ Step 4: Final Standardization & UX (COMPLETED)
+*   Standardized logic-heavy helper scripts in `scripts/` (`launcher.sh`, `icon-gen.sh`, `screenshot.sh`, etc.) to use `utils.sh`.
+*   Verified path consistency in Python widgets.
+*   Updated `restart-waybar.sh` to use unified launcher logic.
+*   **Official Version Bump**: Project upgraded to **v2.0.0**.

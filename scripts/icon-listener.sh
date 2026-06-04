@@ -3,18 +3,25 @@
 # icon-listener.sh - Listens for Hyprland window events to generate icons in real-time
 # Usage: ./icon-listener.sh
 
-GEN_SCRIPT="$HOME/.config/waybar/scripts/icon-gen.sh"
-THEME_FILE="$HOME/.config/waybar/style.css"
+# Resolve real path to locate utility library
+SCRIPT_DIR_LIS="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
+LIB_UTILS_LIS="$SCRIPT_DIR_LIS/lib/utils.sh"
 
-# If the scripts are not in the config folder yet, use the local one (repo)
-if [ ! -f "$GEN_SCRIPT" ]; then
-    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-    GEN_SCRIPT="$SCRIPT_DIR/icon-gen.sh"
-    THEME_FILE="$SCRIPT_DIR/../waybar/style.css"
+if [ -f "$LIB_UTILS_LIS" ]; then
+    # shellcheck disable=SC1091
+    source "$LIB_UTILS_LIS"
+else
+    AIKO_ROOT="$HOME/.config/waybar"
+    AIKO_SCRIPTS="$AIKO_ROOT/scripts"
 fi
 
+AIKO_LOG_COMPONENT="icons"
+
+GEN_SCRIPT="$AIKO_SCRIPTS/icon-gen.sh"
+STYLE_FILE="$AIKO_ROOT/style.css"
+
 get_accent_color() {
-    local real_theme=$(readlink -f "$THEME_FILE")
+    local real_theme=$(readlink -f "$STYLE_FILE")
     local color=$(grep "@mako-border" "$real_theme" | cut -d':' -f2 | tr -d '[:space:]' | head -n 1)
     echo "${color:-#ff8fbd}"
 }
@@ -22,7 +29,7 @@ get_accent_color() {
 reload_bottom_bar() {
     pkill -f "waybar --config .*config-bottom.jsonc" || true
     sleep 0.4
-    nohup waybar --config "$HOME/.config/waybar/config-bottom.jsonc" --style "$HOME/.config/waybar/style.css" >/dev/null 2>&1 &
+    nohup waybar --config "$AIKO_ROOT/config-bottom.jsonc" --style "$STYLE_FILE" >/dev/null 2>&1 &
 }
 
 handle() {
@@ -38,7 +45,7 @@ handle() {
                 if [ $exit_code -eq 200 ]; then
                     reload_bottom_bar
                 elif [ $exit_code -ne 0 ]; then
-                    echo "[listener] Icon generation failed for $class (code: $exit_code)" >&2
+                    error "Icon generation failed for $class (code: $exit_code)"
                 fi
             fi
             ;;
@@ -46,7 +53,12 @@ handle() {
 }
 
 # Listen to hyprland socket
-echo "[listener] Aiko Icon Listener active..."
-socat -U - "UNIX-CONNECT:$XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock" | while read -r line; do
-    handle "$line"
-done
+if [ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]; then
+    log "Aiko Icon Listener active..."
+    socat -U - "UNIX-CONNECT:$XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock" | while read -r line; do
+        handle "$line"
+    done
+else
+    error "HYPRLAND_INSTANCE_SIGNATURE not found. Icon listener cannot start."
+    exit 1
+fi

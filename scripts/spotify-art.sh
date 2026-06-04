@@ -1,4 +1,18 @@
 #!/usr/bin/env bash
+
+# Resolve real path to locate utility library
+SCRIPT_DIR_ART="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
+LIB_UTILS_ART="$SCRIPT_DIR_ART/lib/utils.sh"
+
+if [ -f "$LIB_UTILS_ART" ]; then
+    # shellcheck disable=SC1091
+    source "$LIB_UTILS_ART"
+fi
+
+if ! have playerctl; then
+    exit 0
+fi
+
 artUrl=$(playerctl metadata mpris:artUrl 2> /dev/null)
 
 if [ -z "$artUrl" ]; then
@@ -24,7 +38,9 @@ fi
 
 if [ "$artUrl" != "$lastUrl" ]; then
     # try download, fall back to leaving previous file
-    curl -s -L "$artUrl" -o "$filename" || true
+    if have curl; then
+        curl -s -L "$artUrl" -o "$filename" || true
+    fi
     echo "$artUrl" > "$lastUrlFile"
 fi
 

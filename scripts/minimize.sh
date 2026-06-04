@@ -1,4 +1,18 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+# Resolve real path to locate utility library
+SCRIPT_DIR_MIN="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
+LIB_UTILS_MIN="$SCRIPT_DIR_MIN/lib/utils.sh"
+
+if [ -f "$LIB_UTILS_MIN" ]; then
+    # shellcheck disable=SC1091
+    source "$LIB_UTILS_MIN"
+fi
+
+if ! have hyprctl || ! have jq; then
+    exit 1
+fi
+
 MODE=$1
 ADDR=$2
 

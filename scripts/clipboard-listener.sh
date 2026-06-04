@@ -1,6 +1,15 @@
 #!/usr/bin/env bash
 
-if ! command -v wl-paste >/dev/null 2>&1 || ! command -v cliphist >/dev/null 2>&1; then
+# Resolve real path to locate utility library
+SCRIPT_DIR_CLIP_L="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
+LIB_UTILS_CLIP_L="$SCRIPT_DIR_CLIP_L/lib/utils.sh"
+
+if [ -f "$LIB_UTILS_CLIP_L" ]; then
+    # shellcheck disable=SC1091
+    source "$LIB_UTILS_CLIP_L"
+fi
+
+if ! have wl-paste || ! have cliphist; then
     exit 0
 fi
 
