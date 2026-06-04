@@ -47,6 +47,7 @@ Options:
   --icon-listener   Start the icon window listener
   --screenshot      Open screenshot menu
   --minimize        Minimize/Restore active window
+  --test            Run internal codebase integrity test
   --diag            Run system environment diagnostics
   --edit-usercard   Edit the User Card information
   --edit-logo       Edit terminal ASCII logo color and spacing
@@ -152,6 +153,9 @@ case "${1:-}" in
         ;;
     --screenshot)
         [ -f "$AIKO_SCRIPTS/screenshot.sh" ] && exec bash "$AIKO_SCRIPTS/screenshot.sh" "${2:-menu}"
+        ;;
+    --test)
+        [ -f "$AIKO_SCRIPTS/test.sh" ] && exec bash "$AIKO_SCRIPTS/test.sh"
         ;;
     --minimize)
         [ -f "$AIKO_SCRIPTS/minimize.sh" ] && exec bash "$AIKO_SCRIPTS/minimize.sh" "${2:-toggle}"
