@@ -1,4 +1,16 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+# menu.sh - Modular Menu System for AikoHyprSetup
+# Integrated with utils.sh for consistent styling and behavior.
+
+# Resolve real path to locate utility library
+SCRIPT_DIR_MENU="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
+LIB_UTILS_MENU="$SCRIPT_DIR_MENU/lib/utils.sh"
+
+if [ -f "$LIB_UTILS_MENU" ]; then
+    # shellcheck disable=SC1091
+    source "$LIB_UTILS_MENU"
+fi
 
 # Return from the current menu. Useful for submenu "Back" actions.
 menu_back() {
@@ -30,7 +42,7 @@ _menu_render() {
 
     _menu_clear
 
-    # If a header function exists in the main script, call it
+    # If a header function exists in the calling script, call it
     if declare -f print_header > /dev/null; then
         print_header
     fi
@@ -61,14 +73,14 @@ menu() {
     
     local choice key action action_status
 
-    # Ensure terminal focus tracking and bracketed paste are disabled
-    printf "\e[?1004l\e[?2004l"
+    # Standardize terminal state
+    aiko_cleanup_term
 
     while true; do
         _menu_render "$labels_name" "$order_name"
         
-        # Disable again just in case a sub-command turned them on
-        printf "\e[?1004l\e[?2004l"
+        # Ensure focus/paste tracking stays off
+        aiko_cleanup_term
         read -r choice
         
         if [[ "$choice" =~ ^[Qq]$ ]]; then
@@ -115,33 +127,5 @@ menu() {
             printf "${RED}Invalid option!${NC}\n"
             sleep 1
         fi
-    done
-}
-
-# Usability utility for Y/N prompts
-confirm() {
-    local prompt="$1"
-    local default="${2:-y}"
-    local response
-
-    while true; do
-        if [[ "$default" == "y" ]]; then
-            printf "%b %s [Y/n]: %b" "${CYAN}${BOLD}" "$prompt" "${NC}"
-        else
-            printf "%b %s [y/N]: %b" "${CYAN}${BOLD}" "$prompt" "${NC}"
-        fi
-        
-        read -r response
-        response=$(echo "$response" | tr '[:upper:]' '[:lower:]')
-        
-        if [[ -z "$response" ]]; then
-            response="$default"
-        fi
-
-        case "$response" in
-            y|yes) return 0 ;;
-            n|no) return 1 ;;
-            *) printf "${RED}Please enter 'y' or 'n'.${NC}\n" ;;
-        esac
     done
 }

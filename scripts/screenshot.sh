@@ -1,5 +1,18 @@
 #!/usr/bin/env bash
 
+# Resolve real path to locate utility library
+SCRIPT_DIR_SHOT="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
+LIB_UTILS_SHOT="$SCRIPT_DIR_SHOT/lib/utils.sh"
+
+if [ -f "$LIB_UTILS_SHOT" ]; then
+    # shellcheck disable=SC1091
+    source "$LIB_UTILS_SHOT"
+else
+    AIKO_ROOT="$HOME/.config/waybar"
+fi
+
+AIKO_LOG_COMPONENT="shot"
+
 # Screenshot script for Hyprland
 DIR="$HOME/Imagens/Screenshots"
 mkdir -p "$DIR"
@@ -7,7 +20,7 @@ FILE="$DIR/print_$(date +'%Y-%m-%d_%H-%M-%S').png"
 
 # Check if swappy is installed for editing
 EDITOR_CMD="swappy -f"
-if ! command -v swappy &> /dev/null; then
+if ! have swappy; then
     EDITOR_CMD="xdg-open"
 fi
 
@@ -23,7 +36,7 @@ case "$1" in
             pkill -f "config-screenshot.jsonc"
             exit 0
         fi
-        waybar -c "$HOME/.config/waybar/config-screenshot.jsonc" -s "$HOME/.config/waybar/style.css" &
+        waybar -c "$AIKO_ROOT/config-screenshot.jsonc" -s "$AIKO_ROOT/style.css" &
         exit 0
         ;;
     "area")

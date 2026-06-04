@@ -33,9 +33,9 @@ cd AikoHyprSetup
 ./install.sh
 ```
 
-## ✨ Features & Aiko CLI
+## ✨ Features & Aiko CLI v2
 
-AikoHyprSetup comes with a powerful global CLI command and a suite of interactive Python widgets that run right on your desktop.
+AikoHyprSetup comes with a powerful global CLI command and a suite of interactive Python widgets that run right on your desktop. The setup is now completely modular, using a centralized utility library for consistent performance and design.
 
 Once installed, you can use the `aiko` command from anywhere to manage your environment:
 
@@ -43,12 +43,16 @@ Once installed, you can use the `aiko` command from anywhere to manage your envi
 aiko --help         # Show all available commands
 aiko --theme        # Open the interactive Theme Selector
 aiko --wallpaper    # Open the interactive Wallpaper Selector
+aiko --launcher     # Open application launcher (Wofi)
+aiko --power        # Open stylized power menu
+aiko --clip         # Open clipboard history
+aiko --screenshot   # Open screenshot utility bar
 aiko --diag         # Run system health and dependencies diagnostics
 aiko --restart      # Reload Waybar and Hyprland
 ```
 
 ### 🧩 Interactive Widgets
-The setup includes rich, standalone floating widgets for Waybar. You can trigger them from the Waybar interface or via the CLI:
+The setup includes rich, standalone floating widgets for Waybar. They are now powered by a unified launcher that handles binary fallbacks and environment detection:
 *   `aiko --note` : A sticky note app for quick thoughts.
 *   `aiko --clock` : A beautiful oversized desktop clock.
 *   `aiko --player` : A dedicated media player controller with cover art.
@@ -61,18 +65,16 @@ The setup includes rich, standalone floating widgets for Waybar. You can trigger
 ## 🛠️ Structure and Locations
 Repo Path: `./` | System Path: `~/.config/waybar/`
 
-*   **`waybar/config.jsonc`**: Main configuration file (Top Bar). Defines modules like clock, battery, and spotify.
-*   **`waybar/config-bottom.jsonc`**: Bottom bar configuration (dock/pill style).
-*   **`waybar/config-left.jsonc`**: Left sidebar configuration (experimental).
-*   **`waybar/config-screenshot.jsonc`**: Simplified floating bar used during screenshots or HUD.
-*   **`themes/style.css`**: Global CSS for all bars. Controls colors, animations, and the "pink anime" look.
-*   **`scripts/restart-waybar.sh`**: Script to kill and restart Waybar applying all configurations.
+*   **`waybar/`**: Contains the bar configuration files (Top, Bottom, Left, Screenshot).
+*   **`scripts/lib/`**: The core logic of V2. Contains modular scripts for system handling, packages, and configurations.
+*   **`scripts/`**: Specialized helper scripts (Wallpaper, Theme Selector, Listeners).
+*   **`widgets/`**: Standalone GTK/Python widgets.
+*   **`themes/`**: Style definitions for all bars and widgets.
 
 ### 🎵 Media & Audio Scripts
 *   **`scripts/spotify-art.sh`**: Downloads and displays the current album art.
 *   **`scripts/spotify-info.sh`**: Returns "Artist - Title" for the main module.
-*   **`scripts/spotify-playstate.sh`**: Dynamic Play/Pause icons.
-*   **`scripts/audio-output.sh`** & **`scripts/audio-input.sh`**: Volume/Mute display and control for outputs and microphones.
+*   **`scripts/audio-output.sh`** & **`scripts/audio-input.sh`**: Volume/Mute display and control.
 
 ## 🚀 Hyprland & System
 *   **`configs/hypr/hyprland.conf`**: Base Hyprland configuration (binds, window rules).

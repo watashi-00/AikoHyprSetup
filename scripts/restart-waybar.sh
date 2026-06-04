@@ -1,9 +1,23 @@
 #!/usr/bin/env bash
 
-# Paths
-WAYBAR_DIR="$HOME/.config/waybar"
-STYLE_CSS="$WAYBAR_DIR/style.css"
-SCRIPTS_DIR="$WAYBAR_DIR/scripts"
+# Resolve real path to locate utility library
+SCRIPT_DIR_RESTART="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
+LIB_UTILS_RESTART="$SCRIPT_DIR_RESTART/lib/utils.sh"
+
+if [ -f "$LIB_UTILS_RESTART" ]; then
+    # shellcheck disable=SC1091
+    source "$LIB_UTILS_RESTART"
+else
+    # Fallback paths
+    NC=$'\e[0m'
+    BLUE=$'\e[0;34m'
+    AIKO_ROOT="$HOME/.config/waybar"
+    AIKO_SCRIPTS="$AIKO_ROOT/scripts"
+fi
+
+AIKO_LOG_COMPONENT="restart"
+
+STYLE_CSS="$AIKO_ROOT/style.css"
 
 # Kill all running Waybar instances and listeners
 killall waybar || true
@@ -22,44 +36,45 @@ if [ -L "$STYLE_CSS" ]; then
         ACCENT_COLOR=$(grep "@mako-border" "$ACTIVE_THEME" | cut -d':' -f2 | tr -d '[:space:]')
         [ -z "$ACCENT_COLOR" ] && ACCENT_COLOR="#ff8fbd"
         
-        echo "Syncing icons and colors for active theme: $(basename "$ACTIVE_THEME")"
+        log "Syncing icons and colors for active theme: $(basename "$ACTIVE_THEME")"
         
         # Run icon generator
-        if [ -f "$SCRIPTS_DIR/icon-gen.sh" ]; then
-            bash "$SCRIPTS_DIR/icon-gen.sh" "$ACCENT_COLOR"
+        if [ -f "$AIKO_SCRIPTS/icon-gen.sh" ]; then
+            bash "$AIKO_SCRIPTS/icon-gen.sh" "$ACCENT_COLOR"
         fi
         
         # Sync fastfetch
-        if [ -f "$SCRIPTS_DIR/sync-fastfetch.py" ]; then
-            python3 "$SCRIPTS_DIR/sync-fastfetch.py"
+        if [ -f "$AIKO_SCRIPTS/sync-fastfetch.py" ]; then
+            python3 "$AIKO_SCRIPTS/sync-fastfetch.py"
         fi
     fi
 fi
 
 # Apply wallpaper (static or animated)
-if [ -x "$WAYBAR_DIR/wallpaper.sh" ]; then
-    "$WAYBAR_DIR/wallpaper.sh" apply
+if [ -f "$AIKO_SCRIPTS/wallpaper.sh" ]; then
+    bash "$AIKO_SCRIPTS/wallpaper.sh" apply
 fi
 
 # Start the three instances
-nohup waybar --config "$WAYBAR_DIR/config-left.jsonc" --style "$STYLE_CSS" >/dev/null 2>&1 &
+nohup waybar --config "$AIKO_ROOT/config-left.jsonc" --style "$STYLE_CSS" >/dev/null 2>&1 &
 sleep 0.4
-nohup waybar --config "$WAYBAR_DIR/config.jsonc" --style "$STYLE_CSS" >/dev/null 2>&1 &
+nohup waybar --config "$AIKO_ROOT/config.jsonc" --style "$STYLE_CSS" >/dev/null 2>&1 &
 sleep 0.4
-nohup waybar --config "$WAYBAR_DIR/config-bottom.jsonc" --style "$STYLE_CSS" >/dev/null 2>&1 &
+nohup waybar --config "$AIKO_ROOT/config-bottom.jsonc" --style "$STYLE_CSS" >/dev/null 2>&1 &
 
 # Restart Listeners
-nohup "$SCRIPTS_DIR/icon-listener.sh" >/dev/null 2>&1 &
-nohup "$SCRIPTS_DIR/clipboard-listener.sh" >/dev/null 2>&1 &
+nohup "$AIKO_SCRIPTS/icon-listener.sh" >/dev/null 2>&1 &
+nohup "$AIKO_SCRIPTS/clipboard-listener.sh" >/dev/null 2>&1 &
 
 # Restart Aiko Widgets if they were running
-widgets=("aiko-clock" "aiko-weather" "aiko-note" "aiko-player" "aiko-list" "aiko-sys" "aiko-usercard")
-for widget in "${widgets[@]}"; do
+widgets=("clock" "weather" "note" "player" "list" "sys" "usercard")
+for w in "${widgets[@]}"; do
+    widget="aiko-$w"
     if pgrep -f "$widget.py" >/dev/null || pgrep -f "$widget-bin" >/dev/null; then
-        echo "Restarting $widget..."
+        log "Restarting $widget..."
         pkill -f "$widget.py" || true
         pkill -f "$widget-bin" || true
-        # Start it back using its launcher script
-        nohup bash "$WAYBAR_DIR/widgets/$widget/$widget.sh" >/dev/null 2>&1 &
+        # Start it back using the global CLI
+        nohup aiko --"$w" >/dev/null 2>&1 &
     fi
 done
