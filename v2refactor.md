@@ -14,10 +14,10 @@ Multiple scripts redefine the same or very similar helper functions. These shoul
     *   Inconsistency: Different prefix labels (e.g., `[install]`, `[diag]`, `[wallpaper]`) and icon sets.
     *   Goal: Create a standardized logging library with optional component labels.
 *   **`confirm()` logic**:
-    *   Found in: `scripts/menu.sh` (as function), `install.sh` (manual `read -r`).
-    *   Goal: Use the centralized function everywhere.
+    *   Investigation: `utils.sh` has a standard version, but `menu.sh` still carries its own redundant version, and `install.sh` uses manual `read -r` in some places.
+    *   Goal: Use the centralized `confirm` function everywhere.
 *   **Terminal Cleanup Trap**:
-    *   Found in: `scripts/aiko.sh`, `install.sh`.
+    *   Found in: `scripts/aiko.sh`, `install.sh`, `scripts/menu.sh`.
     *   Goal: Centralize the trap setup and escape sequences.
 
 ## 2. Global Variable Inconsistencies
@@ -25,34 +25,28 @@ Multiple scripts redefine the same or very similar helper functions. These shoul
 Many scripts redefine path variables and environment settings independently.
 
 *   **Color Codes**:
-    *   Redefined in: `install.sh`, `scripts/diagnostics.sh`, `build.sh`, `sys/error_handler.sh`, `scripts/gpu_setup/src/generic_use/colors.sh`.
-    *   Goal: Single source of truth for CLI colors.
-*   **Path Resolution (`PROJECT_ROOT`, `WAYBAR_DIR`, `SOURCE_DIR`)**:
-    *   Redefined in: Every major script.
-    *   Issue: Some use `readlink -f`, some use hardcoded fallback paths.
-    *   Goal: Centralized environment discovery sourced at the start of every script.
+    *   Investigation: Redefined in `install.sh`, `scripts/diagnostics.sh`, `build.sh`, `sys/error_handler.sh`, `scripts/menu.sh`.
+    *   Goal: Single source of truth for CLI colors via `utils.sh`.
+*   **Path Resolution (`PROJECT_ROOT`, `WAYBAR_DIR`, `SOURCE_DIR`, `REPO_DIR`)**:
+    *   Investigation: Every script uses a different naming convention and detection logic (`readlink` vs hardcoded fallback).
+    *   Goal: Add a standard path discovery logic to `utils.sh` that exports a standard set of path variables.
 *   **Hardcoded Paths**:
-    *   Issue: Literal `/home/watashi` exists in many files and relies on `sed` patching during installation.
-    *   Goal: Use environment variables or relative paths calculated at runtime.
+    *   Investigation: Literal `/home/watashi` found in 8 `.desktop` files in `configs/applications/`.
+    *   Goal: Use environment variables or continue patching but with a clearly defined placeholder in source files.
 *   **Version Definition**:
     *   Found in: `scripts/aiko.sh`.
-    *   Goal: Should be accessible globally by all components.
+    *   Goal: Move to a shared config or defined once in `utils.sh` for all components to access.
 
 ## 3. Structural & Design Issues
 
 *   **Installer Bloat**: `install.sh` contains over 800 lines of mixed logic (UI, file copying, package management).
     *   Goal: Split into modules (e.g., `lib/packages.sh`, `lib/config_installer.sh`).
-*   **Widget Redundancy**: Most widget scripts (`widgets/**/*.sh`) perform very similar tasks (checking for binary, python modules, and finding paths).
-    *   Goal: Create a common widget launcher/wrapper or a shared bootstrapper to reduce boilerplate in each widget folder.
-*   **Theme Management**: The system relies on `theme.css` symlinks in every widget folder.
-    *   Goal: Centralize how widgets load themes (perhaps a global environment variable or a more robust dynamic loader).
-*   **Dependency Management**: Dependency lists are hardcoded in `install.sh` and `scripts/diagnostics.sh`.
-    *   Goal: Centralize the dependency manifest.
-*   **Configuration Handling**: Scripts manually `grep`/`sed` configuration files.
-    *   Goal: Standardize config reading/writing (perhaps using a simple key=value helper).
+*   **Widget Redundancy**: Most widget scripts (`widgets/**/*.sh`) are 90% identical in their launching logic.
+    *   Goal: Create a common widget launcher script or a shared bootstrapper.
+*   **Un-standardized Scripts**: Found 25 shell scripts that still don't source `utils.sh`.
+    *   Goal: Systematic refactor of all scripts in `scripts/` and `widgets/`.
 
 ## 4. Specific Refactor Targets
 
-*   **`scripts/menu.sh`**: This is a great modular base, but it's used inconsistently.
-*   **`sys/error_handler.sh`**: Should be integrated into the central utility library.
-*   **`scripts/gpu_setup/`**: Ensure this remains clean as it hands over the terminal.
+*   **`scripts/menu.sh`**: Needs to be refactored to use `utils.sh` variables and logging.
+*   **`scripts/lib/utils.sh`**: Needs to expand to include path discovery and versioning.
