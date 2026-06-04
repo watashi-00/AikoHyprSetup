@@ -156,8 +156,8 @@ _aiko_error_handler() {
     local command="$2"
     local component="${AIKO_LOG_COMPONENT:-system}"
     
-    # Ignore code 127/130 (Exit or Interrupt)
-    if [ $exit_code -eq 127 ] || [ $exit_code -eq 130 ]; then
+    # Ignore code 127/130 (Exit or Interrupt) and 2 (Clean Menu Exit)
+    if [ $exit_code -eq 127 ] || [ $exit_code -eq 130 ] || [ $exit_code -eq 2 ]; then
         return
     fi
 
