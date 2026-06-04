@@ -2,8 +2,10 @@
 set -euo pipefail
 
 # --- Initial Settings ---
-REAL_PATH="$(readlink -f "${BASH_SOURCE[0]}")"
-SOURCE_DIR_LOCAL="$(cd "$(dirname "$REAL_PATH")" && pwd)"
+# Use BASH_SOURCE[0] if available (when run as script), fallback to $0
+SCRIPT_REF="${BASH_SOURCE[0]:-$0}"
+REAL_PATH="$(readlink -f "$SCRIPT_REF" 2>/dev/null || echo "$SCRIPT_REF")"
+SOURCE_DIR_LOCAL="$(cd "$(dirname "$REAL_PATH")" && pwd 2>/dev/null || pwd)"
 
 # --- Load Central Utility Library ---
 LIB_UTILS="$SOURCE_DIR_LOCAL/scripts/lib/utils.sh"
