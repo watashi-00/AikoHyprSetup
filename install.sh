@@ -7,6 +7,11 @@ SCRIPT_REF="${BASH_SOURCE[0]:-$0}"
 REAL_PATH="$(readlink -f "$SCRIPT_REF" 2>/dev/null || echo "$SCRIPT_REF")"
 SOURCE_DIR_LOCAL="$(cd "$(dirname "$REAL_PATH")" && pwd 2>/dev/null || pwd)"
 
+# Force AIKO_ROOT to the current installer directory to ensure modules 
+# are loaded from the downloaded package and not from an old installation.
+export AIKO_ROOT="$SOURCE_DIR_LOCAL"
+export AIKO_SCRIPTS="$AIKO_ROOT/scripts"
+
 # --- Load Central Utility Library ---
 LIB_UTILS="$SOURCE_DIR_LOCAL/scripts/lib/utils.sh"
 [ ! -f "$LIB_UTILS" ] && LIB_UTILS="$SOURCE_DIR_LOCAL/lib/utils.sh"
