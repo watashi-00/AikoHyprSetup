@@ -25,15 +25,20 @@ else
 fi
 
 # --- Load Installer Modules ---
-for module in system.sh packages.sh configs.sh health.sh; do
-    module_path="$AIKO_SCRIPTS/lib/$module"
+load_installer_module() {
+    local module="$1"
+    local module_path="$AIKO_SCRIPTS/lib/$module"
+
     if [ -f "$module_path" ]; then
         # shellcheck disable=SC1090
         source "$module_path"
     else
-        error "Installer module not found: $module"
-        exit 1
+        die "Installer module not found: $module_path. Verify the AikoHyprSetup repository is intact." "$AIKO_EXIT_MISSING_MODULE"
     fi
+}
+
+for module in system.sh packages.sh configs.sh health.sh; do
+    load_installer_module "$module"
 done
 
 AIKO_LOG_COMPONENT="install"
@@ -108,7 +113,7 @@ action_full_setup() {
     post_install_checks
     show_summary
     apply_changes
-    return 130
+    return "$AIKO_EXIT_MENU_BACK"
 }
 
 action_update_configs() {
@@ -267,7 +272,7 @@ action_cleanup_backups() {
 action_exit() {
     if [ -t 1 ]; then clear; fi
     log "Exiting..."
-    return 127
+    return "$AIKO_EXIT_QUIT"
 }
 
 # Submenu Navigation...
