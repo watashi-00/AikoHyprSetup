@@ -154,22 +154,15 @@ install_configs() {
     done
 
     log "${MAGENTA}Installing helper scripts...${NC}"
-    if [ -d "$AIKO_SCRIPTS" ]; then
-        # Avoid subshell by using process substitution
-        while read -r script_src; do
-            copy_file "$script_src" "$waybar_dest/$(basename "$script_src")"
-            patch_installed_paths "$waybar_dest/$(basename "$script_src")"
-        done < <(find "$AIKO_SCRIPTS" -maxdepth 1 -type f \( -name "*.sh" -o -name "*.py" \))
-    fi
-
-    log "${MAGENTA}Installing Installer itself...${NC}"
-    copy_file "$REAL_PATH" "$waybar_dest/install.sh"
-    
+    # Scripts now live ONLY in the scripts/ subfolder of the destination
     if [ -d "$AIKO_SCRIPTS" ]; then
         copy_dir_contents "$AIKO_SCRIPTS" "$waybar_dest/scripts"
         # Standardize paths in installed scripts
         find "$waybar_dest/scripts" -type f -exec sed -i "s#@HOME@#$HOME#g;s#/home/watashi#$HOME#g;s#\$HOME#$HOME#g;s#~/.config#$HOME/.config#g" {} +
     fi
+
+    log "${MAGENTA}Installing Installer itself...${NC}"
+    copy_file "$REAL_PATH" "$waybar_dest/install.sh"
 
     log "${MAGENTA}Installing Themes...${NC}"
     if [ -d "$AIKO_THEMES" ]; then

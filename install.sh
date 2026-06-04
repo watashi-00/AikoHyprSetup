@@ -184,7 +184,7 @@ action_theme_selector() {
 
 action_global_aiko() {
     local mode="${1:-normal}"
-    local aiko_src="$HOME/.config/waybar/aiko.sh"
+    local aiko_src="$HOME/.config/waybar/scripts/aiko.sh"
     local aiko_dest="/usr/local/bin/aiko"
 
     if [ ! -f "$aiko_src" ]; then

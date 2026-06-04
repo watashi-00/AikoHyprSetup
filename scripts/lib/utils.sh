@@ -44,15 +44,13 @@ get_aiko_paths() {
     local caller_dir
     caller_dir="$(cd "$(dirname "$(readlink -f "$caller_path")")" && pwd)"
 
-    # CWD might be the repo root even if the script is called from elsewhere
-    local cwd_dir
-    cwd_dir="$(pwd)"
+    local installed_path="$HOME/.config/waybar"
 
     # Detection Priority:
-    # 1. Check if we are in the repository root (look for marker files)
-    if [ -f "$cwd_dir/install.sh" ] && [ -d "$cwd_dir/waybar" ] && [ -d "$cwd_dir/scripts" ]; then
-        export AIKO_ROOT="$cwd_dir"
-    # 2. Check if the caller script is in the repo root
+    # 1. Check if the caller script itself is already in the standard installed location
+    if [[ "$caller_dir" == "$installed_path"* ]]; then
+        export AIKO_ROOT="$installed_path"
+    # 2. Check if we are running from the repository root (look for marker files in caller dir)
     elif [ -f "$caller_dir/install.sh" ] && [ -d "$caller_dir/waybar" ]; then
         export AIKO_ROOT="$caller_dir"
     # 3. Check if caller is in scripts/ or widgets/ and find root from there
@@ -62,9 +60,12 @@ get_aiko_paths() {
         else
             export AIKO_ROOT="$(cd "$caller_dir/.." && pwd)"
         fi
-    # 4. Fallback to standard installation path
+    # 4. Fallback to current working directory if it looks like a repo
+    elif [ -f "$(pwd)/install.sh" ] && [ -d "$(pwd)/waybar" ]; then
+        export AIKO_ROOT="$(pwd)"
+    # 5. Final fallback to standard installation path
     else
-        export AIKO_ROOT="$HOME/.config/waybar"
+        export AIKO_ROOT="$installed_path"
     fi
 
     # Export Standard Subdirectories

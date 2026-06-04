@@ -43,6 +43,8 @@ Options:
   --launcher        Open application launcher (wofi)
   --power           Open power menu
   --clip            Open clipboard history
+  --clip-listener   Start the clipboard listener
+  --icon-listener   Start the icon window listener
   --screenshot      Open screenshot menu
   --minimize        Minimize/Restore active window
   --diag            Run system environment diagnostics
@@ -142,17 +144,17 @@ case "${1:-}" in
     --clip)
         [ -f "$AIKO_SCRIPTS/clipboard-history.sh" ] && exec bash "$AIKO_SCRIPTS/clipboard-history.sh"
         ;;
-    --screenshot)
-        [ -f "$AIKO_SCRIPTS/screenshot.sh" ] && exec bash "$AIKO_SCRIPTS/screenshot.sh" "${2:-menu}"
-        ;;
-    --minimize)
-        [ -f "$AIKO_SCRIPTS/minimize.sh" ] && exec bash "$AIKO_SCRIPTS/minimize.sh" "${2:-toggle}"
-        ;;
     --clip-listener)
         [ -f "$AIKO_SCRIPTS/clipboard-listener.sh" ] && exec bash "$AIKO_SCRIPTS/clipboard-listener.sh"
         ;;
     --icon-listener)
         [ -f "$AIKO_SCRIPTS/icon-listener.sh" ] && exec bash "$AIKO_SCRIPTS/icon-listener.sh"
+        ;;
+    --screenshot)
+        [ -f "$AIKO_SCRIPTS/screenshot.sh" ] && exec bash "$AIKO_SCRIPTS/screenshot.sh" "${2:-menu}"
+        ;;
+    --minimize)
+        [ -f "$AIKO_SCRIPTS/minimize.sh" ] && exec bash "$AIKO_SCRIPTS/minimize.sh" "${2:-toggle}"
         ;;
     --wallpaper)
         script="$AIKO_SCRIPTS/wallpaper.sh"
