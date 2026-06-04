@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # aiko - Global CLI for AikoHyprSetup management
 
-VERSION="1.0.3"
+VERSION="1.0.4"
 
 # --- Terminal Cleanup Trap ---
 cleanup() {
@@ -50,6 +50,7 @@ Options:
   --diag            Run system environment diagnostics
   --edit-usercard   Edit the User Card information
   --edit-logo       Edit terminal ASCII logo color and spacing
+  --gpu             GPU Setup and Optimization
   --restart         Restart Waybar and refresh configs
 
 Examples:
@@ -71,6 +72,9 @@ case "${1:-}" in
         else
             echo "Error: install.sh not found in $PROJECT_ROOT"
         fi
+        ;;
+    --gpu)
+        echo "GPU Setup functionality is coming soon!"
         ;;
     --update)
         if [ -d "$PROJECT_ROOT/.git" ]; then
