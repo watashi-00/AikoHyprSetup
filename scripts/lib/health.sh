@@ -102,3 +102,12 @@ prompt_apply() {
         apply_changes
     fi
 }
+
+action_self_test() {
+    if [ -f "$AIKO_SCRIPTS/test.sh" ]; then
+        bash "$AIKO_SCRIPTS/test.sh"
+    else
+        error "Self-test script not found."
+        return 1
+    fi
+}

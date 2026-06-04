@@ -294,17 +294,19 @@ submenu_maintenance() {
         [1]="🔄  Restart Waybar"
         [2]="🔍  Check System Health"
         [3]="🩺  Environment Diagnostics"
-        [4]="🗑️   Clean Generated Backups"
+        [4]="🧪  Codebase Self-Test"
+        [5]="🗑️   Clean Generated Backups"
         [0]="⬅   Back"
     )
     declare -A actions=(
         [1]="action_restart_waybar"
         [2]="action_check_health"
         [3]="action_diagnostics"
-        [4]="action_cleanup_backups"
+        [4]="action_self_test"
+        [5]="action_cleanup_backups"
         [0]="menu_back"
     )
-    local order=(1 2 3 4 0)
+    local order=(1 2 3 4 5 0)
     menu "Maintenance & Diagnostics" labels actions order
 }
 
