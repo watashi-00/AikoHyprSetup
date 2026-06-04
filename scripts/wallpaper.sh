@@ -15,9 +15,8 @@ fi
 AIKO_LOG_COMPONENT="wallpaper"
 
 CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
-WAYBAR_DIR="$CONFIG_HOME/waybar"
 HYPR_DIR="$CONFIG_HOME/hypr"
-STATE_FILE="$WAYBAR_DIR/wallpaper.conf"
+STATE_FILE="$AIKO_ROOT/wallpaper.conf"
 HYPRPAPER_CONF="$HYPR_DIR/hyprpaper.conf"
 
 is_animated_file() {
@@ -139,7 +138,7 @@ crop_image() {
         return 0
     fi
 
-    local output_dir="$WAYBAR_DIR/wallpapers"
+    local output_dir="$AIKO_ROOT/wallpapers"
     mkdir -p "$output_dir"
     local output="$output_dir/cropped_$(date +%s).png"
 
@@ -190,7 +189,7 @@ select_wallpaper() {
     # Get current terminal image for menu display
     local current_term_img="None"
     local config_file="$HOME/.config/fastfetch/config.jsonc"
-    [ ! -f "$config_file" ] && config_file="$WAYBAR_DIR/configs/fastfetch/config.jsonc"
+    [ ! -f "$config_file" ] && config_file="$AIKO_ROOT/configs/fastfetch/config.jsonc"
     if [ -f "$config_file" ]; then
         current_term_img=$(jq -r '.logo.source // "None"' "$config_file" | sed "s|^$HOME|~|")
     fi

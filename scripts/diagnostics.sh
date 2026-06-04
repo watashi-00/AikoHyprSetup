@@ -21,7 +21,7 @@ divider() {
 }
 
 divider
-printf "${BOLD}${MAGENTA}   AikoHyprSetup Environment Diagnostics   ${NC}\n"
+printf "${BOLD}${MAGENTA}   AikoHyprSetup v$AIKO_VERSION Environment Diagnostics   ${NC}\n"
 divider
 
 # --- 1. Dependencies ---
@@ -92,7 +92,7 @@ done
 
 # --- 6. CLI Integration ---
 log "Checking CLI integration..."
-if command -v aiko >/dev/null 2>&1; then
+if have aiko; then
     success "'aiko' command is global"
 else
     warn "'aiko' command is NOT global"

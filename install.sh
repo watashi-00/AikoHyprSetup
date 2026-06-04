@@ -3,11 +3,11 @@ set -euo pipefail
 
 # --- Initial Settings ---
 REAL_PATH="$(readlink -f "${BASH_SOURCE[0]}")"
-SOURCE_DIR="$(cd "$(dirname "$REAL_PATH")" && pwd)"
+SOURCE_DIR_LOCAL="$(cd "$(dirname "$REAL_PATH")" && pwd)"
 
 # --- Load Central Utility Library ---
-LIB_UTILS="$SOURCE_DIR/scripts/lib/utils.sh"
-[ ! -f "$LIB_UTILS" ] && LIB_UTILS="$SOURCE_DIR/lib/utils.sh"
+LIB_UTILS="$SOURCE_DIR_LOCAL/scripts/lib/utils.sh"
+[ ! -f "$LIB_UTILS" ] && LIB_UTILS="$SOURCE_DIR_LOCAL/lib/utils.sh"
 
 if [ -f "$LIB_UTILS" ]; then
     # shellcheck disable=SC1091
@@ -21,79 +21,33 @@ AIKO_LOG_COMPONENT="install"
 aiko_init_term
 
 REPO_ISSUES="https://github.com/watashi-00/AikoHyprSetup/issues"
-if [ -f "$SOURCE_DIR/waybar/config.jsonc" ]; then
-    WAYBAR_SOURCE_DIR="$SOURCE_DIR/waybar"
-elif [ -f "$SOURCE_DIR/config.jsonc" ]; then
-    WAYBAR_SOURCE_DIR="$SOURCE_DIR"
+
+# Logic for source files location (repo vs installed)
+if [ -f "$AIKO_ROOT/waybar/config.jsonc" ]; then
+    AIKO_SOURCE_WAYBAR="$AIKO_ROOT/waybar"
 else
-    WAYBAR_SOURCE_DIR="$SOURCE_DIR/waybar"
+    AIKO_SOURCE_WAYBAR="$AIKO_ROOT"
 fi
+
 INSTALL_PACKAGES=1
 INSTALL_HYPR=1
 FORCE=0
 DRY_RUN=0
 
-# --- Colors and Style ---
-NC=$'\e[0m'
-BOLD=$'\e[1m'
-UNDERLINE=$'\e[4m'
-RED=$'\e[0;31m'
-GREEN=$'\e[0;32m'
-YELLOW=$'\e[1;33m'
-BLUE=$'\e[0;34m'
-MAGENTA=$'\e[0;35m'
-CYAN=$'\e[0;36m'
-WHITE=$'\e[1;37m'
-REVERSED=$(tput rev 2>/dev/null || echo $'\e[7m')
-
-# Icons
-CHECK="✔"
-WARN="⚠"
-ERROR="✘"
-INFO="ℹ"
-ROCKET="🚀"
-PACKAGE="📦"
-CONFIG="🎨"
-SEARCH="🔍"
-RELOAD="🔄"
-
 # --- Load Modular Menu ---
-if [ -f "$SOURCE_DIR/scripts/menu.sh" ]; then
+if [ -f "$AIKO_SCRIPTS/menu.sh" ]; then
     # shellcheck disable=SC1091
-    source "$SOURCE_DIR/scripts/menu.sh"
-elif [ -f "$SOURCE_DIR/menu.sh" ]; then
-    source "$SOURCE_DIR/menu.sh"
+    source "$AIKO_SCRIPTS/menu.sh"
+elif [ -f "$AIKO_ROOT/menu.sh" ]; then
+    source "$AIKO_ROOT/menu.sh"
 else
-    echo "Error: menu.sh not found in $SOURCE_DIR/scripts or $SOURCE_DIR"
-    exit 1
+    die "menu.sh not found in $AIKO_SCRIPTS or $AIKO_ROOT"
 fi
 
 # --- Summary Variables ---
 INSTALLED_PKGS=0
 COPIED_FILES=0
 BACKUPS_CREATED=0
-
-# --- Log Functions ---
-log() {
-    printf "${BLUE}[install]${NC} %s\n" "$*"
-}
-
-success() {
-    printf "${GREEN}[$CHECK]${NC} %s\n" "$*"
-}
-
-warn() {
-    printf "${YELLOW}[$WARN]${NC} %s\n" "$*" >&2
-}
-error() {
-    printf "${RED}[$ERROR]${NC} %s\n" "$*" >&2
-    printf "${YELLOW}[$INFO]${NC} Report issues at: ${UNDERLINE}${REPO_ISSUES}${NC}\n" >&2
-}
-
-die() {
-    error "$*"
-    exit 1
-}
 
 # --- Internal Logic ---
 
@@ -103,10 +57,6 @@ run() {
     else
         "$@"
     fi
-}
-
-have() {
-    command -v "$1" >/dev/null 2>&1
 }
 
 sudo_cmd() {
@@ -226,7 +176,7 @@ install_packages() {
     missing=""
     while IFS= read -r pkg; do
         [ -n "$pkg" ] || continue
-        printf "  ${CYAN}$PACKAGE${NC} Checking/Installing: ${WHITE}%s${NC}..." "$pkg"
+        printf "  ${CYAN}%s${NC} Checking/Installing: ${WHITE}%s${NC}..." "$ICON_PACKAGE" "$pkg"
         if install_one_package "$pm" "$pkg" >/dev/null 2>&1; then
             printf " ${GREEN}OK${NC}\n"
             INSTALLED_PKGS=$((INSTALLED_PKGS + 1))
@@ -307,8 +257,9 @@ copy_dir_contents() {
 patch_installed_paths() {
     file="$1"
     [ -f "$file" ] || return 0
-    # Replace literal /home/watashi and literal $HOME with the actual $HOME value
+    # Standardize path placeholders to the actual $HOME value
     run sed -i \
+        -e "s#@HOME@#$HOME#g" \
         -e "s#/home/watashi#$HOME#g" \
         -e "s#\$HOME#$HOME#g" \
         -e "s#~/.config#$HOME/.config#g" \
@@ -348,102 +299,102 @@ preserve_hyprland_hw_settings() {
 }
 
 install_configs() {
-    waybar_dir="$HOME/.config/waybar"
-    hypr_dir="$HOME/.config/hypr"
-    mako_dir="$HOME/.config/mako"
-    wofi_dir="$HOME/.config/wofi"
+    local waybar_dest="$HOME/.config/waybar"
+    local hypr_dest="$HOME/.config/hypr"
+    local mako_dest="$HOME/.config/mako"
+    local wofi_dest="$HOME/.config/wofi"
 
-    waybar_files=(
+    local waybar_files=(
         config.jsonc config-bottom.jsonc config-left.jsonc config-screenshot.jsonc
     )
 
     log "${MAGENTA}Installing Waybar configs...${NC}"
     for file in "${waybar_files[@]}"; do
-        if [ -f "$WAYBAR_SOURCE_DIR/$file" ]; then
-            copy_file "$WAYBAR_SOURCE_DIR/$file" "$waybar_dir/$file"
-            patch_installed_paths "$waybar_dir/$file"
+        if [ -f "$AIKO_SOURCE_WAYBAR/$file" ]; then
+            copy_file "$AIKO_SOURCE_WAYBAR/$file" "$waybar_dest/$file"
+            patch_installed_paths "$waybar_dest/$file"
         fi
     done
 
     log "${MAGENTA}Installing helper scripts...${NC}"
-    if [ -d "$SOURCE_DIR/scripts" ]; then
-        find "$SOURCE_DIR/scripts" -maxdepth 1 -type f \( -name "*.sh" -o -name "*.py" \) | while read -r script_src; do
-            copy_file "$script_src" "$waybar_dir/$(basename "$script_src")"
-            patch_installed_paths "$waybar_dir/$(basename "$script_src")"
+    if [ -d "$AIKO_SCRIPTS" ]; then
+        find "$AIKO_SCRIPTS" -maxdepth 1 -type f \( -name "*.sh" -o -name "*.py" \) | while read -r script_src; do
+            copy_file "$script_src" "$waybar_dest/$(basename "$script_src")"
+            patch_installed_paths "$waybar_dest/$(basename "$script_src")"
         done
     fi
 
     log "${MAGENTA}Installing Installer itself...${NC}"
-    copy_file "$REAL_PATH" "$waybar_dir/install.sh"
+    copy_file "$REAL_PATH" "$waybar_dest/install.sh"
     
-    if [ -d "$SOURCE_DIR/scripts" ]; then
-        copy_dir_contents "$SOURCE_DIR/scripts" "$waybar_dir/scripts"
-        find "$waybar_dir/scripts" -type f -exec sed -i "s#/home/watashi#$HOME#g;s#\$HOME#$HOME#g;s#~/.config#$HOME/.config#g" {} +
+    if [ -d "$AIKO_SCRIPTS" ]; then
+        copy_dir_contents "$AIKO_SCRIPTS" "$waybar_dest/scripts"
+        find "$waybar_dest/scripts" -type f -exec sed -i "s#/home/watashi#$HOME#g;s#\$HOME#$HOME#g;s#~/.config#$HOME/.config#g" {} +
     fi
 
     log "${MAGENTA}Installing Themes...${NC}"
-    if [ -d "$SOURCE_DIR/themes" ]; then
-        copy_dir_contents "$SOURCE_DIR/themes" "$waybar_dir/themes"
-        find "$waybar_dir/themes" -type f -name "*.css" -exec sed -i "s#/home/watashi#$HOME#g;s#\$HOME#$HOME#g;s#~/.config#$HOME/.config#g" {} +
+    if [ -d "$AIKO_THEMES" ]; then
+        copy_dir_contents "$AIKO_THEMES" "$waybar_dest/themes"
+        find "$waybar_dest/themes" -type f -name "*.css" -exec sed -i "s#/home/watashi#$HOME#g;s#\$HOME#$HOME#g;s#~/.config#$HOME/.config#g" {} +
     fi
 
     log "${MAGENTA}Installing Mako and Wofi...${NC}"
-    [ -d "$SOURCE_DIR/configs/mako" ] && copy_dir_contents "$SOURCE_DIR/configs/mako" "$mako_dir"
-    [ -d "$SOURCE_DIR/configs/wofi" ] && copy_dir_contents "$SOURCE_DIR/configs/wofi" "$wofi_dir"
-    patch_installed_paths "$mako_dir/config"
-    patch_installed_paths "$wofi_dir/config"
-    patch_installed_paths "$wofi_dir/style.css"
+    [ -d "$AIKO_CONFIGS/mako" ] && copy_dir_contents "$AIKO_CONFIGS/mako" "$mako_dest"
+    [ -d "$AIKO_CONFIGS/wofi" ] && copy_dir_contents "$AIKO_CONFIGS/wofi" "$wofi_dest"
+    patch_installed_paths "$mako_dest/config"
+    patch_installed_paths "$wofi_dest/config"
+    patch_installed_paths "$wofi_dest/style.css"
 
     log "${MAGENTA}Installing Widgets...${NC}"
-    if [ -d "$SOURCE_DIR/widgets" ]; then
-        copy_dir_contents "$SOURCE_DIR/widgets" "$waybar_dir/widgets"
-        find "$waybar_dir/widgets" -type f \( -name "*.sh" -o -name "*.css" -o -name "*.py" \) -exec sed -i "s#/home/watashi#$HOME#g;s#\$HOME#$HOME#g;s#~/.config#$HOME/.config#g" {} +
+    if [ -d "$AIKO_WIDGETS" ]; then
+        copy_dir_contents "$AIKO_WIDGETS" "$waybar_dest/widgets"
+        find "$waybar_dest/widgets" -type f \( -name "*.sh" -o -name "*.css" -o -name "*.py" \) -exec sed -i "s#/home/watashi#$HOME#g;s#\$HOME#$HOME#g;s#~/.config#$HOME/.config#g" {} +
     fi
 
     log "${MAGENTA}Installing Assets...${NC}"
-    [ -d "$SOURCE_DIR/assets" ] && copy_dir_contents "$SOURCE_DIR/assets" "$waybar_dir/assets"
+    [ -d "$AIKO_ASSETS" ] && copy_dir_contents "$AIKO_ASSETS" "$waybar_dest/assets"
 
     log "${MAGENTA}Installing Hyprland config...${NC}"
-    if [ "$INSTALL_HYPR" -eq 1 ] && [ -d "$SOURCE_DIR/configs/hypr" ]; then
-        local hypr_conf="$hypr_dir/hyprland.conf"
+    if [ "$INSTALL_HYPR" -eq 1 ] && [ -d "$AIKO_CONFIGS/hypr" ]; then
+        local hypr_conf="$hypr_dest/hyprland.conf"
         local old_hypr_content=""
         if [ -f "$hypr_conf" ]; then
             old_hypr_content=$(cat "$hypr_conf")
         fi
 
-        copy_dir_contents "$SOURCE_DIR/configs/hypr" "$hypr_dir"
+        copy_dir_contents "$AIKO_CONFIGS/hypr" "$hypr_dest"
         
         if [ -n "$old_hypr_content" ]; then
             preserve_hyprland_hw_settings "$hypr_conf" "$old_hypr_content"
         fi
 
         patch_installed_paths "$hypr_conf"
-        [ -f "$hypr_dir/shortcuts.txt" ] && patch_installed_paths "$hypr_dir/shortcuts.txt"
+        [ -f "$hypr_dest/shortcuts.txt" ] && patch_installed_paths "$hypr_dest/shortcuts.txt"
     fi
 
     log "${MAGENTA}Installing Desktop Entries...${NC}"
     local app_dir="$HOME/.local/share/applications"
     local icon_dir="$HOME/.local/share/icons"
     mkdir -p "$app_dir" "$icon_dir"
-    if [ -d "$SOURCE_DIR/configs/applications" ]; then
-        copy_dir_contents "$SOURCE_DIR/configs/applications" "$app_dir"
+    if [ -d "$AIKO_CONFIGS/applications" ]; then
+        copy_dir_contents "$AIKO_CONFIGS/applications" "$app_dir"
         find "$app_dir" -type f -name "aiko-*.desktop" -exec sed -i "s#/home/watashi#$HOME#g;s#\$HOME#$HOME#g" {} +
     fi
 
     log "${MAGENTA}Installing Kitty and Fastfetch configs...${NC}"
     mkdir -p "$HOME/.config/kitty" "$HOME/.config/fastfetch"
-    [ -d "$SOURCE_DIR/configs/kitty" ] && copy_dir_contents "$SOURCE_DIR/configs/kitty" "$HOME/.config/kitty"
-    [ -d "$SOURCE_DIR/configs/fastfetch" ] && copy_dir_contents "$SOURCE_DIR/configs/fastfetch" "$HOME/.config/fastfetch"
+    [ -d "$AIKO_CONFIGS/kitty" ] && copy_dir_contents "$AIKO_CONFIGS/kitty" "$HOME/.config/kitty"
+    [ -d "$AIKO_CONFIGS/fastfetch" ] && copy_dir_contents "$AIKO_CONFIGS/fastfetch" "$HOME/.config/fastfetch"
     patch_installed_paths "$HOME/.config/fastfetch/config.jsonc"
 
     log "${MAGENTA}Creating default theme links...${NC}"
     # Use relative links for portability
-    [ ! -f "$waybar_dir/style.css" ] && run ln -sf "themes/pink-anime.css" "$waybar_dir/style.css"
+    [ ! -f "$waybar_dest/style.css" ] && run ln -sf "themes/pink-anime.css" "$waybar_dest/style.css"
     
     # Widget theme links
     local widget
     for widget in aiko-note aiko-player aiko-clock aiko-usercard aiko-weather aiko-list aiko-sys; do
-        local w_dir="$waybar_dir/widgets/$widget"
+        local w_dir="$waybar_dest/widgets/$widget"
         if [ -d "$w_dir" ] && [ ! -f "$w_dir/theme.css" ]; then
             (cd "$w_dir" && run ln -sf "themes/pink-anime.css" "theme.css")
         fi
@@ -462,16 +413,16 @@ EOF
     fi
 
     log "${MAGENTA}Adjusting permissions...${NC}"
-    find "$waybar_dir" -type f -name "*.sh" -exec chmod +x {} +
+    find "$waybar_dest" -type f -name "*.sh" -exec chmod +x {} +
 
     log "${MAGENTA}Generating initial themed icons (Pink Anime default)...${NC}"
-    if [ -x "$waybar_dir/icon-gen.sh" ]; then
-        run "$waybar_dir/icon-gen.sh" "#ff8fbd"
+    if [ -x "$waybar_dest/icon-gen.sh" ]; then
+        run "$waybar_dest/icon-gen.sh" "#ff8fbd"
     fi
 
     log "${MAGENTA}Syncing Fastfetch logo properties...${NC}"
-    if [ -x "$waybar_dir/sync-fastfetch.py" ]; then
-        run "$waybar_dir/sync-fastfetch.py"
+    if [ -x "$waybar_dest/sync-fastfetch.py" ]; then
+        run "$waybar_dest/sync-fastfetch.py"
     fi
 }
 
@@ -487,9 +438,9 @@ post_install_checks() {
     printf "\n${BOLD}--- Binary Check ---${NC}\n"
     for bin in "${required_bins[@]}"; do
         if have "$bin"; then
-            printf "  ${GREEN}✔${NC} %-15s ${GREEN}[OK]${NC}\n" "$bin"
+            printf "  ${GREEN}%s${NC} %-15s ${GREEN}[OK]${NC}\n" "$ICON_CHECK" "$bin"
         else
-            printf "  ${RED}✘${NC} %-15s ${RED}[MISSING]${NC}\n" "$bin"
+            printf "  ${RED}%s${NC} %-15s ${RED}[MISSING]${NC}\n" "$ICON_ERROR" "$bin"
             missing_required+=("$bin")
         fi
     done
@@ -502,19 +453,19 @@ post_install_checks() {
 apply_changes() {
     log "${MAGENTA}Applying configurations...${NC}"
 
-    local waybar_dir="$HOME/.config/waybar"
-    local local_restart="$SOURCE_DIR/scripts/restart-waybar.sh"
+    local waybar_dest="$HOME/.config/waybar"
+    local local_restart="$AIKO_SCRIPTS/restart-waybar.sh"
 
     if [ -f "$local_restart" ]; then
         log "Using source restart script for immediate application..."
         run bash "$local_restart"
-    elif [ -x "$waybar_dir/restart-waybar.sh" ]; then
-        run "$waybar_dir/restart-waybar.sh"
+    elif [ -x "$waybar_dest/restart-waybar.sh" ]; then
+        run "$waybar_dest/restart-waybar.sh"
     elif have waybar; then
         pkill waybar 2>/dev/null || true
-        waybar --config "$waybar_dir/config-left.jsonc" --style "$waybar_dir/style.css" &
-        waybar --config "$waybar_dir/config.jsonc" --style "$waybar_dir/style.css" &
-        waybar --config "$waybar_dir/config-bottom.jsonc" --style "$waybar_dir/style.css" &
+        waybar --config "$waybar_dest/config-left.jsonc" --style "$waybar_dest/style.css" &
+        waybar --config "$waybar_dest/config.jsonc" --style "$waybar_dest/style.css" &
+        waybar --config "$waybar_dest/config-bottom.jsonc" --style "$waybar_dest/style.css" &
     else
         warn "waybar not found."
     fi
@@ -536,7 +487,7 @@ ${MAGENTA}${BOLD}
   ██║██║ ╚████║███████║   ██║   ██║  ██║███████╗███████╗███████╗██║  ██║
   ╚═╝╚═╝  ╚═══╝╚══════╝   ╚═╝   ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝
 ${NC}
-             ${CYAN}AikoHyprSetup (Hyprland + Waybar)${NC}
+             ${CYAN}AikoHyprSetup v$AIKO_VERSION (Hyprland + Waybar)${NC}
 EOF
     echo
 }
@@ -636,39 +587,35 @@ action_restart_waybar() {
 }
 
 action_git_pull() {
-    if [ -d "$SOURCE_DIR/.git" ]; then
-        log "Updating AikoHyprSetup from GitHub in: $SOURCE_DIR"
-        if git -C "$SOURCE_DIR" pull; then
+    if [ -d "$AIKO_ROOT/.git" ]; then
+        log "Updating AikoHyprSetup from GitHub in: $AIKO_ROOT"
+        if git -C "$AIKO_ROOT" pull; then
             success "Update successful! Please exit (0) and run ./install.sh again to use the updated version."
         else
             error "Failed to pull updates. Check your connection or git status."
         fi
     else
-        warn "Source at $SOURCE_DIR is not a git repository."
-        if command -v curl >/dev/null 2>&1 && command -v unzip >/dev/null 2>&1; then
-            printf "${YELLOW}[?]${NC} Do you want to download the latest version from GitHub? (y/N): "
-            read -r confirm
-            if [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]]; then
-                TEMP_DIR=$(mktemp -d)
-                log "Downloading latest master archive..."
-                if curl -L https://github.com/watashi-00/AikoHyprSetup/archive/refs/heads/master.zip -o "$TEMP_DIR/update.zip"; then
-                    log "Extracting to $SOURCE_DIR..."
-                    unzip -o -q "$TEMP_DIR/update.zip" -d "$TEMP_DIR"
-                    EXTRACTED_DIR=$(find "$TEMP_DIR" -maxdepth 1 -type d -name "AikoHyprSetup-*" | head -n 1)
-                    if [ -d "$EXTRACTED_DIR" ]; then
-                        # Copy all files from extracted dir to current SOURCE_DIR
-                        cp -rf "$EXTRACTED_DIR"/* "$SOURCE_DIR/"
-                        success "Update successful! Source files updated."
-                        printf "${YELLOW}[!]${NC} Please exit (0) and run ./install.sh again to use the updated version.\n"
-                        exit 0
-                    else
-                        error "Could not find extracted directory."
-                    fi
+        warn "Source at $AIKO_ROOT is not a git repository."
+        if confirm "Do you want to download the latest version from GitHub?" "n"; then
+            TEMP_DIR=$(mktemp -d)
+            log "Downloading latest master archive..."
+            if curl -L https://github.com/watashi-00/AikoHyprSetup/archive/refs/heads/master.zip -o "$TEMP_DIR/update.zip"; then
+                log "Extracting to $AIKO_ROOT..."
+                unzip -o -q "$TEMP_DIR/update.zip" -d "$TEMP_DIR"
+                EXTRACTED_DIR=$(find "$TEMP_DIR" -maxdepth 1 -type d -name "AikoHyprSetup-*" | head -n 1)
+                if [ -d "$EXTRACTED_DIR" ]; then
+                    # Copy all files from extracted dir to current AIKO_ROOT
+                    cp -rf "$EXTRACTED_DIR"/* "$AIKO_ROOT/"
+                    success "Update successful! Source files updated."
+                    printf "${YELLOW}[!]${NC} Please exit (0) and run ./install.sh again to use the updated version.\n"
+                    exit 0
                 else
-                    error "Failed to download update."
+                    error "Could not find extracted directory."
                 fi
-                rm -rf "$TEMP_DIR"
+            else
+                error "Failed to download update."
             fi
+            rm -rf "$TEMP_DIR"
         else
             warn "Non-git updates require 'curl' and 'unzip'. Please update manually."
         fi
@@ -677,11 +624,9 @@ action_git_pull() {
 }
 
 action_wallpaper_changer() {
-    local wp_script="$SOURCE_DIR/scripts/wallpaper.sh"
+    local wp_script="$AIKO_SCRIPTS/wallpaper.sh"
     if [ -f "$wp_script" ]; then
         bash "$wp_script" select
-    elif [ -x "$HOME/.config/waybar/wallpaper.sh" ]; then
-        "$HOME/.config/waybar/wallpaper.sh" select
     else
         warn "Wallpaper script not found."
     fi
@@ -689,11 +634,9 @@ action_wallpaper_changer() {
 }
 
 action_theme_selector() {
-    local theme_script="$SOURCE_DIR/scripts/theme-selector.sh"
+    local theme_script="$AIKO_SCRIPTS/theme-selector.sh"
     if [ -f "$theme_script" ]; then
         bash "$theme_script"
-    elif [ -x "$HOME/.config/waybar/theme-selector.sh" ]; then
-        "$HOME/.config/waybar/theme-selector.sh"
     else
         warn "Theme selector script not found."
     fi
@@ -727,11 +670,9 @@ action_global_aiko() {
 }
 
 action_diagnostics() {
-    local diag_script="$SOURCE_DIR/scripts/diagnostics.sh"
+    local diag_script="$AIKO_SCRIPTS/diagnostics.sh"
     if [ -f "$diag_script" ]; then
         bash "$diag_script"
-    elif [ -x "$HOME/.config/waybar/scripts/diagnostics.sh" ]; then
-        "$HOME/.config/waybar/scripts/diagnostics.sh"
     else
         warn "Diagnostics script not found."
     fi
@@ -739,13 +680,13 @@ action_diagnostics() {
 }
 
 action_gpu_setup() {
-    local gpu_local="$SOURCE_DIR/../gpu_setup/setup.sh"
+    local gpu_local="$(cd "$AIKO_ROOT/.." && pwd)/gpu_setup/setup.sh"
     if [ -f "$gpu_local" ]; then
         log "Handing over to local GPU Setup Manager..."
         exec sudo bash "$gpu_local"
     else
         log "GPU Setup not found locally. Downloading and running from GitHub..."
-        if ! command -v git >/dev/null 2>&1; then
+        if ! have git; then
             error "Error: 'git' is required to download the GPU Setup Manager."
             return 1
         fi

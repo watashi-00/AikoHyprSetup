@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=Aiko Player
 Comment=Retro style media player widget
-Exec=/home/watashi/.config/waybar/widgets/aiko-player/aiko-player.sh
+Exec=@HOME@/.config/waybar/widgets/aiko-player/aiko-player.sh
 Icon=multimedia-player-symbolic
 Terminal=false
 Type=Application

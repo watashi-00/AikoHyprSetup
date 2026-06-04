@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=Aiko Tasks
 Comment=Simple task list widget
-Exec=/home/watashi/.config/waybar/widgets/aiko-list/aiko-list.sh
+Exec=@HOME@/.config/waybar/widgets/aiko-list/aiko-list.sh
 Icon=checkbox-checked-symbolic
 Terminal=false
 Type=Application

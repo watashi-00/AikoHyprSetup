@@ -1,9 +1,7 @@
 #!/usr/bin/env bash
 # aiko - Global CLI for AikoHyprSetup management
 
-VERSION="1.0.4"
-
-# Get the real directory of the script, resolving symlinks
+# Get the real directory of the script to locate the library
 REAL_SCRIPT_PATH="$(readlink -f "${BASH_SOURCE[0]}")"
 SCRIPT_DIR="$(cd "$(dirname "$REAL_SCRIPT_PATH")" && pwd)"
 
@@ -20,20 +18,9 @@ fi
 AIKO_LOG_COMPONENT="aiko"
 aiko_init_term
 
-# Resolve the project root directory
-# If we are in ~/.config/waybar or ~/.config/waybar/scripts, the root is ~/.config/waybar
-if [[ "$SCRIPT_DIR" == */scripts ]]; then
-    PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-elif [ -f "$SCRIPT_DIR/config.jsonc" ] || [ -f "$SCRIPT_DIR/waybar/config.jsonc" ]; then
-    PROJECT_ROOT="$SCRIPT_DIR"
-else
-    # Fallback to standard location
-    PROJECT_ROOT="$HOME/.config/waybar"
-fi
-
 show_help() {
     cat <<EOF
-Aiko CLI - Manage your AikoHyprSetup environment
+Aiko CLI v$AIKO_VERSION - Manage your AikoHyprSetup environment
 
 Usage: aiko [options]
 
@@ -69,17 +56,17 @@ case "${1:-}" in
         show_help
         ;;
     -v|--version)
-        echo "Aiko CLI v$VERSION"
+        echo "Aiko CLI v$AIKO_VERSION"
         ;;
     --install)
-        if [ -f "$PROJECT_ROOT/install.sh" ]; then
-            bash "$PROJECT_ROOT/install.sh"
+        if [ -f "$AIKO_ROOT/install.sh" ]; then
+            bash "$AIKO_ROOT/install.sh"
         else
-            error "install.sh not found in $PROJECT_ROOT"
+            error "install.sh not found in $AIKO_ROOT"
         fi
         ;;
     --gpu)
-        GPU_LOCAL="$PROJECT_ROOT/../gpu_setup/setup.sh"
+        GPU_LOCAL="$(cd "$AIKO_ROOT/.." && pwd)/gpu_setup/setup.sh"
         if [ -f "$GPU_LOCAL" ]; then
             exec sudo bash "$GPU_LOCAL"
         else
@@ -99,21 +86,21 @@ case "${1:-}" in
         fi
         ;;
     --update)
-        if [ -d "$PROJECT_ROOT/.git" ]; then
+        if [ -d "$AIKO_ROOT/.git" ]; then
             log "Updating AikoHyprSetup via git..."
-            git -C "$PROJECT_ROOT" pull
+            git -C "$AIKO_ROOT" pull
         else
             warn "Non-git installation detected. Checking for updates on GitHub..."
             if have curl && have unzip; then
                 # Fetch remote version
-                REMOTE_VERSION=$(curl -sSL https://raw.githubusercontent.com/watashi-00/AikoHyprSetup/master/scripts/aiko.sh | grep '^VERSION=' | cut -d '"' -f 2)
+                REMOTE_VERSION=$(curl -sSL https://raw.githubusercontent.com/watashi-00/AikoHyprSetup/master/scripts/lib/utils.sh | grep '^export AIKO_VERSION=' | cut -d '"' -f 2)
                 
                 if [ -z "$REMOTE_VERSION" ]; then
                     error "Could not check for updates. Please check your connection."
-                elif [ "$REMOTE_VERSION" == "$VERSION" ]; then
-                    log "You are already using the latest version ($VERSION)."
+                elif [ "$REMOTE_VERSION" == "$AIKO_VERSION" ]; then
+                    log "You are already using the latest version ($AIKO_VERSION)."
                 else
-                    log "A new version is available: $REMOTE_VERSION (Current: $VERSION)"
+                    log "A new version is available: $REMOTE_VERSION (Current: $AIKO_VERSION)"
                     log "Downloading and installing the update..."
                     
                     TEMP_DIR=$(mktemp -d)
@@ -141,8 +128,7 @@ case "${1:-}" in
         fi
         ;;
     --wallpaper)
-        script="$PROJECT_ROOT/scripts/wallpaper.sh"
-        [ ! -f "$script" ] && script="$PROJECT_ROOT/wallpaper.sh"
+        script="$AIKO_SCRIPTS/wallpaper.sh"
         if [ -f "$script" ]; then
             bash "$script" select
         else
@@ -150,8 +136,7 @@ case "${1:-}" in
         fi
         ;;
     --theme)
-        script="$PROJECT_ROOT/scripts/theme-selector.sh"
-        [ ! -f "$script" ] && script="$PROJECT_ROOT/theme-selector.sh"
+        script="$AIKO_SCRIPTS/theme-selector.sh"
         if [ -f "$script" ]; then
             bash "$script"
         else
@@ -159,50 +144,50 @@ case "${1:-}" in
         fi
         ;;
     --note)
-        if [ -f "$PROJECT_ROOT/widgets/aiko-note/aiko-note.sh" ]; then
-            bash "$PROJECT_ROOT/widgets/aiko-note/aiko-note.sh"
+        if [ -f "$AIKO_WIDGETS/aiko-note/aiko-note.sh" ]; then
+            bash "$AIKO_WIDGETS/aiko-note/aiko-note.sh"
         else
             error "Aiko-Note widget not found."
         fi
         ;;
     --list)
-        if [ -f "$PROJECT_ROOT/widgets/aiko-list/aiko-list.sh" ]; then
-            bash "$PROJECT_ROOT/widgets/aiko-list/aiko-list.sh"
+        if [ -f "$AIKO_WIDGETS/aiko-list/aiko-list.sh" ]; then
+            bash "$AIKO_WIDGETS/aiko-list/aiko-list.sh"
         else
             error "Aiko-List widget not found."
         fi
         ;;
     --sys)
-        if [ -f "$PROJECT_ROOT/widgets/aiko-sys/aiko-sys.sh" ]; then
-            bash "$PROJECT_ROOT/widgets/aiko-sys/aiko-sys.sh"
+        if [ -f "$AIKO_WIDGETS/aiko-sys/aiko-sys.sh" ]; then
+            bash "$AIKO_WIDGETS/aiko-sys/aiko-sys.sh"
         else
             error "Aiko-System widget not found."
         fi
         ;;
     --clock)
-        if [ -f "$PROJECT_ROOT/widgets/aiko-clock/aiko-clock.sh" ]; then
-            bash "$PROJECT_ROOT/widgets/aiko-clock/aiko-clock.sh"
+        if [ -f "$AIKO_WIDGETS/aiko-clock/aiko-clock.sh" ]; then
+            bash "$AIKO_WIDGETS/aiko-clock/aiko-clock.sh"
         else
             error "Aiko-Clock widget not found."
         fi
         ;;
     --weather)
-        if [ -f "$PROJECT_ROOT/widgets/aiko-weather/aiko-weather.sh" ]; then
-            bash "$PROJECT_ROOT/widgets/aiko-weather/aiko-weather.sh"
+        if [ -f "$AIKO_WIDGETS/aiko-weather/aiko-weather.sh" ]; then
+            bash "$AIKO_WIDGETS/aiko-weather/aiko-weather.sh"
         else
             error "Aiko-Weather widget not found."
         fi
         ;;
     --usercard)
-        if [ -f "$PROJECT_ROOT/widgets/aiko-usercard/aiko-usercard.sh" ]; then
-            bash "$PROJECT_ROOT/widgets/aiko-usercard/aiko-usercard.sh"
+        if [ -f "$AIKO_WIDGETS/aiko-usercard/aiko-usercard.sh" ]; then
+            bash "$AIKO_WIDGETS/aiko-usercard/aiko-usercard.sh"
         else
             error "Aiko-UserCard widget not found."
         fi
         ;;
     --player)
-        if [ -f "$PROJECT_ROOT/widgets/aiko-player/aiko-player.sh" ]; then
-            bash "$PROJECT_ROOT/widgets/aiko-player/aiko-player.sh"
+        if [ -f "$AIKO_WIDGETS/aiko-player/aiko-player.sh" ]; then
+            bash "$AIKO_WIDGETS/aiko-player/aiko-player.sh"
         else
             error "Aiko-Player widget not found."
         fi
@@ -211,7 +196,7 @@ case "${1:-}" in
         log "Launching all Aiko widgets..."
         widgets=("aiko-clock" "aiko-weather" "aiko-note" "aiko-player" "aiko-list" "aiko-sys" "aiko-usercard")
         for widget in "${widgets[@]}"; do
-            script="$PROJECT_ROOT/widgets/$widget/$widget.sh"
+            script="$AIKO_WIDGETS/$widget/$widget.sh"
             if [ -f "$script" ]; then
                 log "  -> Starting $widget"
                 bash "$script" &
@@ -220,8 +205,7 @@ case "${1:-}" in
         done
         ;;
     --diag)
-        script="$PROJECT_ROOT/scripts/diagnostics.sh"
-        [ ! -f "$script" ] && script="$PROJECT_ROOT/diagnostics.sh"
+        script="$AIKO_SCRIPTS/diagnostics.sh"
         if [ -f "$script" ]; then
             bash "$script"
         else
@@ -229,7 +213,7 @@ case "${1:-}" in
         fi
         ;;
     --edit-usercard)
-        EDITOR_SCRIPT="$PROJECT_ROOT/widgets/aiko-usercard/aiko-usercard-editor.py"
+        EDITOR_SCRIPT="$AIKO_WIDGETS/aiko-usercard/aiko-usercard-editor.py"
         if [ -f "$EDITOR_SCRIPT" ]; then
             python3 "$EDITOR_SCRIPT"
         else
@@ -237,7 +221,7 @@ case "${1:-}" in
         fi
         ;;
     --edit-logo)
-        LOGO_EDITOR="$PROJECT_ROOT/widgets/aiko-sys/aiko-logo-editor.py"
+        LOGO_EDITOR="$AIKO_WIDGETS/aiko-sys/aiko-logo-editor.py"
         if [ -f "$LOGO_EDITOR" ]; then
             python3 "$LOGO_EDITOR"
             if have fastfetch; then
@@ -249,8 +233,7 @@ case "${1:-}" in
         fi
         ;;
     --restart)
-        script="$PROJECT_ROOT/scripts/restart-waybar.sh"
-        [ ! -f "$script" ] && script="$PROJECT_ROOT/restart-waybar.sh"
+        script="$AIKO_SCRIPTS/restart-waybar.sh"
         if [ -f "$script" ]; then
             bash "$script"
         else

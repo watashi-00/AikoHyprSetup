@@ -3,6 +3,9 @@
 # AikoHyprSetup V2 - Central Utility Library
 # Sourced by main scripts for consistent behavior and reduced redundancy.
 
+# --- Version ---
+export AIKO_VERSION="1.0.4"
+
 # --- Colors ---
 export NC=$'\e[0m'
 export BOLD=$'\e[1m'
@@ -25,6 +28,43 @@ export ICON_PACKAGE="📦"
 export ICON_CONFIG="🎨"
 export ICON_SEARCH="🔍"
 export ICON_RELOAD="🔄"
+
+# --- Path Resolution ---
+
+# Detects the root of the AikoHyprSetup installation or repository.
+# Exports: AIKO_ROOT, AIKO_SCRIPTS, AIKO_WIDGETS, AIKO_THEMES, AIKO_ASSETS
+get_aiko_paths() {
+    local script_path
+    script_path="$(readlink -f "${BASH_SOURCE[1]:-$0}")"
+    local current_dir
+    current_dir="$(cd "$(dirname "$script_path")" && pwd)"
+
+    # Resolve AIKO_ROOT
+    if [[ "$current_dir" == */scripts ]] || [[ "$current_dir" == */widgets/* ]]; then
+        # If we are in scripts/ or a widget subfolder, root is one or two levels up
+        if [[ "$current_dir" == */widgets/* ]]; then
+            export AIKO_ROOT="$(cd "$current_dir/../.." && pwd)"
+        else
+            export AIKO_ROOT="$(cd "$current_dir/.." && pwd)"
+        fi
+    elif [ -f "$current_dir/install.sh" ] || [ -f "$current_dir/waybar/config.jsonc" ]; then
+        # If we are in the root directory already
+        export AIKO_ROOT="$current_dir"
+    else
+        # Fallback to standard installation path
+        export AIKO_ROOT="$HOME/.config/waybar"
+    fi
+
+    # Export Standard Subdirectories
+    export AIKO_SCRIPTS="$AIKO_ROOT/scripts"
+    export AIKO_WIDGETS="$AIKO_ROOT/widgets"
+    export AIKO_THEMES="$AIKO_ROOT/themes"
+    export AIKO_ASSETS="$AIKO_ROOT/assets"
+    export AIKO_CONFIGS="$AIKO_ROOT/configs"
+}
+
+# Automatically run path detection on source
+get_aiko_paths
 
 # --- Utility Functions ---
 
