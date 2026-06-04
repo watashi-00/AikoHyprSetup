@@ -1,6 +1,6 @@
 # AikoHyprSetup
 
-A highly aesthetic Pink Anime configuration for Hyprland and Waybar, featuring interactive automation scripts and a seamless user experience.
+A versatile, highly aesthetic, and fully customizable environment for Hyprland and Waybar. Featuring multiple visual styles, interactive Python widgets, and a modular automation engine for a seamless desktop experience.
 
 ## 📦 Pre-built Artifacts (GitHub Actions)
 
