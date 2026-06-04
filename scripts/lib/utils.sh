@@ -4,7 +4,17 @@
 # Sourced by main scripts for consistent behavior and reduced redundancy.
 
 # --- Version ---
-export AIKO_VERSION="2.1.2"
+export AIKO_VERSION="2.1.3"
+
+# --- Colors ---
+export NC=$'\e[0m'
+... User modified the `new_string` content to be: #!/usr/bin/env bash
+
+# AikoHyprSetup V2 - Central Utility Library
+# Sourced by main scripts for consistent behavior and reduced redundancy.
+
+# --- Version ---
+export AIKO_VERSION="2.1.3"
 
 # --- Colors ---
 export NC=$'\e[0m'
