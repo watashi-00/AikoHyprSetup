@@ -1,53 +1,54 @@
-name: Build and Package
+name: Release Build
 
 on:
   push:
     branches:
       - master
-      - main
-      - test
-  pull_request:
-    branches:
-      - master
-      - main
-      - test
 
 jobs:
-  build:
+  release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Run Bash Syntax Check
-        run: find . -type f -name "*.sh" -not -path "*/.git/*" -exec bash -n {} +
-
-      - name: Run Python Syntax Check
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y python3
-          find . -type f -name "*.py" -not -path "*/.git/*" -exec python3 -m py_compile {} +
 
       - name: Package Build Archive
         run: |
           sudo apt-get update
           sudo apt-get install -y zip tar xz-utils
           mkdir -p build/AikoHyprSetup
+          
+          # Copy all essential files to build directory
           cp -a configs scripts themes waybar widgets assets install.sh README.md LICENSE build/AikoHyprSetup/
-          SHORT_SHA=$(git rev-parse --short HEAD)
-          echo "SHORT_SHA=${SHORT_SHA}" >> $GITHUB_ENV
+          
+          # Get Version from the new centralized utility library
+          VERSION=$(grep '^export AIKO_VERSION=' scripts/lib/utils.sh | cut -d '"' -f 2)
+          if [ -z "$VERSION" ]; then
+            VERSION="v$(date +'%Y%m%d%H%M')"
+          fi
+          echo "AIKO_VERSION=${VERSION}" >> $GITHUB_ENV
+          
           cd build
-          tar -czvf "AikoHyprSetup-${SHORT_SHA}.tar.gz" AikoHyprSetup/
-          tar -cJvf "AikoHyprSetup-${SHORT_SHA}.tar.xz" AikoHyprSetup/
-          zip -r "AikoHyprSetup-${SHORT_SHA}.zip" AikoHyprSetup/
+          tar -czvf "AikoHyprSetup-${VERSION}.tar.gz" AikoHyprSetup/
+          tar -cJvf "AikoHyprSetup-${VERSION}.tar.xz" AikoHyprSetup/
+          zip -r "AikoHyprSetup-${VERSION}.zip" AikoHyprSetup/
 
-      - name: Upload Build Artifacts
-        uses: actions/upload-artifact@v4
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
         with:
-          name: AikoHyprSetup-Builds-${{ env.SHORT_SHA }}
-          path: |
+          tag_name: v${{ env.AIKO_VERSION }}
+          name: AikoHyprSetup v${{ env.AIKO_VERSION }}
+          body: |
+            Automated release generated from master branch.
+            Version: ${{ env.AIKO_VERSION }}
+          draft: false
+          prerelease: false
+          files: |
             build/*.tar.gz
             build/*.tar.xz
             build/*.zip
-          retention-days: 14
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

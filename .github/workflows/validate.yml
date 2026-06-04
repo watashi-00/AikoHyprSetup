@@ -1,0 +1,23 @@
+name: Validate PR
+
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Bash Syntax Check
+        run: find . -type f -name "*.sh" -not -path "*/.git/*" -exec bash -n {} +
+
+      - name: Run Python Syntax Check
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3
+          find . -type f -name "*.py" -not -path "*/.git/*" -exec python3 -m py_compile {} +
