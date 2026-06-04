@@ -175,8 +175,14 @@ _aiko_error_handler() {
     local component="${AIKO_LOG_COMPONENT:-system}"
     
     # Ignore code 127/130 (Exit or Interrupt) and 2 (Clean Menu Exit)
-    if [ $exit_code -eq 127 ] || [ $exit_code -eq 130 ] || [ $exit_code -eq 2 ]; then
+    if [ "$exit_code" -eq "$AIKO_EXIT_QUIT" ] || [ "$exit_code" -eq "$AIKO_EXIT_MENU_BACK" ] || [ "$exit_code" -eq "$AIKO_EXIT_MENU_CONTINUE" ]; then
         return
+    fi
+
+    # Attempt rollback if install error handling is enabled.
+    trap '' ERR
+    if [ "${AIKO_ROLLBACK_ON_ERROR:-0}" -eq 1 ] && declare -f aiko_install_rollback > /dev/null; then
+        aiko_install_rollback || true
     fi
 
     echo
