@@ -4,9 +4,8 @@
 
 #main-container {
     background-color: rgba(10, 10, 10, 0.95);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    border: 2px solid #ffffff;
+    border-radius: 12px;
 }
 
 #weather-large-icon {
@@ -21,23 +20,24 @@
 }
 
 #weather-current-desc {
-    color: #dddddd;
+    color: #ffffff;
     font-size: 16px;
     font-weight: 700;
 }
 
 #weather-feels-like {
-    color: #888888;
+    color: #ffffff;
     font-size: 14px;
+    opacity: 0.8;
 }
 
 separator {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(255, 255, 255, 0.2);
 }
 
 #forecast-day {
     color: #ffffff;
-    font-weight: 700;
+    font-weight: 800;
 }
 
 #forecast-icon {
@@ -46,6 +46,6 @@ separator {
 }
 
 #forecast-temp {
-    color: #bbbbbb;
-    font-weight: 600;
+    color: #ffffff;
+    font-weight: 700;
 }
