@@ -416,7 +416,8 @@ install_configs() {
 
     log "${MAGENTA}Installing Desktop Entries...${NC}"
     local app_dir="$HOME/.local/share/applications"
-    mkdir -p "$app_dir"
+    local icon_dir="$HOME/.local/share/icons"
+    mkdir -p "$app_dir" "$icon_dir"
     if [ -d "$SOURCE_DIR/configs/applications" ]; then
         copy_dir_contents "$SOURCE_DIR/configs/applications" "$app_dir"
         find "$app_dir" -type f -name "aiko-*.desktop" -exec sed -i "s#/home/watashi#$HOME#g;s#\$HOME#$HOME#g" {} +
