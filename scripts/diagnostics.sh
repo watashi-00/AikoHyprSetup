@@ -26,7 +26,11 @@ divider
 
 # --- 1. Dependencies ---
 log "Checking core dependencies..."
-deps=(hyprland waybar socat magick jq playerctl python3)
+deps=(
+    hyprland waybar wofi mako hyprpaper kitty jq playerctl cava
+    pipewire wireplumber pavucontrol wl-copy cliphist
+    grim slurp curl hyprpicker swappy socat magick python3
+)
 missing=()
 for d in "${deps[@]}"; do
     if have "$d"; then
@@ -34,6 +38,17 @@ for d in "${deps[@]}"; do
     else
         error "$d NOT found"
         missing+=("$d")
+    fi
+done
+
+# Check specialized dependencies
+log "Checking specialized utilities..."
+spec_deps=(nm-applet bluetoothctl zenity gthumb)
+for d in "${spec_deps[@]}"; do
+    if have "$d"; then
+        success "$d found"
+    else
+        warn "$d NOT found (optional but recommended)"
     fi
 done
 
