@@ -1,17 +1,17 @@
 #!/usr/bin/env bash
-# experimental: try to force gtk to see the new icon without a full reload
+# Experimental: Try to force GTK to see the new icon without a full reload
 # by briefly changing the icon theme to something else and back.
 
+TARGET_CONFIG="config-bottom.jsonc"
 WAYBAR_PID=$(pgrep -f "waybar --config .*")
 
 if [ -z "$WAYBAR_PID" ]; then
-    exit 0
+    exit 1
 fi
 
 # 1. Notify the system of the new icon
-if command -v gtk-update-icon-cache >/dev/null 2>&1; then
-    gtk-update-icon-cache -f "$HOME/.local/share/icons/Aiko" >/dev/null 2>&1
-fi
+gtk-update-icon-cache -f ~/.local/share/icons/Aiko >/dev/null 2>&1
 
 # 2. Re-apply the current theme via SIGUSR2 (Waybar style reload)
+# This sometimes triggers a widget redraw
 kill -SIGUSR2 "$WAYBAR_PID"

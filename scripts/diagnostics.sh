@@ -3,25 +3,32 @@
 # diagnostics.sh - System health check for AikoHyprSetup
 # Usage: ./diagnostics.sh
 
-SCRIPT_DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
-LIB_UTILS="$SCRIPT_DIR/lib/utils.sh"
+# --- Colors ---
+NC=$'\e[0m'
+BOLD=$'\e[1m'
+RED=$'\e[0;31m'
+GREEN=$'\e[0;32m'
+YELLOW=$'\e[1;33m'
+BLUE=$'\e[0;34m'
+CYAN=$'\e[0;36m'
 
-if [ -f "$LIB_UTILS" ]; then
-    # shellcheck disable=SC1091
-    source "$LIB_UTILS"
-else
-    echo "Error: utility library not found at $LIB_UTILS"
-    exit 1
-fi
+# Icons
+CHECK="✔"
+ERROR="✘"
+WARN="⚠"
+INFO="ℹ"
 
-AIKO_LOG_COMPONENT="diag"
+log() { printf "${BLUE}[diag]${NC} %s\n" "$*"; }
+success() { printf "${GREEN}[$CHECK]${NC} %s\n" "$*"; }
+warn() { printf "${YELLOW}[$WARN]${NC} %s\n" "$*"; }
+err() { printf "${RED}[$ERROR]${NC} %s\n" "$*"; }
 
 divider() {
     printf "${CYAN}--------------------------------------------------${NC}\n"
 }
 
 divider
-printf "${BOLD}${MAGENTA}   AikoHyprSetup v$AIKO_VERSION Environment Diagnostics   ${NC}\n"
+printf "${BOLD}${MAGENTA}   AikoHyprSetup Environment Diagnostics   ${NC}\n"
 divider
 
 # --- 1. Dependencies ---
@@ -29,10 +36,10 @@ log "Checking core dependencies..."
 deps=(hyprland waybar socat magick jq playerctl python3)
 missing=()
 for d in "${deps[@]}"; do
-    if have "$d"; then
+    if command -v "$d" >/dev/null 2>&1; then
         success "$d found: $(command -v "$d")"
     else
-        error "$d NOT found"
+        err "$d NOT found"
         missing+=("$d")
     fi
 done
@@ -44,7 +51,7 @@ for m in "${py_modules[@]}"; do
     if python3 -c "import $m" >/dev/null 2>&1; then
         success "Python module '$m' OK"
     else
-        error "Python module '$m' MISSING"
+        err "Python module '$m' MISSING"
     fi
 done
 
@@ -55,7 +62,7 @@ for l in "${listeners[@]}"; do
     if pgrep -f "$l" >/dev/null; then
         success "$l is running"
     else
-        error "$l is NOT running"
+        err "$l is NOT running"
     fi
 done
 
@@ -64,7 +71,7 @@ log "Checking Hyprland environment..."
 if [ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]; then
     success "HYPRLAND_INSTANCE_SIGNATURE is set"
 else
-    error "HYPRLAND_INSTANCE_SIGNATURE is empty (Not in Hyprland?)"
+    err "HYPRLAND_INSTANCE_SIGNATURE is empty (Not in Hyprland?)"
 fi
 
 # --- 5. Filesystem & Links ---
@@ -73,7 +80,7 @@ waybar_dir="$HOME/.config/waybar"
 if [ -L "$waybar_dir/style.css" ]; then
     success "Global theme link: $(readlink "$waybar_dir/style.css")"
 else
-    error "Global theme link (style.css) MISSING"
+    err "Global theme link (style.css) MISSING"
 fi
 
 widgets=("aiko-note" "aiko-player" "aiko-clock" "aiko-usercard" "aiko-weather" "aiko-list" "aiko-sys")
@@ -86,13 +93,13 @@ for w in "${widgets[@]}"; do
             warn "Widget theme link ($w) MISSING"
         fi
     else
-        error "Widget folder ($w) MISSING"
+        err "Widget folder ($w) MISSING"
     fi
 done
 
 # --- 6. CLI Integration ---
 log "Checking CLI integration..."
-if have aiko; then
+if command -v aiko >/dev/null 2>&1; then
     success "'aiko' command is global"
 else
     warn "'aiko' command is NOT global"

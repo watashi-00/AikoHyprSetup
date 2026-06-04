@@ -1,23 +1,29 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
-LIB_UTILS="$SCRIPT_DIR/lib/utils.sh"
-
-if [ -f "$LIB_UTILS" ]; then
-    # shellcheck disable=SC1091
-    source "$LIB_UTILS"
-else
-    echo "Error: utility library not found at $LIB_UTILS"
-    exit 1
-fi
-
-AIKO_LOG_COMPONENT="wallpaper"
-
 CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+WAYBAR_DIR="$CONFIG_HOME/waybar"
 HYPR_DIR="$CONFIG_HOME/hypr"
-STATE_FILE="$AIKO_ROOT/wallpaper.conf"
+STATE_FILE="$WAYBAR_DIR/wallpaper.conf"
 HYPRPAPER_CONF="$HYPR_DIR/hyprpaper.conf"
+
+# Log to stderr to avoid capturing in variables
+log() {
+    printf "${BLUE:-}[wallpaper]${NC:-} %s\n" "$*" >&2
+}
+
+warn() {
+    printf "${YELLOW:-}[wallpaper][warn]${NC:-} %s\n" "$*" >&2
+}
+
+die() {
+    printf "${RED:-}[wallpaper][error]${NC:-} %s\n" "$*" >&2
+    exit 1
+}
+
+have() {
+    command -v "$1" >/dev/null 2>&1
+}
 
 is_animated_file() {
     case "${1,,}" in
@@ -138,7 +144,7 @@ crop_image() {
         return 0
     fi
 
-    local output_dir="$AIKO_ROOT/wallpapers"
+    local output_dir="$WAYBAR_DIR/wallpapers"
     mkdir -p "$output_dir"
     local output="$output_dir/cropped_$(date +%s).png"
 
@@ -189,7 +195,7 @@ select_wallpaper() {
     # Get current terminal image for menu display
     local current_term_img="None"
     local config_file="$HOME/.config/fastfetch/config.jsonc"
-    [ ! -f "$config_file" ] && config_file="$AIKO_ROOT/configs/fastfetch/config.jsonc"
+    [ ! -f "$config_file" ] && config_file="$WAYBAR_DIR/configs/fastfetch/config.jsonc"
     if [ -f "$config_file" ]; then
         current_term_img=$(jq -r '.logo.source // "None"' "$config_file" | sed "s|^$HOME|~|")
     fi

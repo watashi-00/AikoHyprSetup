@@ -1,8 +1,8 @@
 [Desktop Entry]
 Name=Aiko Themes
 Comment=Select global theme for AikoHyprSetup
-Exec=aiko --theme
-Icon=@HOME@/.config/waybar/assets/aiko-icon.svg
+Exec=/home/watashi/.config/waybar/scripts/theme-selector.sh
+Icon=/home/watashi/.config/waybar/assets/aiko-icon.svg
 Terminal=false
 Type=Application
 Categories=Settings;DesktopSettings;

@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=Aiko System
 Comment=System resources monitor widget
-Exec=aiko --sys
+Exec=/home/watashi/.config/waybar/widgets/aiko-sys/aiko-sys.sh
 Icon=utilities-system-monitor-symbolic
 Terminal=false
 Type=Application

@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=Aiko User Card
 Comment=Profile and quick info card
-Exec=aiko --usercard
+Exec=/home/watashi/.config/waybar/widgets/aiko-usercard/aiko-usercard.sh
 Icon=contact-new-symbolic
 Terminal=false
 Type=Application

@@ -3,24 +3,11 @@
 # icon-gen.sh - Generates color-filtered icons for the taskbar
 # Usage: ./icon-gen.sh <hex_color> [app_name]
 
-# Resolve real path to locate utility library
-SCRIPT_DIR_ICON="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
-LIB_UTILS_ICON="$SCRIPT_DIR_ICON/lib/utils.sh"
-
-if [ -f "$LIB_UTILS_ICON" ]; then
-    # shellcheck disable=SC1091
-    source "$LIB_UTILS_ICON"
-else
-    AIKO_ROOT="$HOME/.config/waybar"
-fi
-
-AIKO_LOG_COMPONENT="icons"
-
 COLOR_INPUT="${1:-#ff8fbd}"
 APP_NAME="$2"
 
 # Paths
-BASE_CACHE_DIR="$AIKO_ROOT/cache/icons"
+BASE_CACHE_DIR="$HOME/.config/waybar/cache/icons"
 COLOR_HEX=$(echo "$COLOR_INPUT" | sed 's/#//g')
 [ -z "$COLOR_HEX" ] && COLOR_HEX="default"
 COLOR_CACHE_DIR="$BASE_CACHE_DIR/$COLOR_HEX"
@@ -33,13 +20,13 @@ mkdir -p "$(dirname "$TARGET_THEME_DIR")"
 
 # Ensure the global theme link is correct
 if [ "$(readlink -f "$TARGET_THEME_DIR")" != "$(readlink -f "$COLOR_CACHE_DIR")" ]; then
-    log "Linking $TARGET_THEME_DIR to $COLOR_CACHE_DIR"
+    echo "[icon-gen] Linking $TARGET_THEME_DIR to $COLOR_CACHE_DIR"
     rm -rf "$TARGET_THEME_DIR"
     ln -s "$COLOR_CACHE_DIR" "$TARGET_THEME_DIR"
 fi
 
 if [ ! -f "$COLOR_CACHE_DIR/index.theme" ]; then
-    log "Creating index.theme"
+    echo "[icon-gen] Creating index.theme"
     cat <<EOF > "$COLOR_CACHE_DIR/index.theme"
 [Icon Theme]
 Name=Aiko
@@ -141,12 +128,10 @@ if [ -n "$APP_NAME" ]; then
     exit $?
 else
     NEW_ICONS=0
-    if have hyprctl && have jq; then
-        RUNNING_APPS=$(hyprctl clients -j | jq -r '.[].class' | sort -u)
-        for a in $RUNNING_APPS; do 
-            process_icon "$a"
-            [ $? -eq 200 ] && NEW_ICONS=1
-        done
-    fi
+    RUNNING_APPS=$(hyprctl clients -j | jq -r '.[].class' | sort -u)
+    for a in $RUNNING_APPS; do 
+        process_icon "$a"
+        [ $? -eq 200 ] && NEW_ICONS=1
+    done
     [ $NEW_ICONS -eq 1 ] && exit 200 || exit 0
 fi
