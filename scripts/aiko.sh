@@ -102,21 +102,30 @@ case "${1:-}" in
         else
             warn "Non-git installation detected. Checking for updates on GitHub..."
             if have curl && have unzip; then
-                # Fetch remote data (version and hash)
-                REMOTE_DATA=$(curl -sSL https://raw.githubusercontent.com/watashi-00/AikoHyprSetup/master/scripts/lib/utils.sh | grep -E '^export AIKO_(VERSION|HASH)=')
-                REMOTE_VERSION=$(echo "$REMOTE_DATA" | grep 'VERSION=' | cut -d '"' -f 2)
-                REMOTE_HASH=$(echo "$REMOTE_DATA" | grep 'HASH=' | cut -d '"' -f 2)
+                # Fetch remote version from GitHub
+                REMOTE_VERSION=$(curl -sSL https://raw.githubusercontent.com/watashi-00/AikoHyprSetup/master/scripts/lib/utils.sh | grep '^export AIKO_VERSION=' | cut -d '"' -f 2)
                 
+                # Fetch latest commit hash from GitHub API
+                REMOTE_HASH=$(curl -s "https://api.github.com/repos/watashi-00/AikoHyprSetup/commits/master" | grep -m1 '"sha":' | cut -d'"' -f4 | cut -c1-7)
+                
+                # Get local hash if available
+                LOCAL_HASH_FILE="$AIKO_ROOT/.version_hash"
+                LOCAL_HASH=""
+                [ -f "$LOCAL_HASH_FILE" ] && LOCAL_HASH=$(cat "$LOCAL_HASH_FILE")
+
                 if [ -z "$REMOTE_VERSION" ]; then
                     error "Could not check for updates. Please check your connection."
-                elif [ "$REMOTE_VERSION" == "$AIKO_VERSION" ] && [ "$REMOTE_HASH" == "${AIKO_HASH:-}" ]; then
+                # Only say "latest version" if both Version AND Hash match (and Hash file exists)
+                elif [ "$REMOTE_VERSION" == "$AIKO_VERSION" ] && [ -n "$LOCAL_HASH" ] && [ "$REMOTE_HASH" == "$LOCAL_HASH" ]; then
                     log "You are already using the latest version ($AIKO_VERSION)."
                 else
+                    # Decide what message to show
                     if [ "$REMOTE_VERSION" != "$AIKO_VERSION" ]; then
                         log "A new version is available: $REMOTE_VERSION (Current: $AIKO_VERSION)"
-                    else
-                        log "A hotfix is available (Hash: $REMOTE_HASH)"
+                    elif [ "$REMOTE_HASH" != "$LOCAL_HASH" ]; then
+                        log "A hotfix or synchronization update is available (Hash: $REMOTE_HASH)"
                     fi
+                    
                     log "Downloading and installing the update..."
                     
                     TEMP_DIR=$(mktemp -d)
@@ -127,8 +136,10 @@ case "${1:-}" in
                         
                         if [ -f "$EXTRACTED_DIR/install.sh" ]; then
                             log "Running installer..."
-                            # Run with --no-packages to speed up configuration update
                             bash "$EXTRACTED_DIR/install.sh" --no-packages
+                            
+                            # Store the new hash for future checks
+                            echo "$REMOTE_HASH" > "$LOCAL_HASH_FILE"
                         else
                             error "install.sh not found in update package."
                         fi
