@@ -190,6 +190,11 @@ action_theme_selector() {
     return 0
 }
 
+action_monitor_config() {
+    bash "$AIKO_SCRIPTS/lib/widget_launcher.sh" "aiko-monitors"
+    return 0
+}
+
 action_global_aiko() {
     local mode="${1:-normal}"
     local aiko_src="$HOME/.config/waybar/scripts/aiko.sh"
@@ -286,14 +291,16 @@ submenu_customization() {
     declare -A labels=(
         [1]="🖼️   Change Wallpaper"
         [2]="🎨  Change Theme"
+        [3]="🖥️   Monitor Configuration"
         [0]="⬅   Back"
     )
     declare -A actions=(
         [1]="action_wallpaper_changer"
         [2]="action_theme_selector"
+        [3]="action_monitor_config"
         [0]="menu_back"
     )
-    local order=(1 2 0)
+    local order=(1 2 3 0)
     menu "Desktop Customization" labels actions order
 }
 

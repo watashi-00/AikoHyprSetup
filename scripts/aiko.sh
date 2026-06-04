@@ -41,6 +41,7 @@ Options:
   --sys             Open the Aiko-System widget
   --all             Open all Aiko widgets at once
   --launcher        Open application launcher (wofi)
+  --monitors        Open the Monitor configuration widget
   --power           Open power menu
   --clip            Open clipboard history
   --clip-listener   Start the clipboard listener
@@ -176,6 +177,9 @@ case "${1:-}" in
             error "theme-selector.sh not found."
         fi
         ;;
+    --monitors)
+        bash "$AIKO_SCRIPTS/lib/widget_launcher.sh" "aiko-monitors"
+        ;;
     --note)
         bash "$AIKO_SCRIPTS/lib/widget_launcher.sh" "aiko-note"
         ;;
@@ -199,7 +203,7 @@ case "${1:-}" in
         ;;
     --all)
         log "Launching all Aiko widgets..."
-        widgets=("aiko-clock" "aiko-weather" "aiko-note" "aiko-player" "aiko-list" "aiko-sys" "aiko-usercard")
+        widgets=("aiko-clock" "aiko-weather" "aiko-note" "aiko-player" "aiko-list" "aiko-sys" "aiko-usercard" "aiko-monitors")
         for widget in "${widgets[@]}"; do
             log "  -> Starting $widget"
             bash "$AIKO_SCRIPTS/lib/widget_launcher.sh" "$widget"

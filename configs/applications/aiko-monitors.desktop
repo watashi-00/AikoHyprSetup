@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Aiko Monitor Config
+Comment=Manage monitor rotation and settings
+Exec=aiko --monitors
+Icon=display
+Terminal=false
+Categories=System;Settings;
+Keywords=monitor;rotation;hyprland;aiko;
+Name[pt_BR]=Aiko Config de Monitores
+Comment[pt_BR]=Gerencie a rotação e configurações dos monitores
