@@ -204,19 +204,28 @@ backup_path() {
 }
 
 copy_file() {
-    src="$1"
-    dest="$2"
+    local src="$1"
+    local dest="$2"
 
     [ -e "$src" ] || die "Source file not found: $src"
+    
+    # Skip if source and destination are the same physical path
+    local src_real
+    local dest_real
+    src_real=$(realpath -m "$src")
+    dest_real=$(realpath -m "$dest")
+    if [ "$src_real" = "$dest_real" ]; then
+        return 0
+    fi
+
+    # Ignore backup files during installation
+    if [[ "$(basename "$src")" == *.bak-* ]]; then
+        return 0
+    fi
+
     run mkdir -p "$(dirname "$dest")"
 
     if [ -e "$dest" ] || [ -L "$dest" ]; then
-        src_real="$(realpath -m "$src")"
-        dest_real="$(realpath -m "$dest")"
-        if [ "$src_real" = "$dest_real" ]; then
-            return 0
-        fi
-        
         # Prevent backups for .desktop files to avoid duplication in launchers
         if [[ "$dest" == *.desktop ]]; then
             log "Updating: ${WHITE}$(basename "$src")${NC}"
@@ -232,14 +241,29 @@ copy_file() {
 }
 
 copy_dir_contents() {
-    src_dir="$1"
-    dest_dir="$2"
+    local src_dir="$1"
+    local dest_dir="$2"
 
     [ -d "$src_dir" ] || return 0
+    
+    # Skip if source and destination are the same physical directory
+    local src_dir_real
+    local dest_dir_real
+    src_dir_real=$(realpath -m "$src_dir")
+    dest_dir_real=$(realpath -m "$dest_dir")
+    if [ "$src_dir_real" = "$dest_dir_real" ]; then
+        return 0
+    fi
+
     run mkdir -p "$dest_dir"
 
     find "$src_dir" -mindepth 1 -maxdepth 1 | while IFS= read -r src; do
-        dest="$dest_dir/$(basename "$src")"
+        # Ignore backup items
+        if [[ "$(basename "$src")" == *.bak-* ]]; then
+            continue
+        fi
+
+        local dest="$dest_dir/$(basename "$src")"
         if [ -d "$src" ] && [ ! -L "$src" ]; then
             # If destination exists, backup it before copying new directory
             if [ -d "$dest" ] && [ ! -L "$dest" ]; then

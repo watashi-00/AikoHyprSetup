@@ -34,24 +34,36 @@ export ICON_RELOAD="🔄"
 # Detects the root of the AikoHyprSetup installation or repository.
 # Exports: AIKO_ROOT, AIKO_SCRIPTS, AIKO_WIDGETS, AIKO_THEMES, AIKO_ASSETS
 get_aiko_paths() {
-    local script_path
-    script_path="$(readlink -f "${BASH_SOURCE[1]:-$0}")"
-    local current_dir
-    current_dir="$(cd "$(dirname "$script_path")" && pwd)"
+    # If AIKO_ROOT is already set and exists, don't re-detect (allows overrides)
+    if [ -n "${AIKO_ROOT:-}" ] && [ -d "$AIKO_ROOT" ]; then
+        return 0
+    fi
 
-    # Resolve AIKO_ROOT
-    if [[ "$current_dir" == */scripts ]] || [[ "$current_dir" == */widgets/* ]]; then
-        # If we are in scripts/ or a widget subfolder, root is one or two levels up
-        if [[ "$current_dir" == */widgets/* ]]; then
-            export AIKO_ROOT="$(cd "$current_dir/../.." && pwd)"
+    # BASH_SOURCE[1] is the script that sourced this library
+    local caller_path="${BASH_SOURCE[1]:-$0}"
+    local caller_dir
+    caller_dir="$(cd "$(dirname "$(readlink -f "$caller_path")")" && pwd)"
+
+    # CWD might be the repo root even if the script is called from elsewhere
+    local cwd_dir
+    cwd_dir="$(pwd)"
+
+    # Detection Priority:
+    # 1. Check if we are in the repository root (look for marker files)
+    if [ -f "$cwd_dir/install.sh" ] && [ -d "$cwd_dir/waybar" ] && [ -d "$cwd_dir/scripts" ]; then
+        export AIKO_ROOT="$cwd_dir"
+    # 2. Check if the caller script is in the repo root
+    elif [ -f "$caller_dir/install.sh" ] && [ -d "$caller_dir/waybar" ]; then
+        export AIKO_ROOT="$caller_dir"
+    # 3. Check if caller is in scripts/ or widgets/ and find root from there
+    elif [[ "$caller_dir" == */scripts ]] || [[ "$caller_dir" == */widgets/* ]]; then
+        if [[ "$caller_dir" == */widgets/* ]]; then
+            export AIKO_ROOT="$(cd "$caller_dir/../.." && pwd)"
         else
-            export AIKO_ROOT="$(cd "$current_dir/.." && pwd)"
+            export AIKO_ROOT="$(cd "$caller_dir/.." && pwd)"
         fi
-    elif [ -f "$current_dir/install.sh" ] || [ -f "$current_dir/waybar/config.jsonc" ]; then
-        # If we are in the root directory already
-        export AIKO_ROOT="$current_dir"
+    # 4. Fallback to standard installation path
     else
-        # Fallback to standard installation path
         export AIKO_ROOT="$HOME/.config/waybar"
     fi
 
