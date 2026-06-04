@@ -103,7 +103,7 @@ fi
 
 # --- 4. Widget Theme Mapping ---
 log "Updating widgets..."
-grep "@widget-" "$selected_file" | while read -r line; do
+while read -r line; do
     var_part=$(echo "$line" | cut -d':' -f1 | tr -d '[:space:]*')
     widget_name=${var_part#@widget-}
     theme_file=$(echo "$line" | cut -d':' -f2- | sed 's/^ //;s/[[:space:]]*$//')
@@ -126,7 +126,7 @@ grep "@widget-" "$selected_file" | while read -r line; do
             fi
         fi
     fi
-done
+done < <(grep "@widget-" "$selected_file")
 
 # --- 5. Icon Generation ---
 accent_color=$(grep "@mako-border" "$selected_file" | cut -d':' -f2 | tr -d '[:space:]')

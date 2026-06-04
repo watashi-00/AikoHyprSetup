@@ -84,7 +84,7 @@ menu() {
         read -r choice
         
         if [[ "$choice" =~ ^[Qq]$ ]]; then
-            return 0
+            return 2 # Navigation code for silent return
         fi
 
         key=""
@@ -111,15 +111,22 @@ menu() {
                 "$action"
                 action_status="$?"
 
+                # 130 means "Return from this menu loop"
                 if [ "$action_status" -eq 130 ]; then
-                    return 0
+                    return 2 # Standard code for exiting a menu level silently
                 fi
                 
+                # 2 means "Action complete, return to loop silently (Submenu just finished)"
+                if [ "$action_status" -eq 2 ]; then
+                    continue
+                fi
+
                 # Check if it was an exit/quit action
                 if [ "$action_status" -eq 127 ]; then
                     exit 0
                 fi
 
+                # Standard prompt for non-navigation actions
                 printf "\n${WHITE}Press any key to return to the menu...${NC}"
                 read -rsn1
             fi

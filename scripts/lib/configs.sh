@@ -69,7 +69,8 @@ copy_dir_contents() {
 
     run mkdir -p "$dest_dir"
 
-    find "$src_dir" -mindepth 1 -maxdepth 1 | while IFS= read -r src; do
+    # Avoid subshell by using process substitution
+    while IFS= read -r src; do
         # Ignore backup items
         if [[ "$(basename "$src")" == *.bak-* ]]; then
             continue
@@ -87,7 +88,7 @@ copy_dir_contents() {
         else
             copy_file "$src" "$dest"
         fi
-    done
+    done < <(find "$src_dir" -mindepth 1 -maxdepth 1)
 }
 
 patch_installed_paths() {
@@ -141,7 +142,7 @@ install_configs() {
     local wofi_dest="$HOME/.config/wofi"
 
     local waybar_files=(
-        config.jsonc config-bottom.jsonc config-left.jsonc config-screenshot.jsonc
+        config.jsonc config-bottom.jsonc config-left.jsonc config-screenshot.jsonc style.css
     )
 
     log "${MAGENTA}Installing Waybar configs...${NC}"
@@ -154,10 +155,11 @@ install_configs() {
 
     log "${MAGENTA}Installing helper scripts...${NC}"
     if [ -d "$AIKO_SCRIPTS" ]; then
-        find "$AIKO_SCRIPTS" -maxdepth 1 -type f \( -name "*.sh" -o -name "*.py" \) | while read -r script_src; do
+        # Avoid subshell by using process substitution
+        while read -r script_src; do
             copy_file "$script_src" "$waybar_dest/$(basename "$script_src")"
             patch_installed_paths "$waybar_dest/$(basename "$script_src")"
-        done
+        done < <(find "$AIKO_SCRIPTS" -maxdepth 1 -type f \( -name "*.sh" -o -name "*.py" \))
     fi
 
     log "${MAGENTA}Installing Installer itself...${NC}"

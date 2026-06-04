@@ -17,7 +17,18 @@ fi
 
 AIKO_LOG_COMPONENT="restart"
 
+# --- Path Setup ---
 STYLE_CSS="$AIKO_ROOT/style.css"
+[ ! -f "$STYLE_CSS" ] && STYLE_CSS="$AIKO_ROOT/waybar/style.css"
+
+get_config_path() {
+    local name="$1"
+    if [ -f "$AIKO_ROOT/$name" ]; then
+        echo "$AIKO_ROOT/$name"
+    else
+        echo "$AIKO_ROOT/waybar/$name"
+    fi
+}
 
 # Kill all running Waybar instances and listeners
 killall waybar || true
@@ -56,11 +67,11 @@ if [ -f "$AIKO_SCRIPTS/wallpaper.sh" ]; then
 fi
 
 # Start the three instances
-nohup waybar --config "$AIKO_ROOT/config-left.jsonc" --style "$STYLE_CSS" >/dev/null 2>&1 &
+nohup waybar --config "$(get_config_path config-left.jsonc)" --style "$STYLE_CSS" >/dev/null 2>&1 &
 sleep 0.4
-nohup waybar --config "$AIKO_ROOT/config.jsonc" --style "$STYLE_CSS" >/dev/null 2>&1 &
+nohup waybar --config "$(get_config_path config.jsonc)" --style "$STYLE_CSS" >/dev/null 2>&1 &
 sleep 0.4
-nohup waybar --config "$AIKO_ROOT/config-bottom.jsonc" --style "$STYLE_CSS" >/dev/null 2>&1 &
+nohup waybar --config "$(get_config_path config-bottom.jsonc)" --style "$STYLE_CSS" >/dev/null 2>&1 &
 
 # Restart Listeners
 nohup "$AIKO_SCRIPTS/icon-listener.sh" >/dev/null 2>&1 &
