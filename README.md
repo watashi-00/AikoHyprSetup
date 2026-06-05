@@ -49,6 +49,8 @@ aiko --clip         # Open clipboard history
 aiko --screenshot   # Open screenshot utility bar
 aiko --diag         # Run system health and dependencies diagnostics
 aiko --restart      # Reload Waybar and Hyprland
+aiko --update [branch] # Update or switch setup to a specific branch (defaults to master)
+aiko --update-test  # Shortcut to update/switch setup to the test branch
 ```
 
 ### 🧩 Interactive Widgets
