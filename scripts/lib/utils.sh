@@ -42,6 +42,7 @@ export AIKO_EXIT_INVALID_OPTION=64
 # Detects the root of the AikoHyprSetup installation or repository.
 # Exports: AIKO_ROOT, AIKO_SCRIPTS, AIKO_WIDGETS, AIKO_THEMES, AIKO_ASSETS
 get_aiko_paths() {
+    local resolved=0
     # If AIKO_ROOT is already set and exists, we use it, but we MUST still export subdirs
     if [ -n "${AIKO_ROOT:-}" ] && [ -d "$AIKO_ROOT" ]; then
         export AIKO_SCRIPTS="$AIKO_ROOT/scripts"
@@ -49,38 +50,50 @@ get_aiko_paths() {
         export AIKO_THEMES="$AIKO_ROOT/themes"
         export AIKO_ASSETS="$AIKO_ROOT/assets"
         export AIKO_CONFIGS="$AIKO_ROOT/configs"
-        return 0
+        resolved=1
     fi
 
-    # 1. First, find where this library (utils.sh) is actually located
-    local lib_dir
-    lib_dir="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
-    
-    # 2. Derive root from lib_dir (assuming it's in scripts/lib/)
-    local potential_root
-    potential_root="$(cd "$lib_dir/../.." && pwd)"
+    if [ "$resolved" -ne 1 ]; then
+        # 1. First, find where this library (utils.sh) is actually located
+        local lib_dir
+        lib_dir="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
+        
+        # 2. Derive root from lib_dir (assuming it's in scripts/lib/)
+        local potential_root
+        potential_root="$(cd "$lib_dir/../.." && pwd)"
 
-    local installed_path="$HOME/.config/waybar"
+        local installed_path="$HOME/.config/waybar"
 
-    # Detection Priority:
-    # 1. If we are running inside a valid repository structure (like a temp update dir)
-    if [ -f "$potential_root/install.sh" ] && [ -d "$potential_root/waybar" ]; then
-        export AIKO_ROOT="$potential_root"
-    # 2. Check if the caller script is already in the standard installed location
-    elif [[ "${BASH_SOURCE[1]:-$0}" == "$installed_path"* ]]; then
-        export AIKO_ROOT="$installed_path"
-    # 3. Final fallback to standard installation path
-    else
-        export AIKO_ROOT="$installed_path"
+        # Detection Priority:
+        # 1. If we are running inside a valid repository structure (like a temp update dir)
+        if [ -f "$potential_root/install.sh" ] && [ -d "$potential_root/waybar" ]; then
+            export AIKO_ROOT="$potential_root"
+        # 2. Check if the caller script is already in the standard installed location
+        elif [[ "${BASH_SOURCE[1]:-$0}" == "$installed_path"* ]]; then
+            export AIKO_ROOT="$installed_path"
+        # 3. Final fallback to standard installation path
+        else
+            export AIKO_ROOT="$installed_path"
+        fi
+
+        # Export Standard Subdirectories
+        export AIKO_SCRIPTS="$AIKO_ROOT/scripts"
+        export AIKO_WIDGETS="$AIKO_ROOT/widgets"
+        export AIKO_THEMES="$AIKO_ROOT/themes"
+        export AIKO_ASSETS="$AIKO_ROOT/assets"
+        export AIKO_CONFIGS="$AIKO_ROOT/configs"
     fi
 
-    # Export Standard Subdirectories
-    export AIKO_SCRIPTS="$AIKO_ROOT/scripts"
-    export AIKO_WIDGETS="$AIKO_ROOT/widgets"
-    export AIKO_THEMES="$AIKO_ROOT/themes"
-    export AIKO_ASSETS="$AIKO_ROOT/assets"
-    export AIKO_CONFIGS="$AIKO_ROOT/configs"
     export AIKO_LOG_FILE="$AIKO_ROOT/.aiko-setup.log"
+
+    # Export Git/Metadata Commit Hash
+    if [ -d "$AIKO_ROOT/.git" ]; then
+        export AIKO_HASH=$(git -C "$AIKO_ROOT" rev-parse --short HEAD 2>/dev/null || echo "none")
+    elif [ -f "$AIKO_ROOT/.version_hash" ]; then
+        export AIKO_HASH=$(cat "$AIKO_ROOT/.version_hash" 2>/dev/null || echo "none")
+    else
+        export AIKO_HASH="none"
+    fi
 }
 
 # Automatically run path detection on source
