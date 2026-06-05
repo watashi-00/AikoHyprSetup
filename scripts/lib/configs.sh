@@ -238,6 +238,11 @@ install_configs() {
     [ -d "$AIKO_CONFIGS/fastfetch" ] && copy_dir_contents "$AIKO_CONFIGS/fastfetch" "$HOME/.config/fastfetch"
     patch_installed_paths "$HOME/.config/fastfetch/config.jsonc"
 
+    log "${MAGENTA}Installing Cava config...${NC}"
+    mkdir -p "$HOME/.config/cava"
+    [ -d "$AIKO_CONFIGS/cava" ] && copy_dir_contents "$AIKO_CONFIGS/cava" "$HOME/.config/cava"
+    patch_installed_paths "$HOME/.config/cava/config"
+
     log "${MAGENTA}Applying active theme and patching config colors...${NC}"
     local active_theme="pink-anime.css"
     if [ -L "$waybar_dest/style.css" ]; then
