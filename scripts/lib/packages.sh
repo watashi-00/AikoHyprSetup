@@ -69,19 +69,19 @@ install_one_package() {
     # Specialized logic for Waybar on Arch Linux to ensure feature-rich version
     if [ "$pm" = "pacman" ] && [ "$pkg" = "waybar" ]; then
         if have yay; then
-            log "Attempting to install waybar-hyprland via yay..."
-            yay -S --needed --noconfirm waybar-hyprland && return 0
+            log "Force installing waybar-hyprland via yay..."
+            yay -S --noconfirm waybar-hyprland && return 0
         elif have paru; then
-            log "Attempting to install waybar-hyprland via paru..."
-            paru -S --needed --noconfirm waybar-hyprland && return 0
+            log "Force installing waybar-hyprland via paru..."
+            paru -S --noconfirm waybar-hyprland && return 0
         fi
         # If no AUR helper, try official waybar but handle potential conflict
-        if sudo_cmd pacman -S --needed --noconfirm waybar; then
+        if sudo_cmd pacman -S --noconfirm waybar; then
             return 0
         else
             warn "Official waybar failed. Trying to resolve conflict..."
             # Try to install providing waybar (often resolves conflicts with -git versions)
-            sudo_cmd pacman -S --needed --noconfirm waybar-hyprland || return 1
+            sudo_cmd pacman -S --noconfirm waybar-hyprland || return 1
         fi
         return 0
     fi
