@@ -35,6 +35,9 @@ killall waybar 2>/dev/null || true
 pkill -f icon-listener.sh 2>/dev/null || true
 pkill -f clipboard-listener.sh 2>/dev/null || true
 
+# Clean up old shims
+rm -f /tmp/waybar-shim-*.json
+
 # Wait a moment to ensure processes are closed
 sleep 0.6
 
@@ -62,8 +65,28 @@ if [ -f "$AIKO_SCRIPTS/wallpaper.sh" ]; then
     nohup bash "$AIKO_SCRIPTS/wallpaper.sh" apply >/dev/null 2>&1 &
 fi
 
+# Helper function to launch a specific config pinned to an output
+launch_pinned_bar() {
+    local mon="$1"
+    local config_file="$2"
+    local id="$3"
+    local real_config
+    real_config=$(get_config_path "$config_file")
+    
+    if [ ! -f "$real_config" ]; then
+        return
+    fi
+    
+    local shim="/tmp/waybar-shim-${id}-${mon//[^a-zA-Z0-9]/}.json"
+    
+    # Create shim JSON that includes the original config and pins the output
+    echo "{\"include\": [\"$real_config\"], \"output\": \"$mon\"}" > "$shim"
+    
+    nohup waybar -c "$shim" -s "$STYLE_CSS" >/dev/null 2>&1 &
+}
+
 # --- Intelligent Per-Monitor Launch ---
-if have hyprctl; then
+if have hyprctl && have jq; then
     monitors=$(hyprctl monitors -j)
     primary_found=0
     
@@ -76,26 +99,24 @@ if have hyprctl; then
         # 1 or 3 = Portrait (90°/270°)
         if [ "$transform" -eq 1 ] || [ "$transform" -eq 3 ]; then
             log "Launching Portrait bar for $name"
-            # Pin to output with -o to avoid duplication
-            nohup waybar -o "$name" --bar "portrait-$name" --config "$(get_config_path config-portrait.jsonc)" --style "$STYLE_CSS" >/dev/null 2>&1 &
+            launch_pinned_bar "$name" "config-portrait.jsonc" "portrait"
         else
             log "Launching Landscape bars for $name"
             # Top Bar (always on all landscape monitors)
-            nohup waybar -o "$name" --bar "top-$name" --config "$(get_config_path config.jsonc)" --style "$STYLE_CSS" >/dev/null 2>&1 &
+            launch_pinned_bar "$name" "config.jsonc" "top"
             
-            # Only launch Launcher and Taskbar on the first landscape monitor (avoid clutter)
+            # Only launch Launcher and Taskbar on the first landscape monitor
             if [ "$primary_found" -eq 0 ]; then
                 log "Launching secondary bars (launcher/taskbar) on $name"
-                # Bottom Bar
-                nohup waybar -o "$name" --bar "bottom-$name" --config "$(get_config_path config-bottom.jsonc)" --style "$STYLE_CSS" >/dev/null 2>&1 &
-                # Left Bar
-                nohup waybar -o "$name" --bar "left-$name" --config "$(get_config_path config-left.jsonc)" --style "$STYLE_CSS" >/dev/null 2>&1 &
+                launch_pinned_bar "$name" "config-bottom.jsonc" "bottom"
+                launch_pinned_bar "$name" "config-left.jsonc" "left"
                 primary_found=1
             fi
         fi
     done
 else
-    # Fallback to old behavior if hyprctl is not available
+    # Fallback if hyprctl or jq is not available
+    log "Hyprctl or jq not found. Falling back to default launch..."
     nohup waybar --config "$(get_config_path config-left.jsonc)" --style "$STYLE_CSS" >/dev/null 2>&1 &
     sleep 0.3
     nohup waybar --config "$(get_config_path config.jsonc)" --style "$STYLE_CSS" >/dev/null 2>&1 &
