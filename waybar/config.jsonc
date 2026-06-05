@@ -50,7 +50,7 @@
     },
 
     "custom/audio-output": {
-        "format": "<span color='#ffffff'>\uf028</span> {}", // @theme:waybar_accent
+        "format": "<span color='#ffffff'>\uf028</span> {}%", // @theme:waybar_accent
         "interval": 1,
         "exec": "$HOME/.config/waybar/scripts/audio-output.sh",
         "on-click": "pavucontrol",
@@ -58,7 +58,7 @@
     },
 
     "custom/audio-input": {
-        "format": "<span color='#ffffff'>\uf130</span> {}", // @theme:waybar_accent
+        "format": "<span color='#ffffff'>\uf130</span> {}%", // @theme:waybar_accent
         "interval": 1,
         "exec": "$HOME/.config/waybar/scripts/audio-input.sh",
         "on-click": "pavucontrol -t 4",

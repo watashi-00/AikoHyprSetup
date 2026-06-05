@@ -246,7 +246,7 @@ install_configs() {
     
     # Run theme-selector silently to restore theme files, symlinks and config patches
     if [ -f "$waybar_dest/scripts/theme-selector.sh" ]; then
-        run bash "$waybar_dest/scripts/theme-selector.sh" "$active_theme"
+        run env AIKO_ROOT="$waybar_dest" bash "$waybar_dest/scripts/theme-selector.sh" "$active_theme"
     fi
     
     # Widget theme links
