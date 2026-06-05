@@ -46,13 +46,23 @@
     color: #ffffff;
     font-weight: 700;
 }
-
-#time-spinner {
+#time-spinner, #time-spinner text {
     color: #ffffff;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 6px;
     font-weight: 700;
+}
+
+#time-spinner:focus, #time-spinner:focus text {
+    background-color: rgba(255, 255, 255, 0.08);
+    border-color: #ffffff;
+    color: #ffffff;
+}
+
+#time-spinner selection, #time-spinner:selected {
+    background-color: rgba(255, 255, 255, 0.3);
+    color: #ffffff;
 }
 
 #set-btn {

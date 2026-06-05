@@ -255,6 +255,10 @@ class AikoLogoEditor(Gtk.Window):
                 color: {accent};
                 padding: 10px;
             }}
+            textview selection {{
+                background-color: rgba(255,255,255,0.3);
+                color: {accent};
+            }}
             button {{ 
                 background-color: rgba(255,255,255,0.05); 
                 color: #e6e1ea; 

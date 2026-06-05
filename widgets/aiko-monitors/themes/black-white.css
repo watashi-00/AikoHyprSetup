@@ -37,12 +37,34 @@
     font-weight: 700;
 }
 
-combobox button {
+combobox, combobox button, combobox cell {
     background-color: rgba(255, 255, 255, 0.1);
     color: #ffffff;
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 8px;
     padding: 5px;
+}
+
+combobox button:hover, combobox button:checked {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+}
+
+/* Force popup menu styling for GtkComboBoxText options dropdown */
+menu, popover, combobox window, combobox menu, combobox cell:hover {
+    background-color: #0c0c0c;
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+menu menuitem, menu cell, popover cell {
+    color: #ffffff;
+    background-color: transparent;
+}
+
+menu menuitem:hover, menu cell:hover, popover cell:hover {
+    background-color: #ffffff;
+    color: #000000;
 }
 
 #apply-button {

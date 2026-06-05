@@ -217,13 +217,21 @@ class AikoUserCardEditor(Gtk.Window):
         css_provider = Gtk.CssProvider()
         css = f"""
             window {{ background-color: #1e2023; color: #e6e1ea; }}
-            entry {{ 
+            entry, entry text {{ 
                 background-color: rgba(255,255,255,0.05); 
                 background-image: none;
                 color: white; 
                 border: 1px solid {border_color};
                 border-radius: 5px;
                 padding: 8px;
+            }}
+            entry:focus, entry:focus text {{
+                background-color: rgba(255,255,255,0.08);
+                border-color: {accent};
+            }}
+            entry selection, entry:selected {{
+                background-color: rgba(255,255,255,0.3);
+                color: white;
             }}
             button {{ 
                 background-color: rgba(255,255,255,0.05); 
