@@ -22,6 +22,9 @@ class AikoUserCardEditor(Gtk.Window):
         # Load Data
         self.data = self.load_config()
 
+        # Get dynamic theme color
+        self.accent = self.get_active_accent_color()
+
         # Load CSS
         self.load_css()
 
@@ -35,7 +38,7 @@ class AikoUserCardEditor(Gtk.Window):
 
         # Header
         header_lbl = Gtk.Label()
-        header_lbl.set_markup("<span size='xx-large' weight='bold' foreground='#ff8fbd'>User Card Settings</span>")
+        header_lbl.set_markup(f"<span size='xx-large' weight='bold' foreground='{self.accent}'>User Card Settings</span>")
         self.vbox.pack_start(header_lbl, False, False, 0)
 
         # Scrollable Area for Form
@@ -183,32 +186,59 @@ class AikoUserCardEditor(Gtk.Window):
                 return json.load(f)
         return {}
 
+    def get_active_accent_color(self):
+        default_color = "#ff8fbd"
+        try:
+            style_path = os.path.expanduser("~/.config/waybar/style.css")
+            if os.path.exists(style_path):
+                with open(style_path, "r") as f:
+                    content = f.read()
+                    import re
+                    match = re.search(r"@waybar_accent:\s*(#[0-9a-fA-F]{6})", content)
+                    if match:
+                        return match.group(1)
+        except Exception:
+            pass
+        return default_color
+
+    def hex_to_rgba(self, hex_color, alpha=1.0):
+        hex_color = hex_color.lstrip('#')
+        r = int(hex_color[0:2], 16)
+        g = int(hex_color[2:4], 16)
+        b = int(hex_color[4:6], 16)
+        return f"rgba({r},{g},{b},{alpha})"
+
     def load_css(self):
+        accent = self.accent
+        border_color = self.hex_to_rgba(accent, 0.3)
+        hover_color = self.hex_to_rgba(accent, 0.2)
+        save_hover = self.hex_to_rgba(accent, 0.8)
+
         css_provider = Gtk.CssProvider()
-        css = """
-            window { background-color: #1e2023; color: #e6e1ea; }
-            entry { 
+        css = f"""
+            window {{ background-color: #1e2023; color: #e6e1ea; }}
+            entry {{ 
                 background-color: rgba(255,255,255,0.05); 
                 background-image: none;
                 color: white; 
-                border: 1px solid rgba(255,143,189,0.3);
+                border: 1px solid {border_color};
                 border-radius: 5px;
                 padding: 8px;
-            }
-            button { 
+            }}
+            button {{ 
                 background-color: rgba(255,255,255,0.05); 
                 color: #e6e1ea; 
                 border-radius: 8px;
                 padding: 10px;
-            }
-            button:hover { background-color: rgba(255,143,189,0.2); }
-            #save-button { 
-                background-color: #ff8fbd; 
+            }}
+            button:hover {{ background-color: {hover_color}; }}
+            #save-button {{ 
+                background-color: {accent}; 
                 color: #1e2023; 
                 font-weight: bold; 
-            }
-            #save-button:hover { background-color: #ffb3d1; }
-            label { font-family: "JetBrainsMono Nerd Font"; margin-bottom: 2px; }
+            }}
+            #save-button:hover {{ background-color: {save_hover}; }}
+            label {{ font-family: "JetBrainsMono Nerd Font"; margin-bottom: 2px; }}
         """
         css_provider.load_from_data(css.encode())
         Gtk.StyleContext.add_provider_for_screen(

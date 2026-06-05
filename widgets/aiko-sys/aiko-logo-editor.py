@@ -23,6 +23,9 @@ class AikoLogoEditor(Gtk.Window):
         # Load Fastfetch Config (handling JSONC comments)
         self.config_data = self.load_fastfetch_config()
 
+        # Get dynamic theme color
+        self.accent = self.get_active_accent_color()
+
         # Load CSS
         self.load_css()
 
@@ -36,7 +39,7 @@ class AikoLogoEditor(Gtk.Window):
 
         # Header
         header_lbl = Gtk.Label()
-        header_lbl.set_markup("<span size='xx-large' weight='bold' foreground='#ff8fbd'>Terminal Logo Settings</span>")
+        header_lbl.set_markup(f"<span size='xx-large' weight='bold' foreground='{self.accent}'>Terminal Logo Settings</span>")
         self.vbox.pack_start(header_lbl, False, False, 0)
 
         # ASCII Text Area
@@ -214,35 +217,62 @@ class AikoLogoEditor(Gtk.Window):
         except Exception as e:
             print(f"Error saving fastfetch config: {e}")
 
+    def get_active_accent_color(self):
+        default_color = "#ff8fbd"
+        try:
+            style_path = os.path.expanduser("~/.config/waybar/style.css")
+            if os.path.exists(style_path):
+                with open(style_path, "r") as f:
+                    content = f.read()
+                    import re
+                    match = re.search(r"@waybar_accent:\s*(#[0-9a-fA-F]{6})", content)
+                    if match:
+                        return match.group(1)
+        except Exception:
+            pass
+        return default_color
+
+    def hex_to_rgba(self, hex_color, alpha=1.0):
+        hex_color = hex_color.lstrip('#')
+        r = int(hex_color[0:2], 16)
+        g = int(hex_color[2:4], 16)
+        b = int(hex_color[4:6], 16)
+        return f"rgba({r},{g},{b},{alpha})"
+
     def load_css(self):
+        accent = self.accent
+        hover_color = self.hex_to_rgba(accent, 0.2)
+        save_hover = self.hex_to_rgba(accent, 0.8)
+        colorbutton_border = self.hex_to_rgba(accent, 0.5)
+
         css_provider = Gtk.CssProvider()
-        css = """
-            window { background-color: #1e2023; color: #e6e1ea; }
-            textview, textview text { 
+        css = f"""
+            window {{ background-color: #1e2023; color: #e6e1ea; }}
+            textview, textview text {{ 
                 font-family: "JetBrainsMono Nerd Font"; 
                 background-color: #181a1d; 
                 background-image: none;
-                color: #ff8fbd;
+                color: {accent};
                 padding: 10px;
-            }
-            button { 
+            }}
+            button {{ 
                 background-color: rgba(255,255,255,0.05); 
                 color: #e6e1ea; 
                 border-radius: 8px; 
                 padding: 10px;
-            }
-            button:hover { background-color: rgba(255,143,189,0.2); }
-            #save-button { 
-                background-color: #ff8fbd; 
+            }}
+            button:hover {{ background-color: {hover_color}; }}
+            #save-button {{ 
+                background-color: {accent}; 
                 color: #1e2023; 
                 font-weight: bold; 
-            }
-            #save-button:hover { background-color: #ffb3d1; }
-            label { font-family: "JetBrainsMono Nerd Font"; }
-            colorbutton { 
+            }}
+            #save-button:hover {{ background-color: {save_hover}; }}
+            label {{ font-family: "JetBrainsMono Nerd Font"; }}
+            colorbutton {{ 
                 border-radius: 8px; 
-                border: 1px solid rgba(255,143,189,0.5);
-            }
+                border: 1px solid {colorbutton_border};
+            }}
         """
         css_provider.load_from_data(css.encode())
         Gtk.StyleContext.add_provider_for_screen(

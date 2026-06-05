@@ -254,7 +254,7 @@ install_configs() {
     for widget in aiko-note aiko-player aiko-clock aiko-usercard aiko-weather aiko-list aiko-sys aiko-monitors aiko-audio; do
         local w_dir="$waybar_dest/widgets/$widget"
         if [ -d "$w_dir" ]; then
-            (cd "$w_dir" && run ln -sf "../../themes/pink-anime.css" "theme.css")
+            (cd "$w_dir" && run ln -sf "../../themes/$active_theme" "theme.css")
         fi
     done
 
@@ -281,10 +281,18 @@ EOF
         fi
     done
 
-    log "${MAGENTA}Generating initial themed icons (Pink Anime default)...${NC}"
+    # Get the accent color dynamically from the theme file for icon-gen
+    local theme_file="$waybar_dest/themes/$active_theme"
+    local accent_color=""
+    if [ -f "$theme_file" ]; then
+        accent_color=$(grep "@mako-border" "$theme_file" | cut -d':' -f2 | tr -d '[:space:]')
+    fi
+    [ -z "$accent_color" ] && accent_color="#ff8fbd"
+
+    log "${MAGENTA}Generating initial themed icons ($active_theme default)...${NC}"
     if [ -x "$waybar_dest/scripts/icon-gen.sh" ]; then
         # Run in background to avoid blocking
-        "$waybar_dest/scripts/icon-gen.sh" "#ff8fbd" >/dev/null 2>&1 &
+        "$waybar_dest/scripts/icon-gen.sh" "$accent_color" >/dev/null 2>&1 &
     fi
 
     log "${MAGENTA}Syncing Fastfetch logo properties...${NC}"
