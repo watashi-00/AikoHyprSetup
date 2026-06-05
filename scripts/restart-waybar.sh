@@ -134,7 +134,6 @@ if [ -f "$AIKO_SCRIPTS/event-listener.sh" ]; then
 elif [ -f "$AIKO_SCRIPTS/icon-listener.sh" ]; then
     nohup "$AIKO_SCRIPTS/icon-listener.sh" >/dev/null 2>&1 &
 fi
-nohup "$AIKO_SCRIPTS/clipboard-listener.sh" >/dev/null 2>&1 &
 
 # Restart Aiko Widgets
 widgets=("clock" "weather" "note" "player" "list" "sys" "usercard")

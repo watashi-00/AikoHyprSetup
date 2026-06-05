@@ -16,51 +16,26 @@ else
 fi
 
 AIKO_LOG_COMPONENT="events"
+EVENTS_DIR="$AIKO_SCRIPTS/events"
 
-GEN_SCRIPT="$AIKO_SCRIPTS/icon-gen.sh"
-STYLE_FILE="$AIKO_ROOT/style.css"
-RESTART_SCRIPT="$AIKO_SCRIPTS/restart-waybar.sh"
-
-get_accent_color() {
-    local real_theme=$(readlink -f "$STYLE_FILE")
-    local color=$(grep "@mako-border" "$real_theme" | cut -d':' -f2 | tr -d '[:space:]' | head -n 1)
-    echo "${color:-#ff8fbd}"
-}
-
-reload_bottom_bar() {
-    pkill -f "waybar --config .*config-bottom.jsonc" || true
-    sleep 0.4
-    nohup waybar --config "$AIKO_ROOT/config-bottom.jsonc" --style "$STYLE_FILE" >/dev/null 2>&1 &
-}
+# Run startup hook in the background
+if [ -f "$EVENTS_DIR/startup.sh" ]; then
+    log "Running startup hook..."
+    bash "$EVENTS_DIR/startup.sh" &
+fi
 
 handle() {
-    case $1 in
-        openwindow*)
-            class=$(echo "$1" | sed 's/openwindow>>//' | cut -d',' -f3)
-            
-            if [ -n "$class" ]; then
-                accent=$(get_accent_color)
-                bash "$GEN_SCRIPT" "$accent" "$class"
-                local exit_code=$?
-                
-                if [ $exit_code -eq 200 ]; then
-                    reload_bottom_bar
-                elif [ $exit_code -ne 0 ]; then
-                    error "Icon generation failed for $class (code: $exit_code)"
-                fi
-            fi
-            ;;
-        monitoradded*)
-            log "Monitor added/activated event detected: $1"
-            if [ -f "$RESTART_SCRIPT" ]; then
-                log "Triggering Waybar restart..."
-                # Run in background to avoid blocking the listener or self-killing issues
-                nohup bash "$RESTART_SCRIPT" >/dev/null 2>&1 &
-            else
-                error "Restart script not found at $RESTART_SCRIPT"
-            fi
-            ;;
-    esac
+    local line="$1"
+    # Event format: EVENT>>DATA
+    if [[ "$line" =~ \>\> ]]; then
+        local event_name="${line%%>>*}"
+        local event_script="$EVENTS_DIR/${event_name}.sh"
+        
+        if [ -f "$event_script" ]; then
+            # Execute handler asynchronously to prevent blocking the event loop
+            bash "$event_script" "$line" &
+        fi
+    fi
 }
 
 # Listen to hyprland socket

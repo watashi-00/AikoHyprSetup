@@ -95,7 +95,8 @@ Repo Path: `./` | System Path: `~/.config/waybar/`
 *   **`configs/wofi/style.css`**: Wofi menu styling. This is a real file, not a symlink.
 *   **`scripts/launcher.sh`**: Opens Wofi as an app launcher.
 *   **`scripts/clipboard-history.sh`**: Opens clipboard history via Wofi (`cliphist`).
-*   **`scripts/clipboard-listener.sh`**: Logs clipboard to `cliphist` using `wl-paste --watch`.
+*   **`scripts/event-listener.sh`**: Global Hyprland event listener and daemon manager.
+*   **`scripts/events/`**: Directory containing event handler scripts (`startup.sh`, `openwindow.sh`, `monitoradded.sh`).
 
 ## 🔧 Maintenance
 *   **`install.sh`**: Universal installer. Detects package managers, installs dependencies, copies payloads, and creates backups.

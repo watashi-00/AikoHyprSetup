@@ -44,7 +44,7 @@ Options:
   --launcher        Open application launcher (wofi)
   --power           Open power menu
   --clip            Open clipboard history
-  --clip-listener   Start the clipboard listener
+  --clip-listener   Start the clipboard listener (deprecated, use --event-listener)
   --icon-listener   Start the icon window listener (deprecated, use --event-listener)
   --event-listener  Start the global event listener
   --screenshot      Open screenshot menu
@@ -165,7 +165,11 @@ case "${1:-}" in
         [ -f "$AIKO_SCRIPTS/clipboard-history.sh" ] && exec bash "$AIKO_SCRIPTS/clipboard-history.sh"
         ;;
     --clip-listener)
-        [ -f "$AIKO_SCRIPTS/clipboard-listener.sh" ] && exec bash "$AIKO_SCRIPTS/clipboard-listener.sh"
+        if [ -f "$AIKO_SCRIPTS/event-listener.sh" ]; then
+            exec bash "$AIKO_SCRIPTS/event-listener.sh"
+        elif [ -f "$AIKO_SCRIPTS/clipboard-listener.sh" ]; then
+            exec bash "$AIKO_SCRIPTS/clipboard-listener.sh"
+        fi
         ;;
     --event-listener)
         [ -f "$AIKO_SCRIPTS/event-listener.sh" ] && exec bash "$AIKO_SCRIPTS/event-listener.sh"
