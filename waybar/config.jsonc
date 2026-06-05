@@ -140,7 +140,7 @@
 
     "cava": {
         "framerate": 60,
-        "autosens": 1,
+        "autosens": 0,
         "sensitivity": 1.5,
         "bars": 16,
         "lower_cutoff_freq": 50,
