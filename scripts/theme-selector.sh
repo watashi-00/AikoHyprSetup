@@ -107,8 +107,19 @@ patch_file() {
 
 # --- 3. Apply Config Patches ---
 patch_file "$HYPR_CONF"
-patch_file "$MAKO_CONF"
 patch_file "$WOFI_STYLE"
+
+# Special handling for Mako config to prevent trailing comment syntax errors
+MAKO_TEMPLATE="${MAKO_CONF}.template"
+if [ ! -f "$MAKO_TEMPLATE" ] && [ -f "$MAKO_CONF" ]; then
+    cp "$MAKO_CONF" "$MAKO_TEMPLATE"
+fi
+
+if [ -f "$MAKO_TEMPLATE" ]; then
+    patch_file "$MAKO_TEMPLATE"
+    # Strip trailing comments (space followed by #) to keep mako parser happy
+    sed 's/[[:space:]]\+#.*$//' "$MAKO_TEMPLATE" > "$MAKO_CONF"
+fi
 
 if [ -f "$AIKO_ROOT/waybar/config.jsonc" ]; then
     patch_file "$AIKO_ROOT/waybar/config.jsonc"

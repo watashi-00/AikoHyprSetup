@@ -50,7 +50,7 @@
     },
 
     "custom/audio-output": {
-        "format": "<span color='#ffffff'>\uf028</span> {}%", // @theme:waybar_accent
+        "format": "<span color='#00ffff'>\uf028</span> {}%", // @theme:waybar_accent
         "interval": 1,
         "exec": "$HOME/.config/waybar/scripts/audio-output.sh",
         "on-click": "pavucontrol",
@@ -58,7 +58,7 @@
     },
 
     "custom/audio-input": {
-        "format": "<span color='#ffffff'>\uf130</span> {}%", // @theme:waybar_accent
+        "format": "<span color='#00ffff'>\uf130</span> {}%", // @theme:waybar_accent
         "interval": 1,
         "exec": "$HOME/.config/waybar/scripts/audio-input.sh",
         "on-click": "pavucontrol -t 4",
@@ -67,8 +67,8 @@
     },
 
     "bluetooth": {
-        "format": "<span color='#ffffff'>\uf294</span>", // @theme:waybar_accent
-        "format-connected": "<span color='#ffffff'>\uf294</span> {device_alias}", // @theme:waybar_accent
+        "format": "<span color='#00ffff'>\uf294</span>", // @theme:waybar_accent
+        "format-connected": "<span color='#00ffff'>\uf294</span> {device_alias}", // @theme:waybar_accent
         "tooltip-format": "{controller_alias}\t{controller_address}",
         "tooltip-format-connected": "{controller_alias}\t{controller_address}\n\n{device_enumerate}",
         "tooltip-format-enumerate-connected": "{device_alias}\t{device_address}",
@@ -77,13 +77,13 @@
 
 
     "network": {
-        "format-wifi": "<span color='#ffffff'>\uf1eb</span>  {essid}", // @theme:waybar_accent
-        "format-ethernet": "<span color='#ffffff'>\uf6ff</span>  Connected", // @theme:waybar_accent
-        "format-disconnected": "<span color='#ffffff'>\u26a0</span>  Disconnected" // @theme:waybar_accent
+        "format-wifi": "<span color='#00ffff'>\uf1eb</span>  {essid}", // @theme:waybar_accent
+        "format-ethernet": "<span color='#00ffff'>\uf6ff</span>  Connected", // @theme:waybar_accent
+        "format-disconnected": "<span color='#00ffff'>\u26a0</span>  Disconnected" // @theme:waybar_accent
     },
 
     "battery": {
-        "format": "<span color='#ffffff'>{icon}</span>  {capacity}%", // @theme:waybar_accent
+        "format": "<span color='#00ffff'>{icon}</span>  {capacity}%", // @theme:waybar_accent
         "format-icons": ["\uf244", "\uf243", "\uf242", "\uf241", "\uf240"]
     },
 
@@ -94,7 +94,7 @@
     },
 
     "custom/power": {
-        "format": "<span color='#ffffff'>\uf011</span>", // @theme:waybar_accent
+        "format": "<span color='#00ffff'>\uf011</span>", // @theme:waybar_accent
         "on-click": "aiko --power",
         "tooltip": false
     },
@@ -120,13 +120,13 @@
     },
 
     "custom/spotify-prev": {
-        "format": "<span color='#ffffff'>\uf048</span>", // @theme:waybar_accent
+        "format": "<span color='#00ffff'>\uf048</span>", // @theme:waybar_accent
         "on-click": "playerctl previous",
         "tooltip": false
     },
 
     "custom/spotify-play": {
-        "format": "<span color='#ffffff'>{}</span>", // @theme:waybar_accent
+        "format": "<span color='#00ffff'>{}</span>", // @theme:waybar_accent
         "interval": 1,
         "exec": "playerctl status 2> /dev/null | grep -q 'Playing' && echo '' || echo ''",
         "on-click": "playerctl play-pause",
@@ -134,7 +134,7 @@
     },
 
     "custom/spotify-next": {
-        "format": "<span color='#ffffff'>\uf051</span>", // @theme:waybar_accent
+        "format": "<span color='#00ffff'>\uf051</span>", // @theme:waybar_accent
         "on-click": "playerctl next",
         "tooltip": false
     },
