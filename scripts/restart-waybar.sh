@@ -30,9 +30,9 @@ get_config_path() {
 }
 
 # Kill all running Waybar instances and listeners
-killall waybar || true
-pkill -f icon-listener.sh || true
-pkill -f clipboard-listener.sh || true
+killall waybar 2>/dev/null || true
+pkill -f icon-listener.sh 2>/dev/null || true
+pkill -f clipboard-listener.sh 2>/dev/null || true
 
 # Wait a moment to ensure processes are closed
 sleep 0.5
