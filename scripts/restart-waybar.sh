@@ -105,12 +105,20 @@ if have hyprctl && have jq; then
         fi
 
         if [ "$is_portrait" -eq 1 ]; then
-            log "Launching Portrait bar for $name"
+            log "Launching full bar set for $name (Portrait Mode)"
+            # Portrait Top Bar (Minimal: Workspaces + Power)
             launch_pinned_bar "$name" "config-portrait.jsonc" "portrait"
-        else
-            log "Launching full bar set for $name (Landscape)"
-            launch_pinned_bar "$name" "config.jsonc" "top"
+            # Bottom Bar (Taskbar)
             launch_pinned_bar "$name" "config-bottom.jsonc" "bottom"
+            # Left Bar (Launcher)
+            launch_pinned_bar "$name" "config-left.jsonc" "left"
+        else
+            log "Launching full bar set for $name (Landscape Mode)"
+            # Top Bar (Full)
+            launch_pinned_bar "$name" "config.jsonc" "top"
+            # Bottom Bar (Taskbar)
+            launch_pinned_bar "$name" "config-bottom.jsonc" "bottom"
+            # Left Bar (Launcher)
             launch_pinned_bar "$name" "config-left.jsonc" "left"
         fi
     done

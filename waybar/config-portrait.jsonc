@@ -9,8 +9,8 @@
     "margin-right": 8,
     "fixed-center": true,
 
-    "modules-left": ["hyprland/workspaces", "clock"],
-    "modules-center": ["group/spotify-portrait"],
+    "modules-left": ["hyprland/workspaces"],
+    "modules-center": [],
     "modules-right": ["custom/power"],
 
     "hyprland/workspaces": {
@@ -23,30 +23,9 @@
         }
     },
 
-    "group/spotify-portrait": {
-        "orientation": "horizontal",
-        "modules": [
-            "custom/spotify"
-        ]
-    },
-
-    "clock": {
-        "format": "{:%H:%M}",
-        "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
-    },
-
     "custom/power": {
         "format": "⏻",
         "on-click": "aiko --power",
         "tooltip": false
-    },
-
-    "custom/spotify": {
-        "format": "{}",
-        "escape": true,
-        "interval": 2,
-        "exec": "playerctl metadata --format '{{title}}' 2> /dev/null",
-        "on-click": "playerctl play-pause",
-        "max-length": 15
     }
 }
