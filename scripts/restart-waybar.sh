@@ -109,13 +109,17 @@ if have hyprctl && have jq; then
             log "Launching full bar set for $name (Portrait Mode)"
             # Launch order: Left -> Bottom -> Top
             launch_pinned_bar "$name" "config-left.jsonc" "left"
+            sleep 0.3
             launch_pinned_bar "$name" "config-bottom.jsonc" "bottom"
+            sleep 0.3
             launch_pinned_bar "$name" "config-portrait.jsonc" "portrait"
         else
             log "Launching full bar set for $name (Landscape Mode)"
             # Launch order: Left -> Bottom -> Top
             launch_pinned_bar "$name" "config-left.jsonc" "left"
+            sleep 0.3
             launch_pinned_bar "$name" "config-bottom.jsonc" "bottom"
+            sleep 0.3
             launch_pinned_bar "$name" "config.jsonc" "top"
         fi
     done
@@ -134,7 +138,6 @@ if [ -f "$AIKO_SCRIPTS/event-listener.sh" ]; then
 elif [ -f "$AIKO_SCRIPTS/icon-listener.sh" ]; then
     nohup "$AIKO_SCRIPTS/icon-listener.sh" >/dev/null 2>&1 &
 fi
-nohup "$AIKO_SCRIPTS/clipboard-listener.sh" >/dev/null 2>&1 &
 
 # Restart Aiko Widgets
 widgets=("clock" "weather" "note" "player" "list" "sys" "usercard")

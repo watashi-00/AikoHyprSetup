@@ -65,14 +65,17 @@ done
 
 # --- 3. Active Listeners ---
 log "Checking active listeners..."
-listeners=("event-listener.sh" "clipboard-listener.sh")
-for l in "${listeners[@]}"; do
-    if pgrep -f "$l" >/dev/null; then
-        success "$l is running"
-    else
-        error "$l is NOT running"
-    fi
-done
+if pgrep -f "event-listener.sh" >/dev/null; then
+    success "event-listener.sh is running"
+else
+    error "event-listener.sh is NOT running"
+fi
+
+if pgrep -f "wl-paste --type text" >/dev/null; then
+    success "Clipboard watcher daemon is running"
+else
+    error "Clipboard watcher daemon is NOT running"
+fi
 
 # --- 4. Hyprland Environment ---
 log "Checking Hyprland environment..."
