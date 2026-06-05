@@ -6,6 +6,10 @@ import os
 import sys
 import re
 import subprocess
+import urllib.request
+import urllib.parse
+import json
+import threading
 
 class AikoSearch(Gtk.Window):
     def __init__(self):
@@ -20,6 +24,9 @@ class AikoSearch(Gtk.Window):
         # Search variables
         self.search_mode = "default"  # default, google, youtube, wiki, files
         self.apps = self.load_installed_apps()
+        self.theme_name = "pink-anime"
+        self.accent_color = "#ff8fbd"
+        self.current_search_query = ""
 
         # Load dynamic theme CSS
         self.load_css()
@@ -199,6 +206,7 @@ class AikoSearch(Gtk.Window):
             self.listbox.remove(child)
 
         query = query.strip()
+        self.current_search_query = query
 
         if self.search_mode == "default":
             # Search apps
@@ -216,9 +224,16 @@ class AikoSearch(Gtk.Window):
             for app in matches:
                 self.add_app_row(app)
 
-            # Add fallback google search row if query exists
+            # Search files quickly if query has at least 3 characters
+            if query and len(query) >= 3:
+                files = self.find_files(query)
+                for f_path in files[:3]:
+                    self.add_file_row(f_path)
+
+            # Add fallback search action rows if query exists
             if query:
                 self.add_search_action_row("google", f"Search Google for '{query}'", query)
+                self.add_search_action_row("youtube", f"Search YouTube for '{query}'", query)
 
         elif self.search_mode == "files":
             if not query:
@@ -238,6 +253,10 @@ class AikoSearch(Gtk.Window):
             else:
                 label_text = f"Search {self.search_mode.capitalize()} for '{query}'"
                 self.add_search_action_row(self.search_mode, label_text, query)
+                
+                # Fetch autocomplete suggestions dynamically for Google/YouTube
+                if self.search_mode in ("google", "youtube"):
+                    self.fetch_suggestions_async(self.search_mode, query)
 
         self.listbox.show_all()
         # Default select first row
@@ -264,9 +283,10 @@ class AikoSearch(Gtk.Window):
         vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
         hbox.pack_start(vbox, True, True, 0)
 
-        name_lbl = Gtk.Label(label=app["name"])
+        name_lbl = Gtk.Label()
         name_lbl.set_halign(Gtk.Align.START)
         name_lbl.set_name("row-title")
+        name_lbl.set_markup(f"<span foreground='{self.accent_color}' weight='bold'>App:</span> {app['name']}")
         vbox.pack_start(name_lbl, False, False, 0)
 
         if app["comment"]:
@@ -298,9 +318,11 @@ class AikoSearch(Gtk.Window):
         vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
         hbox.pack_start(vbox, True, True, 0)
 
-        name_lbl = Gtk.Label(label=os.path.basename(path))
+        name_lbl = Gtk.Label()
         name_lbl.set_halign(Gtk.Align.START)
         name_lbl.set_name("row-title")
+        basename = os.path.basename(path)
+        name_lbl.set_markup(f"<span foreground='{self.accent_color}' weight='bold'>File:</span> {basename}")
         vbox.pack_start(name_lbl, False, False, 0)
 
         # Short path
@@ -313,7 +335,7 @@ class AikoSearch(Gtk.Window):
         row.action = lambda: self.open_target(path)
         self.listbox.add(row)
 
-    def add_search_action_row(self, mode, text, query):
+    def add_search_action_row(self, mode, text, query, is_suggestion=False):
         row = Gtk.ListBoxRow()
         row.set_name("result-row")
         
@@ -331,19 +353,27 @@ class AikoSearch(Gtk.Window):
         img = Gtk.Image.new_from_icon_name(icon_name, Gtk.IconSize.LARGE_TOOLBAR)
         hbox.pack_start(img, False, False, 0)
 
-        lbl = Gtk.Label(label=text)
+        lbl = Gtk.Label()
         lbl.set_halign(Gtk.Align.START)
         lbl.set_name("row-title")
+        
+        mode_label = "YouTube" if mode == "youtube" else ("Wikipedia" if mode == "wiki" else mode.capitalize())
+        if is_suggestion:
+            lbl.set_markup(f"<span foreground='{self.accent_color}' weight='bold'>{mode_label} Suggestion:</span> {text}")
+        else:
+            lbl.set_markup(f"<span foreground='{self.accent_color}' weight='bold'>{mode_label}:</span> Search for <i>{query}</i>")
+            
         hbox.pack_start(lbl, True, True, 0)
 
         # Search url dispatch
+        target_query = text if is_suggestion else query
         url = ""
         if mode == "google":
-            url = f"https://www.google.com/search?q={query.replace(' ', '+')}"
+            url = f"https://www.google.com/search?q={urllib.parse.quote_plus(target_query)}"
         elif mode == "youtube":
-            url = f"https://www.youtube.com/results?search_query={query.replace(' ', '+')}"
+            url = f"https://www.youtube.com/results?search_query={urllib.parse.quote_plus(target_query)}"
         elif mode == "wiki":
-            url = f"https://en.wikipedia.org/wiki/Special:Search?search={query.replace(' ', '+')}"
+            url = f"https://en.wikipedia.org/wiki/Special:Search?search={urllib.parse.quote_plus(target_query)}"
 
         row.action = lambda: self.open_target(url)
         self.listbox.add(row)
@@ -367,6 +397,38 @@ class AikoSearch(Gtk.Window):
         row.action = lambda: None
         self.listbox.add(row)
 
+    def fetch_suggestions_async(self, mode, query):
+        def callback(suggestions):
+            if self.current_search_query != query or not suggestions:
+                return
+            # Add unique suggestions
+            for sug in suggestions[:5]:
+                # Don't add if it's the exact same query
+                if sug.strip().lower() == query.lower():
+                    continue
+                self.add_search_action_row(mode, sug, query, is_suggestion=True)
+            self.listbox.show_all()
+
+        def run():
+            try:
+                q = urllib.parse.quote(query)
+                if mode == "google":
+                    url = f"http://suggestqueries.google.com/complete/search?client=firefox&q={q}"
+                elif mode == "youtube":
+                    url = f"http://suggestqueries.google.com/complete/search?client=youtube&q={q}"
+                else:
+                    return
+                
+                req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+                with urllib.request.urlopen(req, timeout=0.8) as response:
+                    data = json.loads(response.read().decode('utf-8'))
+                    suggestions = data[1] if len(data) > 1 else []
+                    GLib.idle_add(callback, suggestions)
+            except Exception:
+                pass
+
+        threading.Thread(target=run, daemon=True).start()
+
     def on_row_activated(self, listbox, row):
         if hasattr(row, "action"):
             row.action()
@@ -388,9 +450,12 @@ class AikoSearch(Gtk.Window):
         sys.exit(0)
 
     def find_files(self, query):
+        if len(query) < 3:
+            return []
         try:
             # Fast shell query utilizing find limit to speed up results
-            find_cmd = f"find ~ -not -path '*/.*' -not -path '*Cache*' -not -path '*/node_modules/*' -iname '*{query}*' -type f 2>/dev/null | head -n 6"
+            # Only search up to maxdepth 4 to keep it extremely fast and responsive during typing
+            find_cmd = f"find ~ -maxdepth 4 -not -path '*/.*' -not -path '*/Cache*' -not -path '*/node_modules/*' -iname '*{query}*' -type f 2>/dev/null | head -n 4"
             output = subprocess.check_output(find_cmd, shell=True).decode("utf-8").strip()
             return [f for f in output.split("\n") if f]
         except Exception:
@@ -451,15 +516,20 @@ class AikoSearch(Gtk.Window):
     def load_css(self):
         css_provider = Gtk.CssProvider()
         
-        # Determine theme name
-        theme_name = "pink-anime"
+        # Determine theme name and accent color
+        self.theme_name = "pink-anime"
+        self.accent_color = "#ff8fbd"
         waybar_style = os.path.expanduser("~/.config/waybar/style.css")
         if os.path.islink(waybar_style):
             target = os.readlink(waybar_style)
-            if "black-white" in target: theme_name = "black-white"
-            elif "cyber-blue" in target: theme_name = "cyber-blue"
+            if "black-white" in target:
+                self.theme_name = "black-white"
+                self.accent_color = "#ffffff"
+            elif "cyber-blue" in target:
+                self.theme_name = "cyber-blue"
+                self.accent_color = "#00ffff"
 
-        theme_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "themes", f"{theme_name}.css")
+        theme_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "themes", f"{self.theme_name}.css")
         if os.path.exists(theme_path):
             css_provider.load_from_path(theme_path)
             Gtk.StyleContext.add_provider_for_screen(

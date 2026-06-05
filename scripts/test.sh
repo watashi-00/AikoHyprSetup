@@ -8,6 +8,8 @@ SCRIPT_DIR_TEST="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
 LIB_UTILS_TEST="$SCRIPT_DIR_TEST/lib/utils.sh"
 
 if [ -f "$LIB_UTILS_TEST" ]; then
+    # Force AIKO_ROOT to be the repository directory for testing
+    export AIKO_ROOT="$(cd "$SCRIPT_DIR_TEST/.." && pwd)"
     # shellcheck disable=SC1091
     source "$LIB_UTILS_TEST"
 else
