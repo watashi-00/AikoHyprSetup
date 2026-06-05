@@ -65,6 +65,7 @@ fi
 # --- Intelligent Per-Monitor Launch ---
 if have hyprctl; then
     monitors=$(hyprctl monitors -j)
+    primary_found=0
     
     # Iterate through each monitor
     echo "$monitors" | jq -c '.[]' | while read -r mon; do
@@ -75,15 +76,22 @@ if have hyprctl; then
         # 1 or 3 = Portrait (90°/270°)
         if [ "$transform" -eq 1 ] || [ "$transform" -eq 3 ]; then
             log "Launching Portrait bar for $name"
-            nohup waybar --bar "portrait-$name" --config "$(get_config_path config-portrait.jsonc)" --style "$STYLE_CSS" >/dev/null 2>&1 &
+            # Pin to output with -o to avoid duplication
+            nohup waybar -o "$name" --bar "portrait-$name" --config "$(get_config_path config-portrait.jsonc)" --style "$STYLE_CSS" >/dev/null 2>&1 &
         else
             log "Launching Landscape bars for $name"
-            # Top Bar
-            nohup waybar --bar "top-$name" --config "$(get_config_path config.jsonc)" --style "$STYLE_CSS" >/dev/null 2>&1 &
-            # Bottom Bar (if it should be on every landscape monitor)
-            nohup waybar --bar "bottom-$name" --config "$(get_config_path config-bottom.jsonc)" --style "$STYLE_CSS" >/dev/null 2>&1 &
-            # Left Bar (Launcher) - Optional: only on primary or eDP-1 if you prefer
-            nohup waybar --bar "left-$name" --config "$(get_config_path config-left.jsonc)" --style "$STYLE_CSS" >/dev/null 2>&1 &
+            # Top Bar (always on all landscape monitors)
+            nohup waybar -o "$name" --bar "top-$name" --config "$(get_config_path config.jsonc)" --style "$STYLE_CSS" >/dev/null 2>&1 &
+            
+            # Only launch Launcher and Taskbar on the first landscape monitor (avoid clutter)
+            if [ "$primary_found" -eq 0 ]; then
+                log "Launching secondary bars (launcher/taskbar) on $name"
+                # Bottom Bar
+                nohup waybar -o "$name" --bar "bottom-$name" --config "$(get_config_path config-bottom.jsonc)" --style "$STYLE_CSS" >/dev/null 2>&1 &
+                # Left Bar
+                nohup waybar -o "$name" --bar "left-$name" --config "$(get_config_path config-left.jsonc)" --style "$STYLE_CSS" >/dev/null 2>&1 &
+                primary_found=1
+            fi
         fi
     done
 else
