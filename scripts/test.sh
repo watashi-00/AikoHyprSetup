@@ -57,7 +57,7 @@ while read -r script; do
         error "SYNTAX ERROR in $script"
         ((ERRORS++))
     fi
-done < <(find "$AIKO_ROOT" -name "*.sh" -not -path "*/.git/*")
+done < <(find "$AIKO_ROOT" -name "*.sh" -not -path "*/.git/*" -not -path "*/.bak-*/*" -not -name "*.bak-*")
 
 # --- 3. Python Integrity ---
 log "Checking Python syntax for all widgets..."
@@ -70,7 +70,7 @@ while read -r py_script; do
     fi
     # Cleanup compilation artifacts
     rm -rf "$(dirname "$py_script")/__pycache__"
-done < <(find "$AIKO_WIDGETS" -name "*.py")
+done < <(find "$AIKO_WIDGETS" -name "*.py" -not -path "*/.bak-*/*" -not -name "*.bak-*")
 
 # --- 4. Widget Directory Structure ---
 log "Verifying widget integrity..."
