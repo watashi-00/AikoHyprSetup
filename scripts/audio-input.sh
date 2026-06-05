@@ -27,4 +27,4 @@ vol=$(pactl get-source-volume @DEFAULT_SOURCE@ 2>/dev/null | awk '/Volume/ {prin
 if [ -z "$vol" ]; then
     exit 0
 fi
-printf '%s%%' "$vol"
+printf '%s' "$vol"

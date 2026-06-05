@@ -27,4 +27,4 @@ vol=$(pactl get-sink-volume @DEFAULT_SINK@ 2>/dev/null | awk '/Volume/ {print $5
 if [ -z "$vol" ]; then
     exit 0
 fi
-printf '%s%%' "$vol"
+printf '%s' "$vol"
