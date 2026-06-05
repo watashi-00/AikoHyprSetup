@@ -32,6 +32,7 @@ get_config_path() {
 
 # Aggressively kill all running Waybar instances and listeners
 pkill -9 waybar 2>/dev/null || true
+pkill -f event-listener.sh 2>/dev/null || true
 pkill -f icon-listener.sh 2>/dev/null || true
 pkill -f clipboard-listener.sh 2>/dev/null || true
 
@@ -128,7 +129,11 @@ else
 fi
 
 # Restart Listeners
-nohup "$AIKO_SCRIPTS/icon-listener.sh" >/dev/null 2>&1 &
+if [ -f "$AIKO_SCRIPTS/event-listener.sh" ]; then
+    nohup "$AIKO_SCRIPTS/event-listener.sh" >/dev/null 2>&1 &
+elif [ -f "$AIKO_SCRIPTS/icon-listener.sh" ]; then
+    nohup "$AIKO_SCRIPTS/icon-listener.sh" >/dev/null 2>&1 &
+fi
 nohup "$AIKO_SCRIPTS/clipboard-listener.sh" >/dev/null 2>&1 &
 
 # Restart Aiko Widgets

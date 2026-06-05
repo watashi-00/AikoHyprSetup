@@ -65,7 +65,7 @@ done
 
 # --- 3. Active Listeners ---
 log "Checking active listeners..."
-listeners=("icon-listener.sh" "clipboard-listener.sh")
+listeners=("event-listener.sh" "clipboard-listener.sh")
 for l in "${listeners[@]}"; do
     if pgrep -f "$l" >/dev/null; then
         success "$l is running"

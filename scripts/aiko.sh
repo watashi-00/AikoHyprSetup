@@ -45,7 +45,8 @@ Options:
   --power           Open power menu
   --clip            Open clipboard history
   --clip-listener   Start the clipboard listener
-  --icon-listener   Start the icon window listener
+  --icon-listener   Start the icon window listener (deprecated, use --event-listener)
+  --event-listener  Start the global event listener
   --screenshot      Open screenshot menu
   --minimize        Minimize/Restore active window
   --test            Run internal codebase integrity test
@@ -166,8 +167,15 @@ case "${1:-}" in
     --clip-listener)
         [ -f "$AIKO_SCRIPTS/clipboard-listener.sh" ] && exec bash "$AIKO_SCRIPTS/clipboard-listener.sh"
         ;;
+    --event-listener)
+        [ -f "$AIKO_SCRIPTS/event-listener.sh" ] && exec bash "$AIKO_SCRIPTS/event-listener.sh"
+        ;;
     --icon-listener)
-        [ -f "$AIKO_SCRIPTS/icon-listener.sh" ] && exec bash "$AIKO_SCRIPTS/icon-listener.sh"
+        if [ -f "$AIKO_SCRIPTS/event-listener.sh" ]; then
+            exec bash "$AIKO_SCRIPTS/event-listener.sh"
+        elif [ -f "$AIKO_SCRIPTS/icon-listener.sh" ]; then
+            exec bash "$AIKO_SCRIPTS/icon-listener.sh"
+        fi
         ;;
     --screenshot)
         [ -f "$AIKO_SCRIPTS/screenshot.sh" ] && exec bash "$AIKO_SCRIPTS/screenshot.sh" "${2:-menu}"
