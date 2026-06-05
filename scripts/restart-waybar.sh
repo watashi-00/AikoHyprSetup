@@ -30,8 +30,8 @@ get_config_path() {
     fi
 }
 
-# Kill all running Waybar instances and listeners
-killall waybar 2>/dev/null || true
+# Aggressively kill all running Waybar instances and listeners
+pkill -9 waybar 2>/dev/null || true
 pkill -f icon-listener.sh 2>/dev/null || true
 pkill -f clipboard-listener.sh 2>/dev/null || true
 
@@ -39,7 +39,7 @@ pkill -f clipboard-listener.sh 2>/dev/null || true
 rm -f /tmp/waybar-shim-*.json
 
 # Wait a moment to ensure processes are closed
-sleep 0.6
+sleep 0.8
 
 # --- Theme & Icon Sync ---
 if [ -L "$STYLE_CSS" ]; then
@@ -88,7 +88,6 @@ launch_pinned_bar() {
 # --- Intelligent Per-Monitor Launch ---
 if have hyprctl && have jq; then
     monitors=$(hyprctl monitors -j)
-    primary_found=0
     
     # Iterate through each monitor
     echo "$monitors" | jq -c '.[]' | while read -r mon; do
@@ -98,7 +97,6 @@ if have hyprctl && have jq; then
         height=$(echo "$mon" | jq -r '.height')
         
         # Orientation Detection
-        # Portrait if height > width OR transform is vertical (1, 3, 5, 7)
         is_portrait=0
         if [ "$height" -gt "$width" ]; then
             is_portrait=1
@@ -107,25 +105,17 @@ if have hyprctl && have jq; then
         fi
 
         if [ "$is_portrait" -eq 1 ]; then
-            log "Launching Portrait bar for $name (Orientation: Vertical)"
+            log "Launching Portrait bar for $name"
             launch_pinned_bar "$name" "config-portrait.jsonc" "portrait"
         else
-            log "Launching Landscape bars for $name (Orientation: Horizontal)"
-            # Top Bar (always on all landscape monitors)
+            log "Launching full bar set for $name (Landscape)"
             launch_pinned_bar "$name" "config.jsonc" "top"
-            
-            # Only launch Launcher and Taskbar on the first landscape monitor
-            if [ "$primary_found" -eq 0 ]; then
-                log "Launching secondary bars (launcher/taskbar) on $name"
-                launch_pinned_bar "$name" "config-bottom.jsonc" "bottom"
-                launch_pinned_bar "$name" "config-left.jsonc" "left"
-                primary_found=1
-            fi
+            launch_pinned_bar "$name" "config-bottom.jsonc" "bottom"
+            launch_pinned_bar "$name" "config-left.jsonc" "left"
         fi
     done
 else
-    # Fallback if hyprctl or jq is not available
-    log "Hyprctl or jq not found. Falling back to default launch..."
+    # Fallback
     nohup waybar --config "$(get_config_path config-left.jsonc)" --style "$STYLE_CSS" >/dev/null 2>&1 &
     sleep 0.3
     nohup waybar --config "$(get_config_path config.jsonc)" --style "$STYLE_CSS" >/dev/null 2>&1 &
