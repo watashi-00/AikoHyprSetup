@@ -18,12 +18,7 @@ AIKO_LOG_COMPONENT="theme"
 
 # Path logic standardized
 WAYBAR_STYLE="$AIKO_ROOT/style.css"
-if [ -f "$AIKO_ROOT/waybar/style.css" ]; then
-    WAYBAR_STYLE="$AIKO_ROOT/waybar/style.css"
-    LINK_PREFIX="../themes"
-else
-    LINK_PREFIX="themes"
-fi
+LINK_PREFIX="themes"
 
 THEMES_DIR="$AIKO_THEMES"
 HYPR_CONF="$HOME/.config/hypr/hyprland.conf"

@@ -239,17 +239,15 @@ install_configs() {
     patch_installed_paths "$HOME/.config/fastfetch/config.jsonc"
 
     log "${MAGENTA}Creating default theme links...${NC}"
-    # Use relative links for portability
-    if [ ! -L "$waybar_dest/style.css" ] && [ ! -f "$waybar_dest/style.css" ]; then
-        run ln -sf "themes/pink-anime.css" "$waybar_dest/style.css"
-    fi
+    # Ensure correct relative links (force update)
+    (cd "$waybar_dest" && run ln -sf "themes/pink-anime.css" "style.css")
     
     # Widget theme links
     local widget
     for widget in aiko-note aiko-player aiko-clock aiko-usercard aiko-weather aiko-list aiko-sys aiko-monitors; do
         local w_dir="$waybar_dest/widgets/$widget"
-        if [ -d "$w_dir" ] && [ ! -L "$w_dir/theme.css" ] && [ ! -f "$w_dir/theme.css" ]; then
-            (cd "$w_dir" && run ln -sf "themes/pink-anime.css" "theme.css")
+        if [ -d "$w_dir" ]; then
+            (cd "$w_dir" && run ln -sf "../../themes/pink-anime.css" "theme.css")
         fi
     done
 

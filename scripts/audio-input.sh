@@ -23,8 +23,12 @@ if [ "$mute" = "yes" ]; then
     exit 0
 fi
 
-vol=$(pactl get-source-volume @DEFAULT_SOURCE@ 2>/dev/null | awk '/Volume/ {print $5; exit}' | tr -d '%')
+# Get volume percentage and clean it up (ensure only numbers, even if it says "Full")
+vol=$(pactl get-source-volume @DEFAULT_SOURCE@ 2>/dev/null | awk '/Volume/ {print $5; exit}' | tr -dc '0-9')
+
 if [ -z "$vol" ]; then
-    exit 0
+    # Fallback to 100 if parsing failed but it wasn't muted (often happens at "Full")
+    vol=$(pactl get-source-volume @DEFAULT_SOURCE@ 2>/dev/null | grep -q "100%" && echo "100" || echo "")
 fi
-printf '%s' "$vol"
+
+[ -n "$vol" ] && printf '%s' "$vol"
