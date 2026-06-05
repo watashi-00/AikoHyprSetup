@@ -106,29 +106,25 @@ if have hyprctl && have jq; then
 
         if [ "$is_portrait" -eq 1 ]; then
             log "Launching full bar set for $name (Portrait Mode)"
-            # Portrait Top Bar (Minimal: Workspaces + Power)
-            launch_pinned_bar "$name" "config-portrait.jsonc" "portrait"
-            # Bottom Bar (Taskbar)
-            launch_pinned_bar "$name" "config-bottom.jsonc" "bottom"
-            # Left Bar (Launcher)
+            # Launch order: Left -> Bottom -> Top
             launch_pinned_bar "$name" "config-left.jsonc" "left"
+            launch_pinned_bar "$name" "config-bottom.jsonc" "bottom"
+            launch_pinned_bar "$name" "config-portrait.jsonc" "portrait"
         else
             log "Launching full bar set for $name (Landscape Mode)"
-            # Top Bar (Full)
-            launch_pinned_bar "$name" "config.jsonc" "top"
-            # Bottom Bar (Taskbar)
-            launch_pinned_bar "$name" "config-bottom.jsonc" "bottom"
-            # Left Bar (Launcher)
+            # Launch order: Left -> Bottom -> Top
             launch_pinned_bar "$name" "config-left.jsonc" "left"
+            launch_pinned_bar "$name" "config-bottom.jsonc" "bottom"
+            launch_pinned_bar "$name" "config.jsonc" "top"
         fi
     done
 else
     # Fallback
     nohup waybar --config "$(get_config_path config-left.jsonc)" --style "$STYLE_CSS" >/dev/null 2>&1 &
     sleep 0.3
-    nohup waybar --config "$(get_config_path config.jsonc)" --style "$STYLE_CSS" >/dev/null 2>&1 &
-    sleep 0.3
     nohup waybar --config "$(get_config_path config-bottom.jsonc)" --style "$STYLE_CSS" >/dev/null 2>&1 &
+    sleep 0.3
+    nohup waybar --config "$(get_config_path config.jsonc)" --style "$STYLE_CSS" >/dev/null 2>&1 &
 fi
 
 # Restart Listeners
