@@ -11,10 +11,26 @@ if [ -f "$AIKO_SCRIPTS/lib/utils.sh" ]; then
 fi
 
 AIKO_LOG_COMPONENT="event-monitor"
-
 RESTART_SCRIPT="$AIKO_SCRIPTS/restart-waybar.sh"
+DEBOUNCE_FILE="/tmp/aiko-monitor-restart-trigger"
 
-log "Monitor added/activated event: $1"
+log "Monitor event received: $1"
+
+# Debounce mechanism: Write our PID to the trigger file
+echo "$$" > "$DEBOUNCE_FILE"
+
+# Wait a short moment to let any rapid consecutive monitor events arrive
+sleep 1.2
+
+# Check if another instance ran and updated the trigger file
+if [ "$(cat "$DEBOUNCE_FILE" 2>/dev/null)" != "$$" ]; then
+    log "Consecutive monitor event detected. Cancelling this restart execution in favor of the newer event."
+    exit 0
+fi
+
+# Clean up trigger file
+rm -f "$DEBOUNCE_FILE"
+
 if [ -f "$RESTART_SCRIPT" ]; then
     log "Triggering Waybar restart..."
     # Run with target AIKO_ROOT config directory to ensure correct theme/config load
