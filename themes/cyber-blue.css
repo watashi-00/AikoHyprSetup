@@ -206,3 +206,33 @@ image#album-art {
     color: #00ffff;
     text-shadow: 0 0 10px #00ffff;
 }
+/* Portrait Mode Optimizations */
+window#waybar.portrait {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+}
+
+window#waybar.portrait .modules-left,
+window#waybar.portrait .modules-center,
+window#waybar.portrait .modules-right {
+    background: #010410;
+    border-radius: 0;
+    border: 1px solid #00ffff;
+    padding: 2px 6px;
+    margin: 0 2px;
+}
+
+window#waybar.portrait .modules-left { min-width: 0; }
+window#waybar.portrait #workspaces { min-width: 0; }
+window#waybar.portrait #workspaces button { min-width: 25px; font-size: 10px; }
+window#waybar.portrait #clock { font-size: 11px; }
+window#waybar.portrait #custom-spotify { min-width: 0; font-size: 10px; }
+window#waybar.portrait #custom-audio-output, 
+window#waybar.portrait #network, 
+window#waybar.portrait #battery, 
+window#waybar.portrait #custom-power {
+    font-size: 11px;
+    padding: 0 5px;
+}

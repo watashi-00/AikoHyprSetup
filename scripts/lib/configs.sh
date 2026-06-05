@@ -161,7 +161,7 @@ install_configs() {
     local wofi_dest="$HOME/.config/wofi"
 
     local waybar_files=(
-        config.jsonc config-bottom.jsonc config-left.jsonc config-screenshot.jsonc style.css
+        config.jsonc config-bottom.jsonc config-left.jsonc config-portrait.jsonc config-screenshot.jsonc style.css
     )
 
     log "${MAGENTA}Installing Waybar configs...${NC}"

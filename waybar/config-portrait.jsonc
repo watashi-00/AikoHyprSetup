@@ -1,0 +1,73 @@
+{
+    "name": "portrait",
+    "layer": "top",
+    "position": "top",
+    "height": 48,
+    "spacing": 4,
+    "margin-top": 8,
+    "margin-left": 8,
+    "margin-right": 8,
+    "fixed-center": true,
+
+    "modules-left": ["hyprland/workspaces", "clock"],
+    "modules-center": ["group/spotify-portrait"],
+    "modules-right": ["custom/audio-output", "network", "battery", "custom/power"],
+
+    "hyprland/workspaces": {
+        "format": "{icon}",
+        "on-click": "activate",
+        "all-outputs": false,
+        "format-icons": {
+            "default": "○",
+            "active": "●"
+        }
+    },
+
+    "group/spotify-portrait": {
+        "orientation": "horizontal",
+        "modules": [
+            "custom/spotify"
+        ]
+    },
+
+    "custom/audio-output": {
+        "format": "{}",
+        "interval": 1,
+        "exec": "$HOME/.config/waybar/scripts/audio-output.sh",
+        "on-click": "pavucontrol",
+        "on-click-right": "$HOME/.config/waybar/scripts/audio-output.sh --toggle"
+    },
+
+    "network": {
+        "format-wifi": "",
+        "format-ethernet": "󰈀",
+        "format-disconnected": "⚠",
+        "tooltip-format": "{essid}"
+    },
+
+    "battery": {
+        "format": "{icon}",
+        "format-icons": ["", "", "", "", ""],
+        "tooltip-format": "{capacity}%"
+    },
+
+    "clock": {
+        "format": "{:%H:%M}",
+        "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
+    },
+
+    "custom/power": {
+        "format": "⏻",
+        "on-click": "aiko --power",
+        "tooltip": false
+    },
+
+    "custom/spotify": {
+        "format": "{}",
+        "escape": true,
+        "interval": 2,
+        "exec": "playerctl metadata --format '{{title}}' 2> /dev/null",
+        "on-click": "playerctl play-pause",
+        "max-length": 15
+    }
+}
