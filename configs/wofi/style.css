@@ -6,7 +6,9 @@
 
 window {
     background: rgba(30, 32, 35, 0.95); /* @theme:wofi-bg */
-    border: 1px solid rgba(245, 185, 212, 0.25); /* @theme:wofi-border */
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgba(245, 185, 212, 0.25); /* @theme:wofi-border */
     border-radius: 12px;
     padding: 16px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
@@ -15,14 +17,16 @@ window {
 #input {
     color: #e6e1ea; /* @theme:wofi-text */
     background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(245, 185, 212, 0.25); /* @theme:wofi-border */
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgba(245, 185, 212, 0.25); /* @theme:wofi-border */
     border-radius: 8px;
     padding: 12px;
     margin-bottom: 12px;
 }
 
 #input:focus {
-    border: 1px solid rgba(245, 185, 212, 0.5); /* @theme:wofi-border */
+    border-color: rgba(245, 185, 212, 0.5); /* @theme:wofi-border */
 }
 
 #inner-box,
@@ -48,7 +52,9 @@ entry {
 entry:selected {
     background-color: rgba(99, 72, 91, 0.85); /* @theme:wofi-accent */
     color: #ffffff; /* @theme:wofi-text */
-    border: 1px solid rgba(245, 185, 212, 0.5); /* @theme:wofi-border */
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgba(245, 185, 212, 0.5); /* @theme:wofi-border */
 }
 
 #text:selected {
