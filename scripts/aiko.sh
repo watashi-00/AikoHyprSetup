@@ -31,6 +31,7 @@ Options:
   --install         Run the installation script
   --update [branch] Update AikoHyprSetup from the specified branch (defaults to master)
   --update-test     Update AikoHyprSetup from the test branch
+  --update-check    Check remote branches, versions, commit dates and messages
   --wallpaper       Open the wallpaper selector
   --theme           Open the theme selector
   --monitors        Open the Monitor configuration widget
@@ -62,6 +63,95 @@ Examples:
   aiko --wallpaper
   aiko --note
 EOF
+}
+
+check_updates_info() {
+    echo -e "${CYAN}--------------------------------------------------${NC}"
+    log "Checking AikoHyprSetup Updates & Branches..."
+    echo -e "${CYAN}--------------------------------------------------${NC}"
+
+    # 1. Local Info
+    local is_git=0
+    local local_branch="master"
+    local local_hash="unknown"
+    
+    if [ -d "$AIKO_ROOT/.git" ]; then
+        is_git=1
+        local_branch=$(git -C "$AIKO_ROOT" branch --show-current)
+        local_hash=$(git -C "$AIKO_ROOT" rev-parse --short HEAD 2>/dev/null || echo "unknown")
+    else
+        # Fallback for non-git
+        if [ -f "$AIKO_ROOT/.version_branch" ]; then
+            local_branch=$(cat "$AIKO_ROOT/.version_branch")
+        fi
+        if [ -f "$AIKO_ROOT/.version_hash" ]; then
+            local_hash=$(cat "$AIKO_ROOT/.version_hash")
+        fi
+    fi
+
+    echo -e "${BOLD}Local Installation:${NC}"
+    echo -e "  Version: ${CYAN}v$AIKO_VERSION${NC}"
+    if [ "$is_git" -eq 1 ]; then
+        echo -e "  Branch:  ${GREEN}$local_branch${NC} (via Git)"
+    else
+        echo -e "  Branch:  ${GREEN}$local_branch${NC} (Manual zip)"
+    fi
+    echo -e "  Commit:  ${YELLOW}$local_hash${NC}"
+    echo ""
+
+    # 2. Remote Info
+    echo -e "${BOLD}Remote Branches on GitHub:${NC}"
+    
+    local branches=("master" "test")
+    for b in "${branches[@]}"; do
+        # Fetch version
+        local r_version
+        r_version=$(curl -sSL "https://raw.githubusercontent.com/watashi-00/AikoHyprSetup/$b/scripts/lib/utils.sh?$(date +%s)" | grep '^export AIKO_VERSION=' | cut -d '"' -f 2)
+        
+        # Fetch commit details
+        local commit_json
+        commit_json=$(curl -s "https://api.github.com/repos/watashi-00/AikoHyprSetup/commits/$b")
+        
+        if [ -n "$r_version" ] && echo "$commit_json" | jq -e .sha >/dev/null 2>&1; then
+            local r_hash
+            r_hash=$(echo "$commit_json" | jq -r '.sha | .[0:7]')
+            
+            local r_date
+            r_date=$(echo "$commit_json" | jq -r '.commit.committer.date' | sed 's/T/ /;s/Z//')
+            
+            local r_msg
+            r_msg=$(echo "$commit_json" | jq -r '.commit.message | split("\n") | .[0]')
+            
+            # Highlight active branch
+            local branch_status=""
+            local prefix="  ●"
+            if [ "$b" == "$local_branch" ]; then
+                prefix="  ${GREEN}●${NC}"
+                branch_status=" ${BOLD}${GREEN}(Active & Selected)${NC}"
+            fi
+            
+            echo -e "$prefix ${BOLD}$b${NC}$branch_status"
+            echo -e "    Version: ${CYAN}v$r_version${NC}"
+            echo -e "    Commit:  ${YELLOW}$r_hash${NC} ($r_date)"
+            echo -e "    Message: ${WHITE}\"$r_msg\"${NC}"
+            
+            # Compare status if this is the active branch
+            if [ "$b" == "$local_branch" ]; then
+                echo -ne "    Status:  "
+                if [ "$local_hash" == "$r_hash" ]; then
+                    echo -e "${GREEN}${ICON_CHECK} Up to date${NC}"
+                elif [ "$AIKO_VERSION" != "$r_version" ]; then
+                    echo -e "${YELLOW}${ICON_WARN} Update Available! (New version v$r_version)${NC}"
+                else
+                    echo -e "${YELLOW}${ICON_WARN} Hotfix/Sync Update Available (Local: $local_hash vs Remote: $r_hash)${NC}"
+                fi
+            fi
+        else
+            echo -e "  ● ${RED}$b (Offline / Unreachable)${NC}"
+        fi
+        echo ""
+    done
+    echo -e "${CYAN}--------------------------------------------------${NC}"
 }
 
 perform_update() {
@@ -174,6 +264,9 @@ case "${1:-}" in
         ;;
     --update-test)
         perform_update "${2:-test}"
+        ;;
+    --update-check)
+        check_updates_info
         ;;
     --launcher)
         [ -f "$AIKO_SCRIPTS/launcher.sh" ] && exec bash "$AIKO_SCRIPTS/launcher.sh"

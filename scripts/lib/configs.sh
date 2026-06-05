@@ -281,6 +281,27 @@ EOF
         fi
     done
 
+    # Write version and branch metadata to target
+    log "${MAGENTA}Writing version and branch details...${NC}"
+    local src_branch="master"
+    local src_hash="unknown"
+    
+    if [ -d "$AIKO_ROOT/.git" ]; then
+        src_branch=$(git -C "$AIKO_ROOT" branch --show-current 2>/dev/null || echo "master")
+        src_hash=$(git -C "$AIKO_ROOT" rev-parse --short HEAD 2>/dev/null || echo "unknown")
+    else
+        local dirname
+        dirname=$(basename "$AIKO_ROOT")
+        if [[ "$dirname" == AikoHyprSetup-* ]]; then
+            src_branch="${dirname#AikoHyprSetup-}"
+        fi
+        [ -f "$AIKO_ROOT/.version_branch" ] && src_branch=$(cat "$AIKO_ROOT/.version_branch")
+        [ -f "$AIKO_ROOT/.version_hash" ] && src_hash=$(cat "$AIKO_ROOT/.version_hash")
+    fi
+    
+    echo "$src_branch" > "$waybar_dest/.version_branch"
+    echo "$src_hash" > "$waybar_dest/.version_hash"
+
     # Get the accent color dynamically from the theme file for icon-gen
     local theme_file="$waybar_dest/themes/$active_theme"
     local accent_color=""
