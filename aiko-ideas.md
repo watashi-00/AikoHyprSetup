@@ -27,5 +27,10 @@ A simple screen and audio recording interface.
 *   **Concept**: A tiny control panel to start/stop recording, select areas, and toggle microphone.
 *   **Implementation Idea**: Wrapping `wf-recorder` or `gpu-screen-recorder` with a custom floating UI.
 
+## 6. Aiko-LiveWallpaper (Wallpaper Engine Integration)
+Study how Wallpaper Engine implements live wallpapers and make it work on Linux.
+*   **Concept**: Enable the use of dynamic, animated, or interactive Scene/Web/Video wallpapers (like those from Steam's Wallpaper Engine).
+*   **Implementation Idea**: Research tools like `linux-wallpaperengine` or custom background window layers (using mpv or webview wrappers) and integrate them into the wallpaper/theme selector.
+
 ---
 *Feel free to add more ideas here as the project evolves.*
