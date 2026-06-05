@@ -54,7 +54,8 @@ class AikoAudio(Gtk.Window):
 
         balance_title = Gtk.Label(label="Channel Volume & Balance")
         balance_title.set_name("section-title")
-        balance_title.set_alignment(0.0, 0.5)
+        balance_title.set_xalign(0.0)
+        balance_title.set_yalign(0.5)
         balance_frame.pack_start(balance_title, False, False, 0)
 
         # Left channel slider
@@ -106,13 +107,15 @@ class AikoAudio(Gtk.Window):
 
         driver_title = Gtk.Label(label="Headphone Compatibility Fix")
         driver_title.set_name("section-title")
-        driver_title.set_alignment(0.0, 0.5)
+        driver_title.set_xalign(0.0)
+        driver_title.set_yalign(0.5)
         driver_frame.pack_start(driver_title, False, False, 0)
 
         driver_desc = Gtk.Label(label="If your headphones only play on one side, have static, or are not detected by the jack, click below to install compatibility drivers & configuration fixes.")
         driver_desc.set_line_wrap(True)
         driver_desc.set_name("section-desc")
-        driver_desc.set_alignment(0.0, 0.5)
+        driver_desc.set_xalign(0.0)
+        driver_desc.set_yalign(0.5)
         driver_frame.pack_start(driver_desc, False, False, 0)
 
         self.install_btn = Gtk.Button(label="Install Headphone Driver & Fixes")
@@ -220,6 +223,29 @@ class AikoAudio(Gtk.Window):
         self.apply_volumes(max_vol, max_vol)
 
     def on_install_clicked(self, btn):
+        # 1. Ask for password via Zenity GUI popup
+        try:
+            res = subprocess.run([
+                "zenity", "--password", 
+                "--title=Authentication Required", 
+                "--text=Aiko Audio Manager needs administrative privileges to install drivers. Please enter your password:"
+            ], capture_output=True, text=True)
+            
+            if res.returncode != 0:
+                # User cancelled or closed the dialog
+                return
+                
+            password = res.stdout.strip()
+            if not password:
+                return
+        except Exception as e:
+            self.show_message_dialog(
+                Gtk.MessageType.ERROR,
+                "Authentication Error",
+                f"Failed to open authentication dialog: {e}"
+            )
+            return
+
         # Disable button during install
         self.install_btn.set_sensitive(False)
         self.install_btn.set_label("Installing...")
@@ -229,21 +255,34 @@ class AikoAudio(Gtk.Window):
         import threading
         def run_install():
             try:
-                res = subprocess.run(["pkexec", "bash", script_path], capture_output=True, text=True)
+                # Run script with sudo -S to pipe password
+                proc = subprocess.Popen(
+                    ["sudo", "-S", "bash", script_path], 
+                    stdin=subprocess.PIPE, 
+                    stdout=subprocess.PIPE, 
+                    stderr=subprocess.PIPE, 
+                    text=True
+                )
+                
+                # Pass password to stdin
+                stdout, stderr = proc.communicate(input=f"{password}\n")
                 
                 def on_done():
-                    if res.returncode == 0:
+                    if proc.returncode == 0:
                         self.show_message_dialog(
                             Gtk.MessageType.INFO, 
                             "Installation Success", 
                             "Drivers and compatibility configuration successfully installed!\n\nPlease restart your computer to apply the changes."
                         )
                     else:
-                        err_msg = res.stderr.strip() if res.stderr else "Installation cancelled or failed."
+                        # Check if it was incorrect password
+                        err_msg = stderr.strip() if stderr else "Installation failed."
+                        if "incorrect password" in err_msg.lower() or "sorry, try again" in err_msg.lower():
+                            err_msg = "Incorrect password. Please try again."
                         self.show_message_dialog(
                             Gtk.MessageType.ERROR, 
                             "Installation Failed", 
-                            f"An error occurred:\n{err_msg}"
+                            err_msg
                         )
                     self.install_btn.set_sensitive(True)
                     self.install_btn.set_label("Install Headphone Driver & Fixes")
