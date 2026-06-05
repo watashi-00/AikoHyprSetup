@@ -29,8 +29,8 @@ Options:
   -h, --help        Show this help message
   -v, --version     Show version information
   --install         Run the installation script
-  --update          Update AikoHyprSetup (git pull master)
-  --update-test     Update AikoHyprSetup from test branch (git pull test)
+  --update [branch] Update AikoHyprSetup from the specified branch (defaults to master)
+  --update-test     Update AikoHyprSetup from the test branch
   --wallpaper       Open the wallpaper selector
   --theme           Open the theme selector
   --monitors        Open the Monitor configuration widget
@@ -169,10 +169,10 @@ case "${1:-}" in
         fi
         ;;
     --update)
-        perform_update "master"
+        perform_update "${2:-master}"
         ;;
     --update-test)
-        perform_update "test"
+        perform_update "${2:-test}"
         ;;
     --launcher)
         [ -f "$AIKO_SCRIPTS/launcher.sh" ] && exec bash "$AIKO_SCRIPTS/launcher.sh"
