@@ -30,23 +30,44 @@ MAKO_CONF="$HOME/.config/mako/config"
 themes=($(ls "$THEMES_DIR"/*.css 2>/dev/null))
 [ ${#themes[@]} -eq 0 ] && error "No themes found" && exit 1
 
-options=""
-for t in "${themes[@]}"; do
-    name=$(grep "@name:" "$t" | cut -d':' -f2 | sed 's/^ //')
-    [ -z "$name" ] && name=$(basename "$t" .css)
-    options+="$name\n"
-done
-
-selected_name=$(echo -e "$options" | wofi --dmenu --prompt "Select Theme" --width 300 --height 350)
-[ -z "$selected_name" ] && exit 0
-
 selected_file=""
-for t in "${themes[@]}"; do
-    name=$(grep "@name:" "$t" | cut -d':' -f2 | sed 's/^ //')
-    [ -z "$name" ] && name=$(basename "$t" .css)
-    if [ "$name" = "$selected_name" ]; then selected_file="$t"; break; fi
-done
+selected_name=""
+
+# If theme path or name is passed as an argument
+if [ "${1:-}" != "" ]; then
+    if [ -f "$1" ]; then
+        selected_file="$1"
+    elif [ -f "$THEMES_DIR/$1" ]; then
+        selected_file="$THEMES_DIR/$1"
+    elif [ -f "$THEMES_DIR/$1.css" ]; then
+        selected_file="$THEMES_DIR/$1.css"
+    fi
+fi
+
+if [ -z "$selected_file" ]; then
+    options=""
+    for t in "${themes[@]}"; do
+        name=$(grep "@name:" "$t" | cut -d':' -f2 | sed 's/^ //')
+        [ -z "$name" ] && name=$(basename "$t" .css)
+        options+="$name\n"
+    done
+
+    selected_name=$(echo -e "$options" | wofi --dmenu --prompt "Select Theme" --width 300 --height 350)
+    [ -z "$selected_name" ] && exit 0
+
+    for t in "${themes[@]}"; do
+        name=$(grep "@name:" "$t" | cut -d':' -f2 | sed 's/^ //')
+        [ -z "$name" ] && name=$(basename "$t" .css)
+        if [ "$name" = "$selected_name" ]; then selected_file="$t"; break; fi
+    done
+fi
+
 [ -z "$selected_file" ] && error "Theme not found" && exit 1
+
+if [ -z "$selected_name" ]; then
+    selected_name=$(grep "@name:" "$selected_file" | cut -d':' -f2 | sed 's/^ //')
+    [ -z "$selected_name" ] && selected_name=$(basename "$selected_file" .css)
+fi
 
 log "Applying theme: $selected_name"
 

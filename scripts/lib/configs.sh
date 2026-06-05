@@ -238,9 +238,16 @@ install_configs() {
     [ -d "$AIKO_CONFIGS/fastfetch" ] && copy_dir_contents "$AIKO_CONFIGS/fastfetch" "$HOME/.config/fastfetch"
     patch_installed_paths "$HOME/.config/fastfetch/config.jsonc"
 
-    log "${MAGENTA}Creating default theme links...${NC}"
-    # Ensure correct relative links (force update)
-    (cd "$waybar_dest" && run ln -sf "themes/pink-anime.css" "style.css")
+    log "${MAGENTA}Applying active theme and patching config colors...${NC}"
+    local active_theme="pink-anime.css"
+    if [ -L "$waybar_dest/style.css" ]; then
+        active_theme=$(basename "$(readlink -f "$waybar_dest/style.css")")
+    fi
+    
+    # Run theme-selector silently to restore theme files, symlinks and config patches
+    if [ -f "$waybar_dest/scripts/theme-selector.sh" ]; then
+        run bash "$waybar_dest/scripts/theme-selector.sh" "$active_theme"
+    fi
     
     # Widget theme links
     local widget

@@ -213,7 +213,7 @@ case "${1:-}" in
     --wallpaper)
         script="$AIKO_SCRIPTS/wallpaper.sh"
         if [ -f "$script" ]; then
-            bash "$script" select
+            bash "$script" "${2:-select}"
         else
             error "wallpaper.sh not found."
         fi
