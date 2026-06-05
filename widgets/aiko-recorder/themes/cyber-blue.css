@@ -12,7 +12,7 @@
 #recorder-status {
     color: #00ffff;
     font-size: 24px;
-    font-weight: 950;
+    font-weight: 900;
     font-family: "JetBrainsMono Nerd Font", sans-serif;
     text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
     margin-bottom: 5px;
@@ -21,7 +21,7 @@
 #recorder-status-active {
     color: #ff0055;
     font-size: 24px;
-    font-weight: 950;
+    font-weight: 900;
     font-family: "JetBrainsMono Nerd Font", sans-serif;
     text-shadow: 0 0 12px rgba(255, 0, 85, 0.6);
     margin-bottom: 5px;

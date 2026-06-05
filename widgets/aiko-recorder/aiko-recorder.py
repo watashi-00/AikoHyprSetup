@@ -113,7 +113,7 @@ class AikoRecorder(Gtk.Window):
 
     def on_start_recording(self, widget, select_area):
         if subprocess.run(["which", "wf-recorder"], capture_output=True).returncode != 0:
-            subprocess.run(["notify-send", "Aiko Recorder", "wf-recorder is not installed!", "-i", "dialog-error"])
+            subprocess.run(["notify-send", "Aiko Recorder", "wf-recorder is not installed!", "-i", "dialog-error"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             return
 
         # Hide window during area selection / start to avoid capture
@@ -134,7 +134,7 @@ class AikoRecorder(Gtk.Window):
 
         if select_area:
             if subprocess.run(["which", "slurp"], capture_output=True).returncode != 0:
-                subprocess.run(["notify-send", "Aiko Recorder", "slurp is not installed for area selection!", "-i", "dialog-error"])
+                subprocess.run(["notify-send", "Aiko Recorder", "slurp is not installed for area selection!", "-i", "dialog-error"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                 self.show_all()
                 return
             
@@ -150,17 +150,17 @@ class AikoRecorder(Gtk.Window):
 
         try:
             subprocess.Popen(cmd)
-            subprocess.run(["notify-send", "Aiko Recorder", "Recording started...", "-i", "media-record"])
+            subprocess.run(["notify-send", "Aiko Recorder", "Recording started...", "-i", "media-record"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         except Exception as e:
-            subprocess.run(["notify-send", "Aiko Recorder", f"Failed to start recording: {e}", "-i", "dialog-error"])
+            subprocess.run(["notify-send", "Aiko Recorder", f"Failed to start recording: {e}", "-i", "dialog-error"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
         self.show_all()
         self.check_recording_status()
 
     def on_stop_recording(self, widget):
         if self.is_wf_recorder_running():
-            subprocess.run(["pkill", "-SIGINT", "-x", "wf-recorder"])
-            subprocess.run(["notify-send", "Aiko Recorder", "Recording stopped and saved to ~/Videos", "-i", "dialog-information"])
+            subprocess.run(["pkill", "-SIGINT", "-x", "wf-recorder"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            subprocess.run(["notify-send", "Aiko Recorder", "Recording stopped and saved to ~/Videos", "-i", "dialog-information"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         self.check_recording_status()
 
     def on_key_press(self, widget, event):

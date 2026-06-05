@@ -143,7 +143,7 @@ class AikoTimer(Gtk.Window):
 
     def notify_timer_up(self):
         try:
-            subprocess.run(["notify-send", "Aiko Timer", "Time's up!", "-i", "alarm-symbolic"])
+            subprocess.run(["notify-send", "Aiko Timer", "Time's up!", "-i", "alarm-symbolic"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         except Exception as e:
             print(f"Failed to send notification: {e}")
 

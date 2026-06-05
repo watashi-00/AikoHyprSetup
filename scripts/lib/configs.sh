@@ -235,8 +235,51 @@ install_configs() {
     log "${MAGENTA}Installing Kitty and Fastfetch configs...${NC}"
     mkdir -p "$HOME/.config/kitty" "$HOME/.config/fastfetch"
     [ -d "$AIKO_CONFIGS/kitty" ] && copy_dir_contents "$AIKO_CONFIGS/kitty" "$HOME/.config/kitty"
+
+    local existing_source=""
+    if [ -f "$HOME/.config/fastfetch/config.jsonc" ]; then
+        existing_source=$(python3 -c "
+import json, os, re
+path = os.path.expanduser('~/.config/fastfetch/config.jsonc')
+try:
+    with open(path, 'r') as f:
+        content = f.read()
+    clean_lines = [line for line in content.split('\n') if not re.match(r'^\s*//', line)]
+    clean_content = re.sub(r',\s*}', '}', '\n'.join(clean_lines))
+    clean_content = re.sub(r',\s*\]', ']', clean_content)
+    data = json.loads(clean_content)
+    source = data.get('logo', {}).get('source')
+    if source:
+        print(source)
+except:
+    pass
+" 2>/dev/null)
+    fi
+
     [ -d "$AIKO_CONFIGS/fastfetch" ] && copy_dir_contents "$AIKO_CONFIGS/fastfetch" "$HOME/.config/fastfetch"
     patch_installed_paths "$HOME/.config/fastfetch/config.jsonc"
+
+    if [ -n "$existing_source" ]; then
+        python3 -c "
+import json, os, sys, re
+path = os.path.expanduser('~/.config/fastfetch/config.jsonc')
+source = sys.argv[1]
+try:
+    with open(path, 'r') as f:
+        content = f.read()
+    clean_lines = [line for line in content.split('\n') if not re.match(r'^\s*//', line)]
+    clean_content = re.sub(r',\s*}', '}', '\n'.join(clean_lines))
+    clean_content = re.sub(r',\s*\]', ']', clean_content)
+    data = json.loads(clean_content)
+    if 'logo' not in data:
+        data['logo'] = {}
+    data['logo']['source'] = source
+    with open(path, 'w') as f:
+        json.dump(data, f, indent=4)
+except:
+    pass
+" "$existing_source" 2>/dev/null
+    fi
 
     log "${MAGENTA}Installing Cava config...${NC}"
     mkdir -p "$HOME/.config/cava"

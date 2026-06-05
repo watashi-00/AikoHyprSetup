@@ -342,7 +342,7 @@ class AikoMonitors(Gtk.Window):
         for line in new_monitor_lines:
             # Strip "monitor = " prefix and trailing newline for hyprctl command
             hypr_cmd = line.strip().replace("monitor = ", "monitor ")
-            subprocess.run(["hyprctl", "keyword"] + hypr_cmd.split())
+            subprocess.run(["hyprctl", "keyword"] + hypr_cmd.split(), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
         # 4. Patch hyprland.conf file
         # Identify indices of all existing monitor lines
@@ -380,7 +380,7 @@ class AikoMonitors(Gtk.Window):
             subprocess.Popen(["aiko", "--restart"])
 
         # 6. Notify user
-        subprocess.run(["notify-send", "Monitor Config", "Monitors layout updated. Waybar restarted.", "-i", "display"])
+        subprocess.run(["notify-send", "Monitor Config", "Monitors layout updated. Waybar restarted.", "-i", "display"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         self.destroy()
 
     def on_key_press(self, widget, event):
