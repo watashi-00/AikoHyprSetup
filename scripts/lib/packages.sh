@@ -21,7 +21,7 @@ packages_for_pm() {
                 cliphist libnotify network-manager-applet grim slurp curl \
                 hyprpicker swappy xdg-utils bluez ttf-font-awesome \
                 ttf-jetbrains-mono-nerd polkit-kde-agent zenity gthumb imagemagick \
-                python-gobject socat fastfetch
+                python-gobject python-psutil socat fastfetch
             ;;
         apt)
             printf '%s\n' \
@@ -30,7 +30,7 @@ packages_for_pm() {
                 cliphist libnotify-bin network-manager-gnome grim slurp curl \
                 hyprpicker swappy xdg-utils bluez fonts-font-awesome \
                 fonts-jetbrains-mono polkit-kde-agent-1 zenity gthumb imagemagick \
-                python3-gi socat fastfetch
+                python3-gi python3-psutil socat fastfetch
             ;;
         dnf)
             printf '%s\n' \
@@ -39,7 +39,7 @@ packages_for_pm() {
                 cliphist libnotify NetworkManager-applet grim slurp curl \
                 hyprpicker swappy xdg-utils bluez fontawesome-fonts \
                 jetbrains-mono-fonts polkit-kde zenity gthumb ImageMagick \
-                python3-gobject socat fastfetch
+                python3-gobject python3-psutil socat fastfetch
             ;;
         zypper)
             printf '%s\n' \
@@ -48,7 +48,7 @@ packages_for_pm() {
                 cliphist libnotify-tools NetworkManager-applet grim slurp curl \
                 hyprpicker swappy xdg-utils bluez fontawesome-fonts \
                 jetbrains-mono-fonts polkit-kde-agent-6 zenity gthumb ImageMagick \
-                python3-gobject socat fastfetch
+                python3-gobject python3-psutil socat fastfetch
             ;;
         apk)
             printf '%s\n' \
@@ -57,7 +57,7 @@ packages_for_pm() {
                 cliphist libnotify network-manager-applet grim slurp curl \
                 hyprpicker swappy xdg-utils bluez fontawesome-fonts \
                 ttf-jetbrains-mono polkit-kde-agent zenity gthumb imagemagick \
-                py3-gobject3 socat fastfetch
+                py3-gobject3 py3-psutil socat fastfetch
             ;;
     esac
 }

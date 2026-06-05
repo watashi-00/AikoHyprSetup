@@ -21,6 +21,7 @@
 
 #note-content {
     background-color: transparent;
+    background-image: none;
     color: #00ffff;
     font-family: "JetBrainsMono Nerd Font", sans-serif;
     font-size: 14px;
@@ -29,6 +30,7 @@
 
 #note-content text {
     background-color: transparent;
+    background-image: none;
 }
 
 #note-cat-icon {

@@ -218,9 +218,10 @@ class AikoLogoEditor(Gtk.Window):
         css_provider = Gtk.CssProvider()
         css = """
             window { background-color: #1e2023; color: #e6e1ea; }
-            textview { 
+            textview, textview text { 
                 font-family: "JetBrainsMono Nerd Font"; 
                 background-color: #181a1d; 
+                background-image: none;
                 color: #ff8fbd;
                 padding: 10px;
             }

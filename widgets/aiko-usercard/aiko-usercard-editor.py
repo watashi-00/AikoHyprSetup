@@ -189,6 +189,7 @@ class AikoUserCardEditor(Gtk.Window):
             window { background-color: #1e2023; color: #e6e1ea; }
             entry { 
                 background-color: rgba(255,255,255,0.05); 
+                background-image: none;
                 color: white; 
                 border: 1px solid rgba(255,143,189,0.3);
                 border-radius: 5px;
