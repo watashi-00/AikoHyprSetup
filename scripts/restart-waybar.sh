@@ -39,45 +39,67 @@ pkill -f clipboard-listener.sh 2>/dev/null || true
 sleep 0.6
 
 # --- Theme & Icon Sync ---
-# Find which theme is currently active via style.css symlink
 if [ -L "$STYLE_CSS" ]; then
     ACTIVE_THEME=$(readlink -f "$STYLE_CSS")
     if [ -f "$ACTIVE_THEME" ]; then
-        # Extract accent color for icons
         ACCENT_COLOR=$(grep "@mako-border" "$ACTIVE_THEME" | cut -d':' -f2 | tr -d '[:space:]')
         [ -z "$ACCENT_COLOR" ] && ACCENT_COLOR="#ff8fbd"
         
         log "Syncing icons and colors for active theme: $(basename "$ACTIVE_THEME")"
         
-        # Run icon generator in background
         if [ -f "$AIKO_SCRIPTS/icon-gen.sh" ]; then
             nohup bash "$AIKO_SCRIPTS/icon-gen.sh" "$ACCENT_COLOR" >/dev/null 2>&1 &
         fi
         
-        # Sync fastfetch
         if [ -f "$AIKO_SCRIPTS/sync-fastfetch.py" ]; then
             python3 "$AIKO_SCRIPTS/sync-fastfetch.py" >/dev/null 2>&1
         fi
     fi
 fi
 
-# Apply wallpaper (static or animated)
+# Apply wallpaper
 if [ -f "$AIKO_SCRIPTS/wallpaper.sh" ]; then
     nohup bash "$AIKO_SCRIPTS/wallpaper.sh" apply >/dev/null 2>&1 &
 fi
 
-# Start the three instances
-nohup waybar --config "$(get_config_path config-left.jsonc)" --style "$STYLE_CSS" >/dev/null 2>&1 &
-sleep 0.3
-nohup waybar --config "$(get_config_path config.jsonc)" --style "$STYLE_CSS" >/dev/null 2>&1 &
-sleep 0.3
-nohup waybar --config "$(get_config_path config-bottom.jsonc)" --style "$STYLE_CSS" >/dev/null 2>&1 &
+# --- Intelligent Per-Monitor Launch ---
+if have hyprctl; then
+    monitors=$(hyprctl monitors -j)
+    
+    # Iterate through each monitor
+    echo "$monitors" | jq -c '.[]' | while read -r mon; do
+        name=$(echo "$mon" | jq -r '.name')
+        transform=$(echo "$mon" | jq -r '.transform')
+        
+        # 0 or 2 = Landscape (Normal/Inverted)
+        # 1 or 3 = Portrait (90°/270°)
+        if [ "$transform" -eq 1 ] || [ "$transform" -eq 3 ]; then
+            log "Launching Portrait bar for $name"
+            nohup waybar --bar "portrait-$name" --config "$(get_config_path config-portrait.jsonc)" --style "$STYLE_CSS" >/dev/null 2>&1 &
+        else
+            log "Launching Landscape bars for $name"
+            # Top Bar
+            nohup waybar --bar "top-$name" --config "$(get_config_path config.jsonc)" --style "$STYLE_CSS" >/dev/null 2>&1 &
+            # Bottom Bar (if it should be on every landscape monitor)
+            nohup waybar --bar "bottom-$name" --config "$(get_config_path config-bottom.jsonc)" --style "$STYLE_CSS" >/dev/null 2>&1 &
+            # Left Bar (Launcher) - Optional: only on primary or eDP-1 if you prefer
+            nohup waybar --bar "left-$name" --config "$(get_config_path config-left.jsonc)" --style "$STYLE_CSS" >/dev/null 2>&1 &
+        fi
+    done
+else
+    # Fallback to old behavior if hyprctl is not available
+    nohup waybar --config "$(get_config_path config-left.jsonc)" --style "$STYLE_CSS" >/dev/null 2>&1 &
+    sleep 0.3
+    nohup waybar --config "$(get_config_path config.jsonc)" --style "$STYLE_CSS" >/dev/null 2>&1 &
+    sleep 0.3
+    nohup waybar --config "$(get_config_path config-bottom.jsonc)" --style "$STYLE_CSS" >/dev/null 2>&1 &
+fi
 
 # Restart Listeners
 nohup "$AIKO_SCRIPTS/icon-listener.sh" >/dev/null 2>&1 &
 nohup "$AIKO_SCRIPTS/clipboard-listener.sh" >/dev/null 2>&1 &
 
-# Restart Aiko Widgets if they were running
+# Restart Aiko Widgets
 widgets=("clock" "weather" "note" "player" "list" "sys" "usercard")
 for w in "${widgets[@]}"; do
     widget="aiko-$w"
@@ -85,7 +107,6 @@ for w in "${widgets[@]}"; do
         log "Restarting $widget..."
         pkill -f "$widget.py" || true
         pkill -f "$widget-bin" || true
-        # Start it back using the global CLI
         nohup aiko --"$w" >/dev/null 2>&1 &
     fi
 done
