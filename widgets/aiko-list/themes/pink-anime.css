@@ -81,17 +81,18 @@ checkbutton#task-check:checked check {
     border-radius: 15px;
 }
 
-entry {
-    background-image: none;
-    background-color: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 143, 189, 0.3);
+entry, entry text {
+    background-image: none !important;
+    background-color: #121315 !important;
+    border: 1px solid rgba(255, 143, 189, 0.3) !important;
     border-radius: 8px;
-    color: #e6e1ea;
+    color: #e6e1ea !important;
     padding: 8px;
 }
 
-entry:focus {
-    border-color: #ff8fbd;
+entry:focus, entry:focus text {
+    border-color: #ff8fbd !important;
+    background-color: #1b1c1e !important;
 }
 
 button {

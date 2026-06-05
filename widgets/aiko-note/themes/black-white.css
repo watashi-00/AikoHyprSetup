@@ -19,17 +19,17 @@
 }
 
 #note-content {
-    background-color: transparent;
-    background-image: none;
-    color: #eeeeee;
+    background-color: transparent !important;
+    background-image: none !important;
+    color: #eeeeee !important;
     font-family: "JetBrainsMono Nerd Font", sans-serif;
     font-size: 14px;
     font-weight: 500;
 }
 
 #note-content text {
-    background-color: transparent;
-    background-image: none;
+    background-color: transparent !important;
+    background-image: none !important;
 }
 
 #note-content selection {
