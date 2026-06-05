@@ -11,7 +11,7 @@
 
     "modules-left": ["hyprland/workspaces", "clock"],
     "modules-center": ["group/spotify-portrait"],
-    "modules-right": ["custom/audio-output", "network", "battery", "custom/power"],
+    "modules-right": ["custom/power"],
 
     "hyprland/workspaces": {
         "format": "{icon}",
@@ -28,27 +28,6 @@
         "modules": [
             "custom/spotify"
         ]
-    },
-
-    "custom/audio-output": {
-        "format": "{}",
-        "interval": 1,
-        "exec": "$HOME/.config/waybar/scripts/audio-output.sh",
-        "on-click": "pavucontrol",
-        "on-click-right": "$HOME/.config/waybar/scripts/audio-output.sh --toggle"
-    },
-
-    "network": {
-        "format-wifi": "",
-        "format-ethernet": "󰈀",
-        "format-disconnected": "⚠",
-        "tooltip-format": "{essid}"
-    },
-
-    "battery": {
-        "format": "{icon}",
-        "format-icons": ["", "", "", "", ""],
-        "tooltip-format": "{capacity}%"
     },
 
     "clock": {
