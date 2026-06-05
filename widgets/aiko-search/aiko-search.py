@@ -60,6 +60,12 @@ class AikoSearch(Gtk.Window):
         self.entry.connect("key-press-event", self.on_entry_key_press)
         self.search_bar_box.pack_start(self.entry, True, True, 0)
 
+        # Close Button
+        self.close_btn = Gtk.Button(label="✕")
+        self.close_btn.set_name("close-button")
+        self.close_btn.connect("clicked", lambda w: self.destroy())
+        self.search_bar_box.pack_end(self.close_btn, False, False, 0)
+
         # Separator line
         self.separator = Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL)
         self.separator.set_name("search-separator")
@@ -82,9 +88,6 @@ class AikoSearch(Gtk.Window):
 
         # Connect window events
         self.connect("key-press-event", self.on_window_key_press)
-        
-        # Delay arming focus-out auto-close to prevent immediate closing during mapping in Hyprland
-        GLib.timeout_add(500, self.arm_focus_out)
 
         # Initial populate
         self.update_results("")
@@ -166,10 +169,6 @@ class AikoSearch(Gtk.Window):
         if event.keyval == Gdk.KEY_Escape:
             self.destroy()
             return True
-        return False
-
-    def arm_focus_out(self):
-        self.connect("focus-out-event", lambda w, e: self.destroy())
         return False
 
     def move_selection(self, step):
