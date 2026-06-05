@@ -1,27 +1,28 @@
-/* Wofi Pink Palette Theme */
+/* Wofi Modern Theme for AikoHyprSetup */
 * {
-    font-family: "JetBrainsMono Nerd Font", "Font Awesome 6 Free", sans-serif;
+    font-family: "JetBrainsMono Nerd Font", sans-serif;
     font-size: 14px;
 }
 
 window {
-    background: rgba(30, 32, 35, 0.95); /* @theme:wofi_bg */
-    border: 1px solid rgba(245, 185, 212, 0.25); /* @theme:wofi_border */
-    border-radius: 8px;
+    background: rgba(30, 32, 35, 0.95); /* @theme:wofi-bg */
+    border: 1px solid rgba(245, 185, 212, 0.25); /* @theme:wofi-border */
+    border-radius: 12px;
     padding: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
 }
 
 #input {
-    color: #e6e1ea; /* @theme:wofi_text */
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(245, 185, 212, 0.25); /* @theme:wofi_border */
+    color: #e6e1ea; /* @theme:wofi-text */
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(245, 185, 212, 0.25); /* @theme:wofi-border */
     border-radius: 8px;
-    padding: 10px 12px;
+    padding: 12px;
     margin-bottom: 12px;
 }
 
 #input:focus {
-    border: 1px solid rgba(245, 185, 212, 0.25); /* @theme:wofi_border */
+    border: 1px solid rgba(245, 185, 212, 0.5); /* @theme:wofi-border */
 }
 
 #inner-box,
@@ -38,20 +39,20 @@ window {
 }
 
 entry {
-    color: #e6e1ea; /* @theme:wofi_text */
-    padding: 10px;
+    color: #e6e1ea; /* @theme:wofi-text */
+    padding: 10px 14px;
     border-radius: 8px;
-    margin: 2px 0;
+    margin: 3px 0;
 }
 
 entry:selected {
-    background-color: rgba(99, 72, 91, 0.85); /* @theme:wofi_accent */
-    color: #e6e1ea; /* @theme:wofi_text */
-    border: 1px solid rgba(245, 185, 212, 0.25); /* @theme:wofi_border */
+    background-color: rgba(99, 72, 91, 0.85); /* @theme:wofi-accent */
+    color: #ffffff; /* @theme:wofi-text */
+    border: 1px solid rgba(245, 185, 212, 0.5); /* @theme:wofi-border */
 }
 
 #text:selected {
-    color: #e6e1ea; /* @theme:wofi_text */
+    color: #ffffff; /* @theme:wofi-text */
 }
 
 label {
