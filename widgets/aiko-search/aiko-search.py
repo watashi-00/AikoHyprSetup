@@ -415,13 +415,13 @@ class AikoSearch(Gtk.Window):
                 if mode == "google":
                     url = f"http://suggestqueries.google.com/complete/search?client=firefox&q={q}"
                 elif mode == "youtube":
-                    url = f"http://suggestqueries.google.com/complete/search?client=youtube&q={q}"
+                    url = f"http://suggestqueries.google.com/complete/search?client=firefox&ds=yt&q={q}"
                 else:
                     return
                 
                 req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
                 with urllib.request.urlopen(req, timeout=0.8) as response:
-                    data = json.loads(response.read().decode('utf-8'))
+                    data = json.loads(response.read().decode('latin-1'))
                     suggestions = data[1] if len(data) > 1 else []
                     GLib.idle_add(callback, suggestions)
             except Exception:
