@@ -43,9 +43,14 @@ Options:
   --player          Open the Aiko-Player widget
   --list            Open the Aiko-List widget
   --sys             Open the Aiko-System widget
+  --calendar        Open the Aiko-Calendar widget
+  --timer           Open the Aiko-Timer widget
+  --recorder        Open the Aiko-Recorder widget
   --all             Open all Aiko widgets at once
   --launcher        Open application launcher (wofi)
+  --search          Open advanced search utility (wofi)
   --power           Open power menu
+  --bluetooth       Open bluetooth manager (wofi)
   --clip            Open clipboard history
   --clip-listener   Start the clipboard listener (deprecated, use --event-listener)
   --icon-listener   Start the icon window listener (deprecated, use --event-listener)
@@ -346,9 +351,24 @@ case "${1:-}" in
     --player)
         bash "$AIKO_SCRIPTS/lib/widget_launcher.sh" "aiko-player"
         ;;
+    --calendar)
+        bash "$AIKO_SCRIPTS/lib/widget_launcher.sh" "aiko-calendar"
+        ;;
+    --timer)
+        bash "$AIKO_SCRIPTS/lib/widget_launcher.sh" "aiko-timer"
+        ;;
+    --recorder)
+        bash "$AIKO_SCRIPTS/lib/widget_launcher.sh" "aiko-recorder"
+        ;;
+    --search)
+        [ -f "$AIKO_SCRIPTS/search.sh" ] && exec bash "$AIKO_SCRIPTS/search.sh"
+        ;;
+    --bluetooth)
+        [ -f "$AIKO_SCRIPTS/bluetooth.sh" ] && exec bash "$AIKO_SCRIPTS/bluetooth.sh"
+        ;;
     --all)
         log "Launching all Aiko widgets..."
-        widgets=("aiko-clock" "aiko-weather" "aiko-note" "aiko-player" "aiko-list" "aiko-sys" "aiko-usercard" "aiko-monitors" "aiko-audio")
+        widgets=("aiko-clock" "aiko-weather" "aiko-note" "aiko-player" "aiko-list" "aiko-sys" "aiko-usercard" "aiko-monitors" "aiko-audio" "aiko-calendar" "aiko-timer" "aiko-recorder")
         for widget in "${widgets[@]}"; do
             log "  -> Starting $widget"
             bash "$AIKO_SCRIPTS/lib/widget_launcher.sh" "$widget"

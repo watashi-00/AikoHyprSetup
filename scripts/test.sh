@@ -74,7 +74,7 @@ done < <(find "$AIKO_WIDGETS" -name "*.py" -not -path "*/.bak-*/*" -not -name "*
 
 # --- 4. Widget Directory Structure ---
 log "Verifying widget integrity..."
-widgets=("aiko-clock" "aiko-weather" "aiko-note" "aiko-player" "aiko-list" "aiko-sys" "aiko-usercard" "aiko-monitors" "aiko-audio")
+widgets=("aiko-clock" "aiko-weather" "aiko-note" "aiko-player" "aiko-list" "aiko-sys" "aiko-usercard" "aiko-monitors" "aiko-audio" "aiko-calendar" "aiko-timer" "aiko-recorder")
 for w in "${widgets[@]}"; do
     w_dir="$AIKO_WIDGETS/$w"
     if [ -d "$w_dir" ]; then
