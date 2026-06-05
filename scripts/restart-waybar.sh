@@ -19,6 +19,7 @@ AIKO_LOG_COMPONENT="restart"
 
 # --- Path Setup ---
 STYLE_CSS="$AIKO_ROOT/style.css"
+[ ! -f "$STYLE_CSS" ] && STYLE_CSS="$AIKO_ROOT/waybar/style.css"
 
 get_config_path() {
     local name="$1"
@@ -35,7 +36,7 @@ pkill -f icon-listener.sh 2>/dev/null || true
 pkill -f clipboard-listener.sh 2>/dev/null || true
 
 # Wait a moment to ensure processes are closed
-sleep 0.5
+sleep 0.6
 
 # --- Theme & Icon Sync ---
 # Find which theme is currently active via style.css symlink
@@ -50,7 +51,7 @@ if [ -L "$STYLE_CSS" ]; then
         
         # Run icon generator in background
         if [ -f "$AIKO_SCRIPTS/icon-gen.sh" ]; then
-            bash "$AIKO_SCRIPTS/icon-gen.sh" "$ACCENT_COLOR" >/dev/null 2>&1 &
+            nohup bash "$AIKO_SCRIPTS/icon-gen.sh" "$ACCENT_COLOR" >/dev/null 2>&1 &
         fi
         
         # Sync fastfetch
@@ -62,19 +63,19 @@ fi
 
 # Apply wallpaper (static or animated)
 if [ -f "$AIKO_SCRIPTS/wallpaper.sh" ]; then
-    bash "$AIKO_SCRIPTS/wallpaper.sh" apply >/dev/null 2>&1 &
+    nohup bash "$AIKO_SCRIPTS/wallpaper.sh" apply >/dev/null 2>&1 &
 fi
 
 # Start the three instances
-waybar --config "$(get_config_path config-left.jsonc)" --style "$STYLE_CSS" >/dev/null 2>&1 &
-sleep 0.2
-waybar --config "$(get_config_path config.jsonc)" --style "$STYLE_CSS" >/dev/null 2>&1 &
-sleep 0.2
-waybar --config "$(get_config_path config-bottom.jsonc)" --style "$STYLE_CSS" >/dev/null 2>&1 &
+nohup waybar --config "$(get_config_path config-left.jsonc)" --style "$STYLE_CSS" >/dev/null 2>&1 &
+sleep 0.3
+nohup waybar --config "$(get_config_path config.jsonc)" --style "$STYLE_CSS" >/dev/null 2>&1 &
+sleep 0.3
+nohup waybar --config "$(get_config_path config-bottom.jsonc)" --style "$STYLE_CSS" >/dev/null 2>&1 &
 
 # Restart Listeners
-"$AIKO_SCRIPTS/icon-listener.sh" >/dev/null 2>&1 &
-"$AIKO_SCRIPTS/clipboard-listener.sh" >/dev/null 2>&1 &
+nohup "$AIKO_SCRIPTS/icon-listener.sh" >/dev/null 2>&1 &
+nohup "$AIKO_SCRIPTS/clipboard-listener.sh" >/dev/null 2>&1 &
 
 # Restart Aiko Widgets if they were running
 widgets=("clock" "weather" "note" "player" "list" "sys" "usercard")
@@ -85,7 +86,7 @@ for w in "${widgets[@]}"; do
         pkill -f "$widget.py" || true
         pkill -f "$widget-bin" || true
         # Start it back using the global CLI
-        aiko --"$w" >/dev/null 2>&1 &
+        nohup aiko --"$w" >/dev/null 2>&1 &
     fi
 done
 
