@@ -24,6 +24,9 @@
  @widget-aiko-weather: black-white.css
  @widget-aiko-list: black-white.css
  @widget-aiko-sys: black-white.css
+ @widget-aiko-calendar: black-white.css
+ @widget-aiko-timer: black-white.css
+ @widget-aiko-recorder: black-white.css
 */
 
 * {

@@ -1,0 +1,73 @@
+#aiko-recorder-window {
+    background-color: transparent;
+}
+
+#main-container {
+    background-color: rgba(30, 32, 35, 0.95);
+    border: 2px solid #ff8fbd;
+    border-radius: 15px;
+}
+
+#recorder-status {
+    color: #ff8fbd;
+    font-size: 24px;
+    font-weight: 850;
+    font-family: "JetBrainsMono Nerd Font", sans-serif;
+    margin-bottom: 5px;
+}
+
+#recorder-status-active {
+    color: #ff3388;
+    font-size: 24px;
+    font-weight: 850;
+    font-family: "JetBrainsMono Nerd Font", sans-serif;
+    text-shadow: 0 0 10px rgba(255, 51, 136, 0.5);
+    margin-bottom: 5px;
+}
+
+#audio-toggle {
+    color: #ffd7e8;
+    font-weight: 700;
+}
+
+#audio-toggle check {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 143, 189, 0.3);
+    border-radius: 6px;
+}
+
+#audio-toggle check:checked {
+    background: #ff8fbd;
+}
+
+#action-btn {
+    color: #302025;
+    background: #ff8fbd;
+    border: 2px solid #ff8fbd;
+    border-radius: 8px;
+    font-weight: 900;
+    font-size: 14px;
+    padding: 10px;
+}
+
+#action-btn:hover {
+    background: #ffffff;
+    border-color: #ffffff;
+    color: #302025;
+}
+
+#stop-btn {
+    color: #ffffff;
+    background: #ff3388;
+    border: 2px solid #ff3388;
+    border-radius: 8px;
+    font-weight: 900;
+    font-size: 16px;
+    padding: 10px;
+    box-shadow: 0 0 8px rgba(255, 51, 136, 0.4);
+}
+
+#stop-btn:hover {
+    background: #ff55aa;
+    border-color: #ff55aa;
+}

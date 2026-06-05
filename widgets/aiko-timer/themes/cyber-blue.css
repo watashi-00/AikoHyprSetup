@@ -1,0 +1,100 @@
+#aiko-timer-window {
+    background-color: transparent;
+}
+
+#main-container {
+    background-color: rgba(2, 4, 15, 0.95);
+    border: 2px solid #00ffff;
+    border-radius: 0;
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+}
+
+#timer-display {
+    color: #00ffff;
+    font-size: 48px;
+    font-weight: 950;
+    font-family: "JetBrainsMono Nerd Font", sans-serif;
+    text-shadow: 0 0 12px rgba(0, 255, 255, 0.5);
+    margin-bottom: 5px;
+}
+
+#timer-progress trough {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(0, 255, 255, 0.2);
+    min-height: 8px;
+}
+
+#timer-progress progress {
+    background-color: #00ffff;
+    box-shadow: 0 0 8px rgba(0, 255, 255, 0.6);
+    min-height: 8px;
+}
+
+#preset-btn {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(0, 255, 255, 0.2);
+    border-radius: 0;
+    font-weight: 700;
+}
+
+#preset-btn:hover {
+    background: rgba(0, 255, 255, 0.15);
+    border-color: #00ffff;
+    color: #00ffff;
+}
+
+#custom-label {
+    color: #00ffff;
+    font-weight: 700;
+}
+
+#time-spinner {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(0, 255, 255, 0.2);
+    border-radius: 0;
+    font-weight: 700;
+}
+
+#set-btn {
+    color: #02040f;
+    background: #00ffff;
+    border: 1px solid #00ffff;
+    border-radius: 0;
+    font-weight: 700;
+}
+
+#set-btn:hover {
+    background: #ffffff;
+    border-color: #ffffff;
+    color: #02040f;
+}
+
+#control-start-btn {
+    color: #ffffff;
+    background: rgba(0, 255, 255, 0.1);
+    border: 2px solid #00ffff;
+    border-radius: 0;
+    font-weight: 900;
+    font-size: 16px;
+}
+
+#control-start-btn:hover {
+    background: #00ffff;
+    color: #02040f;
+}
+
+#control-reset-btn {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 0;
+    font-weight: 900;
+    font-size: 16px;
+}
+
+#control-reset-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: #ffffff;
+}

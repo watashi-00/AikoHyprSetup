@@ -1,0 +1,97 @@
+#aiko-timer-window {
+    background-color: transparent;
+}
+
+#main-container {
+    background-color: rgba(10, 10, 10, 0.95);
+    border: 2px solid #ffffff;
+    border-radius: 12px;
+}
+
+#timer-display {
+    color: #ffffff;
+    font-size: 48px;
+    font-weight: 850;
+    font-family: "JetBrainsMono Nerd Font", sans-serif;
+    margin-bottom: 5px;
+}
+
+#timer-progress trough {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    min-height: 8px;
+}
+
+#timer-progress progress {
+    background-color: #ffffff;
+    border-radius: 4px;
+    min-height: 8px;
+}
+
+#preset-btn {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 6px;
+    font-weight: 700;
+}
+
+#preset-btn:hover {
+    background: #ffffff;
+    color: #000000;
+}
+
+#custom-label {
+    color: #ffffff;
+    font-weight: 700;
+}
+
+#time-spinner {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    font-weight: 700;
+}
+
+#set-btn {
+    color: #000000;
+    background: #ffffff;
+    border: 1px solid #ffffff;
+    border-radius: 6px;
+    font-weight: 700;
+}
+
+#set-btn:hover {
+    background: rgba(255, 255, 255, 0.8);
+    border-color: rgba(255, 255, 255, 0.8);
+}
+
+#control-start-btn {
+    color: #000000;
+    background: #ffffff;
+    border: 2px solid #ffffff;
+    border-radius: 6px;
+    font-weight: 900;
+    font-size: 16px;
+}
+
+#control-start-btn:hover {
+    background: rgba(255, 255, 255, 0.8);
+    border-color: rgba(255, 255, 255, 0.8);
+}
+
+#control-reset-btn {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 6px;
+    font-weight: 900;
+    font-size: 16px;
+}
+
+#control-reset-btn:hover {
+    background: #ffffff;
+    color: #000000;
+}

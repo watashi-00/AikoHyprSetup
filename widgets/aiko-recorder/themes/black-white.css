@@ -1,0 +1,70 @@
+#aiko-recorder-window {
+    background-color: transparent;
+}
+
+#main-container {
+    background-color: rgba(10, 10, 10, 0.95);
+    border: 2px solid #ffffff;
+    border-radius: 12px;
+}
+
+#recorder-status {
+    color: #ffffff;
+    font-size: 24px;
+    font-weight: 850;
+    font-family: "JetBrainsMono Nerd Font", sans-serif;
+    margin-bottom: 5px;
+}
+
+#recorder-status-active {
+    color: #ff3333;
+    font-size: 24px;
+    font-weight: 850;
+    font-family: "JetBrainsMono Nerd Font", sans-serif;
+    margin-bottom: 5px;
+}
+
+#audio-toggle {
+    color: #ffffff;
+    font-weight: 700;
+}
+
+#audio-toggle check {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+}
+
+#audio-toggle check:checked {
+    background: #ffffff;
+}
+
+#action-btn {
+    color: #000000;
+    background: #ffffff;
+    border: 2px solid #ffffff;
+    border-radius: 6px;
+    font-weight: 900;
+    font-size: 14px;
+    padding: 10px;
+}
+
+#action-btn:hover {
+    background: rgba(255, 255, 255, 0.8);
+    border-color: rgba(255, 255, 255, 0.8);
+}
+
+#stop-btn {
+    color: #ffffff;
+    background: #ff3333;
+    border: 2px solid #ff3333;
+    border-radius: 6px;
+    font-weight: 900;
+    font-size: 16px;
+    padding: 10px;
+}
+
+#stop-btn:hover {
+    background: #ff5555;
+    border-color: #ff5555;
+}
