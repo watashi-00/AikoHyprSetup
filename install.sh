@@ -203,7 +203,7 @@ action_git_pull() {
 action_wallpaper_changer() {
     local wp_script="$AIKO_SCRIPTS/wallpaper.sh"
     if [ -f "$wp_script" ]; then
-        bash "$wp_script" select
+        env AIKO_ROOT="$HOME/.config/waybar" bash "$wp_script" select
     else
         warn "Wallpaper script not found."
     fi
@@ -213,7 +213,7 @@ action_wallpaper_changer() {
 action_theme_selector() {
     local theme_script="$AIKO_SCRIPTS/theme-selector.sh"
     if [ -f "$theme_script" ]; then
-        bash "$theme_script"
+        env AIKO_ROOT="$HOME/.config/waybar" bash "$theme_script"
     else
         warn "Theme selector script not found."
     fi
@@ -223,7 +223,7 @@ action_theme_selector() {
 action_profile_export() {
     local profile_script="$AIKO_SCRIPTS/profile-manager.sh"
     if [ -f "$profile_script" ]; then
-        bash "$profile_script" export
+        env AIKO_ROOT="$HOME/.config/waybar" bash "$profile_script" export
     else
         warn "Profile manager script not found."
     fi
@@ -233,7 +233,7 @@ action_profile_export() {
 action_profile_import() {
     local profile_script="$AIKO_SCRIPTS/profile-manager.sh"
     if [ -f "$profile_script" ]; then
-        bash "$profile_script" import
+        env AIKO_ROOT="$HOME/.config/waybar" bash "$profile_script" import
     else
         warn "Profile manager script not found."
     fi
@@ -241,7 +241,7 @@ action_profile_import() {
 }
 
 action_monitor_config() {
-    bash "$AIKO_SCRIPTS/lib/widget_launcher.sh" "aiko-monitors"
+    env AIKO_ROOT="$HOME/.config/waybar" bash "$AIKO_SCRIPTS/lib/widget_launcher.sh" "aiko-monitors"
     return 0
 }
 
@@ -274,7 +274,7 @@ action_global_aiko() {
 action_diagnostics() {
     local diag_script="$AIKO_SCRIPTS/diagnostics.sh"
     if [ -f "$diag_script" ]; then
-        bash "$diag_script"
+        env AIKO_ROOT="$HOME/.config/waybar" bash "$diag_script"
     else
         warn "Diagnostics script not found."
     fi

@@ -122,9 +122,9 @@ apply_changes() {
 
     if [ -f "$local_restart" ]; then
         log "Using source restart script for immediate application..."
-        run bash "$local_restart"
+        run env AIKO_ROOT="$waybar_dest" bash "$local_restart"
     elif [ -x "$waybar_dest/restart-waybar.sh" ]; then
-        run "$waybar_dest/restart-waybar.sh"
+        run env AIKO_ROOT="$waybar_dest" "$waybar_dest/restart-waybar.sh"
     elif have waybar; then
         pkill waybar 2>/dev/null || true
         waybar --config "$waybar_dest/config-left.jsonc" --style "$waybar_dest/style.css" &
@@ -191,7 +191,7 @@ prompt_apply() {
 
 action_self_test() {
     if [ -f "$AIKO_SCRIPTS/test.sh" ]; then
-        bash "$AIKO_SCRIPTS/test.sh"
+        env AIKO_ROOT="$HOME/.config/waybar" bash "$AIKO_SCRIPTS/test.sh"
     else
         error "Self-test script not found."
         return 1
