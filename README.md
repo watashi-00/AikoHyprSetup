@@ -55,12 +55,18 @@ aiko --update-test  # Shortcut to update/switch setup to the test branch
 
 ### 🧩 Interactive Widgets
 The setup includes rich, standalone floating widgets for Waybar. They are now powered by a unified launcher that handles binary fallbacks and environment detection:
+*   `aiko --search` : A premium Spotlight-style search panel and app launcher (replaces old wofi `search.sh`).
 *   `aiko --note` : A sticky note app for quick thoughts.
 *   `aiko --clock` : A beautiful oversized desktop clock.
 *   `aiko --player` : A dedicated media player controller with cover art.
 *   `aiko --usercard` : A customizable profile card (`aiko --edit-usercard` to configure).
 *   `aiko --sys` : A system resource monitor (`aiko --edit-logo` to configure your distro logo).
 *   `aiko --weather` & `aiko --list` : Weather and To-Do list integrations.
+*   `aiko --calendar` : An interactive GTK calendar.
+*   `aiko --timer` : A sleek Pomodoro and countdown timer.
+*   `aiko --recorder` : A screen and audio recorder control panel.
+*   `aiko --monitors` : A display positioning and Hz configuration panel.
+*   `aiko --audio` : A GTK volume and device output manager.
 
 *Pro tip: Use `aiko --all` to launch the full widget dashboard at once!*
 
@@ -159,11 +165,11 @@ The installer:
 
 | Family | Manager | Packages used by the installer |
 | --- | --- | --- |
-| Arch/Endeavour/Manjaro | `pacman` | `hyprland waybar wofi mako hyprpaper kitty jq playerctl cava pipewire pipewire-pulse wireplumber pavucontrol wl-clipboard cliphist libnotify network-manager-applet grim slurp curl hyprpicker swappy xdg-utils bluez ttf-font-awesome ttf-jetbrains-mono-nerd polkit-kde-agent` |
-| Debian/Ubuntu/Mint | `apt-get` | `hyprland waybar wofi mako-notifier hyprpaper kitty jq playerctl cava pipewire pipewire-pulse wireplumber pavucontrol wl-clipboard cliphist libnotify-bin network-manager-gnome grim slurp curl hyprpicker swappy xdg-utils bluez fonts-font-awesome fonts-jetbrains-mono polkit-kde-agent-1` |
-| Fedora | `dnf` | `hyprland waybar wofi mako hyprpaper kitty jq playerctl cava pipewire pipewire-pulseaudio wireplumber pavucontrol wl-clipboard cliphist libnotify NetworkManager-applet grim slurp curl hyprpicker swappy xdg-utils bluez fontawesome-fonts jetbrains-mono-fonts polkit-kde` |
-| openSUSE | `zypper` | `hyprland waybar wofi mako hyprpaper kitty jq playerctl cava pipewire pipewire-pulseaudio wireplumber pavucontrol wl-clipboard cliphist libnotify-tools NetworkManager-applet grim slurp curl hyprpicker swappy xdg-utils bluez fontawesome-fonts jetbrains-mono-fonts polkit-kde-agent-6` |
-| Alpine | `apk` | `hyprland waybar wofi mako hyprpaper kitty jq playerctl cava pipewire pipewire-pulse wireplumber pavucontrol wl-clipboard cliphist libnotify network-manager-applet grim slurp curl hyprpicker swappy xdg-utils bluez font-awesome ttf-jetbrains-mono polkit-kde-agent` |
+| Arch/Endeavour/Manjaro | `pacman` | `hyprland waybar wofi mako hyprpaper kitty jq playerctl cava pipewire pipewire-pulse wireplumber pavucontrol wl-clipboard cliphist libnotify network-manager-applet grim slurp curl hyprpicker swappy xdg-utils bluez ttf-font-awesome ttf-jetbrains-mono-nerd polkit-kde-agent python-gobject python-psutil socat fastfetch wf-recorder` |
+| Debian/Ubuntu/Mint | `apt-get` | `hyprland waybar wofi mako-notifier hyprpaper kitty jq playerctl cava pipewire pipewire-pulse wireplumber pavucontrol wl-clipboard cliphist libnotify-bin network-manager-gnome grim slurp curl hyprpicker swappy xdg-utils bluez fonts-font-awesome fonts-jetbrains-mono polkit-kde-agent-1 python3-gi python3-psutil socat fastfetch wf-recorder` |
+| Fedora | `dnf` | `hyprland waybar wofi mako hyprpaper kitty jq playerctl cava pipewire pipewire-pulseaudio wireplumber pavucontrol wl-clipboard cliphist libnotify NetworkManager-applet grim slurp curl hyprpicker swappy xdg-utils bluez fontawesome-fonts jetbrains-mono-fonts polkit-kde python3-gobject python3-psutil socat fastfetch wf-recorder` |
+| openSUSE | `zypper` | `hyprland waybar wofi mako hyprpaper kitty jq playerctl cava pipewire pipewire-pulseaudio wireplumber pavucontrol wl-clipboard cliphist libnotify-tools NetworkManager-applet grim slurp curl hyprpicker swappy xdg-utils bluez fontawesome-fonts jetbrains-mono-fonts polkit-kde-agent-6 python3-gobject python3-psutil socat fastfetch wf-recorder` |
+| Alpine | `apk` | `hyprland waybar wofi mako hyprpaper kitty jq playerctl cava pipewire pipewire-pulse wireplumber pavucontrol wl-clipboard cliphist libnotify network-manager-applet grim slurp curl hyprpicker swappy xdg-utils bluez font-awesome ttf-jetbrains-mono polkit-kde-agent py3-gobject3 py3-psutil socat fastfetch wf-recorder` |
 
 Not every version of every distro publishes Hyprland and all utilities in standard repos. The installer marks these as pending instead of aborting.
 
