@@ -361,14 +361,14 @@ case "${1:-}" in
         bash "$AIKO_SCRIPTS/lib/widget_launcher.sh" "aiko-recorder"
         ;;
     --search)
-        [ -f "$AIKO_SCRIPTS/search.sh" ] && exec bash "$AIKO_SCRIPTS/search.sh"
+        bash "$AIKO_SCRIPTS/lib/widget_launcher.sh" "aiko-search"
         ;;
     --bluetooth)
         [ -f "$AIKO_SCRIPTS/bluetooth.sh" ] && exec bash "$AIKO_SCRIPTS/bluetooth.sh"
         ;;
     --all)
         log "Launching all Aiko widgets..."
-        widgets=("aiko-clock" "aiko-weather" "aiko-note" "aiko-player" "aiko-list" "aiko-sys" "aiko-usercard" "aiko-monitors" "aiko-audio" "aiko-calendar" "aiko-timer" "aiko-recorder")
+        widgets=("aiko-clock" "aiko-weather" "aiko-note" "aiko-player" "aiko-list" "aiko-sys" "aiko-usercard" "aiko-monitors" "aiko-audio" "aiko-calendar" "aiko-timer" "aiko-recorder" "aiko-search")
         for widget in "${widgets[@]}"; do
             log "  -> Starting $widget"
             bash "$AIKO_SCRIPTS/lib/widget_launcher.sh" "$widget"

@@ -1,0 +1,78 @@
+#aiko-search-window {
+    background-color: transparent;
+}
+
+#main-container {
+    background-color: rgba(30, 32, 35, 0.96);
+    border: 2px solid #ff8fbd;
+    border-radius: 15px;
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.6);
+}
+
+#search-bar-box {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 6px 12px;
+}
+
+#search-entry, #search-entry text {
+    background-color: transparent;
+    background-image: none;
+    color: #e6e1ea;
+    font-family: "JetBrainsMono Nerd Font", sans-serif;
+    font-size: 16px;
+}
+
+#search-badge {
+    background-color: #ff8fbd;
+    color: #1e2023;
+    border-radius: 6px;
+    padding: 2px 10px;
+    font-weight: 800;
+    font-size: 13px;
+}
+
+#search-separator {
+    background-color: rgba(255, 255, 255, 0.1);
+    min-height: 1px;
+}
+
+#result-row {
+    border-radius: 10px;
+    margin: 4px 12px;
+    background-color: transparent;
+}
+
+#result-row:selected, #result-row:hover {
+    background-color: rgba(255, 143, 189, 0.15);
+    border: 1px solid rgba(255, 143, 189, 0.3);
+}
+
+#row-title {
+    color: #e6e1ea;
+    font-family: "JetBrainsMono Nerd Font", sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+#result-row:selected #row-title, #result-row:hover #row-title {
+    color: #ff8fbd;
+}
+
+#row-subtitle {
+    color: #a6a1aa;
+    font-family: "JetBrainsMono Nerd Font", sans-serif;
+    font-size: 12px;
+}
+
+#info-row {
+    background: transparent;
+}
+
+#info-label {
+    color: #a6a1aa;
+    font-family: "JetBrainsMono Nerd Font", sans-serif;
+    font-size: 14px;
+    font-style: italic;
+}
