@@ -71,6 +71,7 @@ launch_pinned_bar() {
     local mon="$1"
     local config_file="$2"
     local id="$3"
+    local mon_idx="$4"
     local real_config
     real_config=$(get_config_path "$config_file")
     
@@ -80,8 +81,44 @@ launch_pinned_bar() {
     
     local shim="/tmp/waybar-shim-${id}-${mon//[^a-zA-Z0-9]/}.json"
     
-    # Create shim JSON that includes the original config and pins the output
-    echo "{\"include\": [\"$real_config\"], \"output\": \"$mon\"}" > "$shim"
+    # If the config file contains hyprland/workspaces and mon_idx is provided, dynamically override workspaces
+    if grep -q "hyprland/workspaces" "$real_config" && [ -n "$mon_idx" ]; then
+        local w1=$((mon_idx * 5 + 1))
+        local w2=$((mon_idx * 5 + 2))
+        local w3=$((mon_idx * 5 + 3))
+        local w4=$((mon_idx * 5 + 4))
+        local w5=$((mon_idx * 5 + 5))
+        
+        jq -n \
+           --arg include "$real_config" \
+           --arg output "$mon" \
+           --arg w1 "$w1" \
+           --arg w2 "$w2" \
+           --arg w3 "$w3" \
+           --arg w4 "$w4" \
+           --arg w5 "$w5" \
+           '{
+             include: [$include],
+             output: $output,
+             "hyprland/workspaces": {
+               format: "{icon}",
+               "on-click": "activate",
+               "all-outputs": false,
+               "persistent-workspaces": {
+                 ($output): [($w1|tonumber), ($w2|tonumber), ($w3|tonumber), ($w4|tonumber), ($w5|tonumber)]
+               },
+               "format-icons": {
+                 ($w1): "1",
+                 ($w2): "2",
+                 ($w3): "3",
+                 ($w4): "4",
+                 ($w5): "5"
+               }
+             }
+           }' > "$shim"
+    else
+        echo "{\"include\": [\"$real_config\"], \"output\": \"$mon\"}" > "$shim"
+    fi
     
     nohup waybar -c "$shim" -s "$STYLE_CSS" >/dev/null 2>&1 &
 }
@@ -90,12 +127,43 @@ launch_pinned_bar() {
 if have hyprctl && have jq; then
     monitors=$(hyprctl monitors -j)
     
-    # Iterate through each monitor
-    echo "$monitors" | jq -c '.[]' | while read -r mon; do
-        name=$(echo "$mon" | jq -r '.name')
-        transform=$(echo "$mon" | jq -r '.transform')
-        width=$(echo "$mon" | jq -r '.width')
-        height=$(echo "$mon" | jq -r '.height')
+    # Sort monitors left-to-right by X coordinate to get stable indexes
+    mon_names=($(echo "$monitors" | jq -r 'sort_by(.x) | .[].name'))
+    
+    # Iterate through each monitor in sorted order
+    for i in "${!mon_names[@]}"; do
+        name="${mon_names[i]}"
+        
+        # Get details for this monitor
+        mon_json=$(echo "$monitors" | jq -c ".[] | select(.name == \"$name\")")
+        transform=$(echo "$mon_json" | jq -r '.transform')
+        width=$(echo "$mon_json" | jq -r '.width')
+        height=$(echo "$mon_json" | jq -r '.height')
+        active_ws=$(echo "$mon_json" | jq -r '.activeWorkspace.id')
+        
+        # Dynamic workspaces: assign 5 workspaces per monitor
+        w_start=$((i * 5 + 1))
+        w_end=$((i * 5 + 5))
+        
+        # Bind these workspaces to this monitor dynamically in Hyprland
+        for w in $(seq "$w_start" "$w_end"); do
+            hyprctl keyword workspace "$w,monitor:$name" >/dev/null 2>&1
+        done
+        
+        # Auto-correct alignment: if the active workspace doesn't belong to this monitor,
+        # move it to its correct monitor and focus this monitor on its default workspace
+        if [ -n "$active_ws" ] && [ "$active_ws" -gt 0 ]; then
+            correct_idx=$(( (active_ws - 1) / 5 ))
+            if [ "$correct_idx" -ne "$i" ] && [ "$correct_idx" -ge 0 ] && [ "$correct_idx" -lt "${#mon_names[@]}" ]; then
+                correct_mon="${mon_names[correct_idx]}"
+                log "Workspace alignment mismatch: workspace $active_ws is active on $name. Moving workspace to $correct_mon"
+                hyprctl dispatch moveworkspacetomonitor "$active_ws" "$correct_mon" >/dev/null 2>&1
+                
+                # Reset this monitor to its default workspace
+                hyprctl dispatch focusmonitor "$name" >/dev/null 2>&1
+                hyprctl dispatch workspace "$w_start" >/dev/null 2>&1
+            fi
+        fi
         
         # Orientation Detection
         is_portrait=0
@@ -108,19 +176,19 @@ if have hyprctl && have jq; then
         if [ "$is_portrait" -eq 1 ]; then
             log "Launching full bar set for $name (Portrait Mode)"
             # Launch order: Left -> Bottom -> Top
-            launch_pinned_bar "$name" "config-left.jsonc" "left"
+            launch_pinned_bar "$name" "config-left.jsonc" "left" "$i"
             sleep 0.3
-            launch_pinned_bar "$name" "config-bottom.jsonc" "bottom"
+            launch_pinned_bar "$name" "config-bottom.jsonc" "bottom" "$i"
             sleep 0.3
-            launch_pinned_bar "$name" "config-portrait.jsonc" "portrait"
+            launch_pinned_bar "$name" "config-portrait.jsonc" "portrait" "$i"
         else
             log "Launching full bar set for $name (Landscape Mode)"
             # Launch order: Left -> Bottom -> Top
-            launch_pinned_bar "$name" "config-left.jsonc" "left"
+            launch_pinned_bar "$name" "config-left.jsonc" "left" "$i"
             sleep 0.3
-            launch_pinned_bar "$name" "config-bottom.jsonc" "bottom"
+            launch_pinned_bar "$name" "config-bottom.jsonc" "bottom" "$i"
             sleep 0.3
-            launch_pinned_bar "$name" "config.jsonc" "top"
+            launch_pinned_bar "$name" "config.jsonc" "top" "$i"
         fi
     done
 else
