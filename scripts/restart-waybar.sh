@@ -94,14 +94,23 @@ if have hyprctl && have jq; then
     echo "$monitors" | jq -c '.[]' | while read -r mon; do
         name=$(echo "$mon" | jq -r '.name')
         transform=$(echo "$mon" | jq -r '.transform')
+        width=$(echo "$mon" | jq -r '.width')
+        height=$(echo "$mon" | jq -r '.height')
         
-        # 0 or 2 = Landscape (Normal/Inverted)
-        # 1 or 3 = Portrait (90°/270°)
-        if [ "$transform" -eq 1 ] || [ "$transform" -eq 3 ]; then
-            log "Launching Portrait bar for $name"
+        # Orientation Detection
+        # Portrait if height > width OR transform is vertical (1, 3, 5, 7)
+        is_portrait=0
+        if [ "$height" -gt "$width" ]; then
+            is_portrait=1
+        elif [[ "$transform" =~ ^(1|3|5|7)$ ]]; then
+            is_portrait=1
+        fi
+
+        if [ "$is_portrait" -eq 1 ]; then
+            log "Launching Portrait bar for $name (Orientation: Vertical)"
             launch_pinned_bar "$name" "config-portrait.jsonc" "portrait"
         else
-            log "Launching Landscape bars for $name"
+            log "Launching Landscape bars for $name (Orientation: Horizontal)"
             # Top Bar (always on all landscape monitors)
             launch_pinned_bar "$name" "config.jsonc" "top"
             
