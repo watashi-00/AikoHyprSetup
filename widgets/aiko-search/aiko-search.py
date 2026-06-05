@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, Gdk, GLib
+from gi.repository import Gtk, Gdk, GLib, Pango, GdkPixbuf
 import os
 import sys
 import re
@@ -254,9 +254,11 @@ class AikoSearch(Gtk.Window):
                 label_text = f"Search {self.search_mode.capitalize()} for '{query}'"
                 self.add_search_action_row(self.search_mode, label_text, query)
                 
-                # Fetch autocomplete suggestions dynamically for Google/YouTube
-                if self.search_mode in ("google", "youtube"):
+                # Fetch autocomplete suggestions / search videos dynamically
+                if self.search_mode == "google":
                     self.fetch_suggestions_async(self.search_mode, query)
+                elif self.search_mode == "youtube":
+                    self.fetch_youtube_search_async(query)
 
         self.listbox.show_all()
         # Default select first row
@@ -424,6 +426,150 @@ class AikoSearch(Gtk.Window):
                     data = json.loads(response.read().decode('latin-1'))
                     suggestions = data[1] if len(data) > 1 else []
                     GLib.idle_add(callback, suggestions)
+            except Exception:
+                pass
+
+        threading.Thread(target=run, daemon=True).start()
+
+    def add_youtube_video_row(self, video_id, title, channel, duration, description):
+        row = Gtk.ListBoxRow()
+        row.set_name("result-row")
+        
+        hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
+        hbox.set_margin_start(10)
+        hbox.set_margin_end(10)
+        hbox.set_margin_top(8)
+        hbox.set_margin_bottom(8)
+        row.add(hbox)
+
+        # Image placeholder
+        img = Gtk.Image.new_from_icon_name("video-x-generic", Gtk.IconSize.DIALOG)
+        img.set_size_request(80, 60)
+        hbox.pack_start(img, False, False, 0)
+
+        # Text container
+        vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
+        hbox.pack_start(vbox, True, True, 0)
+
+        # Title
+        title_lbl = Gtk.Label()
+        title_lbl.set_halign(Gtk.Align.START)
+        title_lbl.set_name("row-title")
+        title_lbl.set_ellipsize(Pango.EllipsizeMode.END)
+        escaped_title = GLib.markup_escape_text(title)
+        title_lbl.set_markup(f"<span foreground='{self.accent_color}' weight='bold'>YT:</span> {escaped_title}")
+        vbox.pack_start(title_lbl, False, False, 0)
+
+        # Metadata
+        meta_text = channel
+        if duration:
+            meta_text += f" • {duration}"
+        meta_lbl = Gtk.Label(label=meta_text)
+        meta_lbl.set_halign(Gtk.Align.START)
+        meta_lbl.set_name("row-subtitle")
+        vbox.pack_start(meta_lbl, False, False, 0)
+
+        # Description
+        if description:
+            desc_lbl = Gtk.Label(label=description)
+            desc_lbl.set_halign(Gtk.Align.START)
+            desc_lbl.set_name("row-subtitle")
+            desc_lbl.set_ellipsize(Pango.EllipsizeMode.END)
+            desc_lbl.set_opacity(0.65)
+            vbox.pack_start(desc_lbl, False, False, 0)
+
+        url = f"https://www.youtube.com/watch?v={video_id}"
+        row.action = lambda: self.open_target(url)
+        self.listbox.add(row)
+        
+        # Load thumbnail asynchronously
+        self.load_thumbnail_async(video_id, img)
+
+    def load_thumbnail_async(self, video_id, gtk_image):
+        thumb_path = f"/tmp/yt_thumb_{video_id}.jpg"
+        
+        def apply_image():
+            if os.path.exists(thumb_path):
+                try:
+                    pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(thumb_path, 80, 60, True)
+                    gtk_image.set_from_pixbuf(pixbuf)
+                except Exception:
+                    pass
+
+        def run():
+            if not os.path.exists(thumb_path):
+                try:
+                    url = f"https://img.youtube.com/vi/{video_id}/default.jpg"
+                    req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+                    with urllib.request.urlopen(req, timeout=3) as response:
+                        with open(thumb_path, "wb") as f:
+                            f.write(response.read())
+                except Exception:
+                    return
+            GLib.idle_add(apply_image)
+
+        threading.Thread(target=run, daemon=True).start()
+
+    def fetch_youtube_search_async(self, query):
+        def callback(videos):
+            if self.current_search_query != query or not videos:
+                return
+            for vid in videos:
+                self.add_youtube_video_row(
+                    video_id=vid["id"],
+                    title=vid["title"],
+                    channel=vid["channel"],
+                    duration=vid["duration"],
+                    description=vid["description"]
+                )
+            self.listbox.show_all()
+
+        def run():
+            try:
+                url = f"https://www.youtube.com/results?search_query={urllib.parse.quote(query)}"
+                req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'})
+                with urllib.request.urlopen(req, timeout=3) as response:
+                    html = response.read().decode('utf-8', errors='ignore')
+                    match = re.search(r'var ytInitialData\s*=\s*({.*?});</script>', html)
+                    if not match:
+                        return
+                    data = json.loads(match.group(1))
+                    
+                    try:
+                        contents = data['contents']['twoColumnSearchResultsRenderer']['primaryContents']['sectionListRenderer']['contents']
+                        item_sec = contents[0]['itemSectionRenderer']
+                        sec_contents = item_sec['contents']
+                    except KeyError:
+                        return
+
+                    videos = []
+                    for item in sec_contents:
+                        if 'videoRenderer' in item:
+                            vr = item['videoRenderer']
+                            
+                            video_id = vr.get('videoId')
+                            if not video_id:
+                                continue
+                                
+                            title = vr.get('title', {}).get('runs', [{}])[0].get('text', '')
+                            channel = vr.get('ownerText', {}).get('runs', [{}])[0].get('text', '')
+                            duration = vr.get('lengthText', {}).get('simpleText', '')
+                            
+                            desc = ''
+                            if 'descriptionSnippet' in vr:
+                                desc = ''.join([r.get('text', '') for r in vr['descriptionSnippet'].get('runs', [])])
+                                
+                            videos.append({
+                                "id": video_id,
+                                "title": title,
+                                "channel": channel,
+                                "duration": duration,
+                                "description": desc
+                            })
+                            if len(videos) >= 5:
+                                break
+                    
+                    GLib.idle_add(callback, videos)
             except Exception:
                 pass
 
