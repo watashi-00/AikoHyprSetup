@@ -17,6 +17,11 @@ SUPER + W           Open Aiko Weather
 SUPER + U           Open Aiko User Card
 SUPER + N           Open Aiko Player
 SUPER + Y           Open Clipboard History
+SUPER + D           Open Advanced Search (Wofi)
+SUPER + B           Open Bluetooth Manager (Wofi)
+SUPER + K           Open Aiko Timer
+SUPER + SHIFT + T   Open Aiko Calendar
+SUPER + SHIFT + R   Open Aiko Recorder
 
 MEDIA & AUDIO
 SUPER + P           Media Play/Pause
