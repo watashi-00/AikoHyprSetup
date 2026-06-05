@@ -29,7 +29,8 @@ Options:
   -h, --help        Show this help message
   -v, --version     Show version information
   --install         Run the installation script
-  --update          Update AikoHyprSetup (git pull)
+  --update          Update AikoHyprSetup (git pull master)
+  --update-test     Update AikoHyprSetup from test branch (git pull test)
   --wallpaper       Open the wallpaper selector
   --theme           Open the theme selector
   --monitors        Open the Monitor configuration widget
@@ -60,6 +61,77 @@ Examples:
   aiko --wallpaper
   aiko --note
 EOF
+}
+
+perform_update() {
+    local branch="${1:-master}"
+    if [ -d "$AIKO_ROOT/.git" ]; then
+        log "Updating AikoHyprSetup via git (branch: $branch)..."
+        git -C "$AIKO_ROOT" fetch origin
+        if git -C "$AIKO_ROOT" show-ref --verify --quiet "refs/heads/$branch"; then
+            git -C "$AIKO_ROOT" checkout "$branch"
+        else
+            git -C "$AIKO_ROOT" checkout -b "$branch" "origin/$branch"
+        fi
+        git -C "$AIKO_ROOT" pull origin "$branch"
+    else
+        warn "Non-git installation detected. Checking for updates on GitHub (branch: $branch)..."
+        if have curl && have unzip; then
+            # Fetch remote version from GitHub (using cache-buster to ensure fresh data)
+            local remote_version
+            remote_version=$(curl -sSL "https://raw.githubusercontent.com/watashi-00/AikoHyprSetup/$branch/scripts/lib/utils.sh?$(date +%s)" | grep '^export AIKO_VERSION=' | cut -d '"' -f 2)
+            
+            # Fetch latest commit hash from GitHub API
+            local remote_hash
+            remote_hash=$(curl -s "https://api.github.com/repos/watashi-00/AikoHyprSetup/commits/$branch" | grep -m1 '"sha":' | cut -d'"' -f4 | cut -c1-7)
+            
+            # Get local hash if available
+            local local_hash_file="$AIKO_ROOT/.version_hash"
+            local local_hash=""
+            [ -f "$local_hash_file" ] && local_hash=$(cat "$local_hash_file")
+
+            if [ -z "$remote_version" ]; then
+                error "Could not check for updates. Please check your connection."
+            # Only say "latest version" if both Version AND Hash match (and Hash file exists)
+            elif [ "$remote_version" == "$AIKO_VERSION" ] && [ -n "$local_hash" ] && [ "$remote_hash" == "$local_hash" ]; then
+                log "You are already using the latest version of branch '$branch' ($AIKO_VERSION)."
+            else
+                # Decide what message to show
+                if [ "$remote_version" != "$AIKO_VERSION" ]; then
+                    log "A new version is available: $remote_version (Current: $AIKO_VERSION)"
+                elif [ "$remote_hash" != "$local_hash" ]; then
+                    log "A hotfix or synchronization update is available (Hash: $remote_hash)"
+                fi
+                
+                log "Downloading and installing the update..."
+                
+                local temp_dir
+                temp_dir=$(mktemp -d)
+                if curl -L "https://github.com/watashi-00/AikoHyprSetup/archive/refs/heads/$branch.zip" -o "$temp_dir/update.zip"; then
+                    log "Extracting..."
+                    unzip -q "$temp_dir/update.zip" -d "$temp_dir"
+                    local extracted_dir
+                    extracted_dir=$(find "$temp_dir" -maxdepth 1 -type d -name "AikoHyprSetup-*" | head -n 1)
+                    
+                    if [ -f "$extracted_dir/install.sh" ]; then
+                        log "Running installer..."
+                        bash "$extracted_dir/install.sh" --no-packages
+                        
+                        # Store the new hash for future checks
+                        echo "$remote_hash" > "$local_hash_file"
+                    else
+                        error "install.sh not found in update package."
+                    fi
+                else
+                    error "Failed to download update."
+                fi
+                rm -rf "$temp_dir"
+            fi
+        else
+            error "'curl' and 'unzip' are required for non-git updates."
+            log "Please update manually from: https://github.com/watashi-00/AikoHyprSetup"
+        fi
+    fi
 }
 
 case "${1:-}" in
@@ -97,63 +169,10 @@ case "${1:-}" in
         fi
         ;;
     --update)
-        if [ -d "$AIKO_ROOT/.git" ]; then
-            log "Updating AikoHyprSetup via git..."
-            git -C "$AIKO_ROOT" pull
-        else
-            warn "Non-git installation detected. Checking for updates on GitHub..."
-            if have curl && have unzip; then
-                # Fetch remote version from GitHub (using cache-buster to ensure fresh data)
-                REMOTE_VERSION=$(curl -sSL "https://raw.githubusercontent.com/watashi-00/AikoHyprSetup/master/scripts/lib/utils.sh?$(date +%s)" | grep '^export AIKO_VERSION=' | cut -d '"' -f 2)
-                
-                # Fetch latest commit hash from GitHub API
-                REMOTE_HASH=$(curl -s "https://api.github.com/repos/watashi-00/AikoHyprSetup/commits/master" | grep -m1 '"sha":' | cut -d'"' -f4 | cut -c1-7)
-                
-                # Get local hash if available
-                LOCAL_HASH_FILE="$AIKO_ROOT/.version_hash"
-                LOCAL_HASH=""
-                [ -f "$LOCAL_HASH_FILE" ] && LOCAL_HASH=$(cat "$LOCAL_HASH_FILE")
-
-                if [ -z "$REMOTE_VERSION" ]; then
-                    error "Could not check for updates. Please check your connection."
-                # Only say "latest version" if both Version AND Hash match (and Hash file exists)
-                elif [ "$REMOTE_VERSION" == "$AIKO_VERSION" ] && [ -n "$LOCAL_HASH" ] && [ "$REMOTE_HASH" == "$LOCAL_HASH" ]; then
-                    log "You are already using the latest version ($AIKO_VERSION)."
-                else
-                    # Decide what message to show
-                    if [ "$REMOTE_VERSION" != "$AIKO_VERSION" ]; then
-                        log "A new version is available: $REMOTE_VERSION (Current: $AIKO_VERSION)"
-                    elif [ "$REMOTE_HASH" != "$LOCAL_HASH" ]; then
-                        log "A hotfix or synchronization update is available (Hash: $REMOTE_HASH)"
-                    fi
-                    
-                    log "Downloading and installing the update..."
-                    
-                    TEMP_DIR=$(mktemp -d)
-                    if curl -L https://github.com/watashi-00/AikoHyprSetup/archive/refs/heads/master.zip -o "$TEMP_DIR/update.zip"; then
-                        log "Extracting..."
-                        unzip -q "$TEMP_DIR/update.zip" -d "$TEMP_DIR"
-                        EXTRACTED_DIR=$(find "$TEMP_DIR" -maxdepth 1 -type d -name "AikoHyprSetup-*" | head -n 1)
-                        
-                        if [ -f "$EXTRACTED_DIR/install.sh" ]; then
-                            log "Running installer..."
-                            bash "$EXTRACTED_DIR/install.sh" --no-packages
-                            
-                            # Store the new hash for future checks
-                            echo "$REMOTE_HASH" > "$LOCAL_HASH_FILE"
-                        else
-                            error "install.sh not found in update package."
-                        fi
-                    else
-                        error "Failed to download update."
-                    fi
-                    rm -rf "$TEMP_DIR"
-                fi
-            else
-                error "'curl' and 'unzip' are required for non-git updates."
-                log "Please update manually from: https://github.com/watashi-00/AikoHyprSetup"
-            fi
-        fi
+        perform_update "master"
+        ;;
+    --update-test)
+        perform_update "test"
         ;;
     --launcher)
         [ -f "$AIKO_SCRIPTS/launcher.sh" ] && exec bash "$AIKO_SCRIPTS/launcher.sh"
