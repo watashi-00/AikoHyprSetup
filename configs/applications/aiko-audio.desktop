@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Aiko Audio
+Comment=Audio settings and headphone fixes
+Exec=aiko --audio
+Icon=audio-card-symbolic
+Terminal=false
+Type=Application
+Categories=Utility;Settings;Audio;
+Keywords=audio;sound;volume;headphones;balance;aiko;
+StartupWMClass=aiko-audio

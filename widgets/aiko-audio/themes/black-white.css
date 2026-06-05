@@ -1,0 +1,103 @@
+#aiko-audio-window {
+    background-color: transparent;
+}
+
+#main-container {
+    background-color: rgba(20, 20, 20, 0.98);
+    border: 2px solid #ffffff;
+    border-radius: 8px;
+}
+
+#header-title {
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: 800;
+}
+
+#section-title {
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+#section-desc {
+    color: #aaaaaa;
+    font-size: 11px;
+}
+
+#channel-label {
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+    min-width: 40px;
+}
+
+/* Sliders */
+scale trough {
+    background-color: rgba(255, 255, 255, 0.1);
+    min-height: 6px;
+    border-radius: 3px;
+}
+
+scale highlight {
+    background-color: #ffffff;
+    border-radius: 3px;
+}
+
+scale slider {
+    background-color: #000000;
+    border: 2px solid #ffffff;
+    min-height: 14px;
+    min-width: 14px;
+    border-radius: 7px;
+}
+
+/* Checkbox */
+checkbutton {
+    color: #ffffff;
+    font-size: 12px;
+}
+
+checkbutton check {
+    color: #ffffff;
+    background-color: #000000;
+    border: 1px solid #ffffff;
+    border-radius: 2px;
+}
+
+checkbutton check:checked {
+    background-color: #ffffff;
+    color: #000000;
+}
+
+/* Buttons */
+button {
+    background-color: transparent;
+    color: #ffffff;
+    border: 1px solid #ffffff;
+    border-radius: 4px;
+    padding: 6px 12px;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+button:hover {
+    background-color: #ffffff;
+    color: #000000;
+}
+
+button:insensitive {
+    background-color: transparent;
+    color: #555555;
+    border-color: #444444;
+}
+
+#close-button {
+    background-color: transparent;
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+}
+
+#close-button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}

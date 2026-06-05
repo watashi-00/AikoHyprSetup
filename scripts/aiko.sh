@@ -34,6 +34,7 @@ Options:
   --wallpaper       Open the wallpaper selector
   --theme           Open the theme selector
   --monitors        Open the Monitor configuration widget
+  --audio           Open the Aiko-Audio manager widget
   --note            Open the Aiko-Note widget
   --clock           Open the Aiko-Clock widget
   --weather         Open the Aiko-Weather widget
@@ -228,6 +229,9 @@ case "${1:-}" in
     --monitors)
         bash "$AIKO_SCRIPTS/lib/widget_launcher.sh" "aiko-monitors"
         ;;
+    --audio)
+        bash "$AIKO_SCRIPTS/lib/widget_launcher.sh" "aiko-audio"
+        ;;
     --note)
         bash "$AIKO_SCRIPTS/lib/widget_launcher.sh" "aiko-note"
         ;;
@@ -251,7 +255,7 @@ case "${1:-}" in
         ;;
     --all)
         log "Launching all Aiko widgets..."
-        widgets=("aiko-clock" "aiko-weather" "aiko-note" "aiko-player" "aiko-list" "aiko-sys" "aiko-usercard" "aiko-monitors")
+        widgets=("aiko-clock" "aiko-weather" "aiko-note" "aiko-player" "aiko-list" "aiko-sys" "aiko-usercard" "aiko-monitors" "aiko-audio")
         for widget in "${widgets[@]}"; do
             log "  -> Starting $widget"
             bash "$AIKO_SCRIPTS/lib/widget_launcher.sh" "$widget"

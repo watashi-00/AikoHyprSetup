@@ -1,0 +1,110 @@
+#aiko-audio-window {
+    background-color: transparent;
+}
+
+#main-container {
+    background-color: rgba(2, 4, 15, 0.95);
+    border: 2px solid #00ffff;
+    border-radius: 0;
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+}
+
+#header-title {
+    color: #00ffff;
+    font-size: 18px;
+    font-weight: 950;
+    text-shadow: 0 0 5px #00ffff;
+}
+
+#section-title {
+    color: #00ffff;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+#section-desc {
+    color: #00cccc;
+    font-size: 11px;
+}
+
+#channel-label {
+    color: #00ffff;
+    font-size: 13px;
+    font-weight: 700;
+    min-width: 40px;
+}
+
+/* Sliders */
+scale trough {
+    background-color: rgba(0, 255, 255, 0.05);
+    min-height: 8px;
+    border: 1px solid #004466;
+    border-radius: 0;
+}
+
+scale highlight {
+    background-color: #00ffff;
+    border-radius: 0;
+    box-shadow: 0 0 5px #00ffff;
+}
+
+scale slider {
+    background-color: #02040f;
+    border: 2px solid #00ffff;
+    min-height: 16px;
+    min-width: 16px;
+    border-radius: 0;
+}
+
+/* Checkbox */
+checkbutton {
+    color: #00ffff;
+    font-size: 12px;
+}
+
+checkbutton check {
+    color: #00ffff;
+    background-color: rgba(2, 4, 15, 0.95);
+    border: 1px solid #005577;
+    border-radius: 0;
+}
+
+checkbutton check:checked {
+    background-color: #00ffff;
+    color: #02040f;
+}
+
+/* Buttons */
+button {
+    background-color: rgba(0, 255, 255, 0.1);
+    color: #00ffff;
+    border: 1px solid #00ffff;
+    border-radius: 0;
+    padding: 6px 12px;
+    font-weight: 700;
+    font-size: 13px;
+    box-shadow: 0 0 5px rgba(0, 255, 255, 0.2);
+}
+
+button:hover {
+    background-color: #00ffff;
+    color: #02040f;
+    box-shadow: 0 0 10px #00ffff;
+}
+
+button:insensitive {
+    background-color: rgba(100, 100, 100, 0.05);
+    color: #004466;
+    border-color: #003344;
+    box-shadow: none;
+}
+
+#close-button {
+    background-color: transparent;
+    border-color: rgba(0, 255, 255, 0.2);
+    color: #00ffff;
+}
+
+#close-button:hover {
+    background-color: rgba(0, 255, 255, 0.1);
+}

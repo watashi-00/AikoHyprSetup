@@ -94,7 +94,7 @@ else
     error "Global theme link (style.css) MISSING"
 fi
 
-widgets=("aiko-note" "aiko-player" "aiko-clock" "aiko-usercard" "aiko-weather" "aiko-list" "aiko-sys")
+widgets=("aiko-note" "aiko-player" "aiko-clock" "aiko-usercard" "aiko-weather" "aiko-list" "aiko-sys" "aiko-monitors" "aiko-audio")
 for w in "${widgets[@]}"; do
     w_path="$waybar_dir/widgets/$w"
     if [ -d "$w_path" ]; then
