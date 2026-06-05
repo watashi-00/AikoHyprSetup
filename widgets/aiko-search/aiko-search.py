@@ -82,7 +82,9 @@ class AikoSearch(Gtk.Window):
 
         # Connect window events
         self.connect("key-press-event", self.on_window_key_press)
-        self.connect("focus-out-event", lambda w, e: self.destroy())
+        
+        # Delay arming focus-out auto-close to prevent immediate closing during mapping in Hyprland
+        GLib.timeout_add(500, self.arm_focus_out)
 
         # Initial populate
         self.update_results("")
@@ -164,6 +166,10 @@ class AikoSearch(Gtk.Window):
         if event.keyval == Gdk.KEY_Escape:
             self.destroy()
             return True
+        return False
+
+    def arm_focus_out(self):
+        self.connect("focus-out-event", lambda w, e: self.destroy())
         return False
 
     def move_selection(self, step):
