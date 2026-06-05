@@ -305,13 +305,7 @@ window#waybar.portrait .modules-right {
 
 window#waybar.portrait .modules-left { min-width: 0; }
 window#waybar.portrait #workspaces { min-width: 0; margin-right: 5px; }
-window#waybar.portrait #workspaces button { min-width: 30px; min-height: 24px; font-size: 10px; }
-window#waybar.portrait #clock { font-size: 11px; padding: 0 4px; }
-window#waybar.portrait #custom-spotify { min-width: 0; font-size: 10px; }
-window#waybar.portrait #custom-audio-output, 
-window#waybar.portrait #network, 
-window#waybar.portrait #battery, 
-window#waybar.portrait #custom-power {
-    font-size: 11px;
-    padding: 0 4px;
-}
+window#waybar.portrait #workspaces button { min-width: 40px; min-height: 26px; font-size: 11px; }
+window#waybar.portrait #custom-power { font-size: 13px; padding: 0 8px; }
+window#waybar.portrait #custom-spotify { min-width: 0; font-size: 11px; padding: 0 4px; }
+window#waybar.portrait #cava { font-size: 10px; margin-left: 10px; padding: 0; }
