@@ -92,7 +92,7 @@ button:hover {
     box-shadow: 0 0 10px #00ffff;
 }
 
-button:insensitive {
+button:disabled {
     background-color: rgba(100, 100, 100, 0.05);
     color: #004466;
     border-color: #003344;

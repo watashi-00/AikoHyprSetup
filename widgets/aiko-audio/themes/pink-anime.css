@@ -86,7 +86,7 @@ button:hover {
     color: #ffffff;
 }
 
-button:insensitive {
+button:disabled {
     background-color: rgba(100, 100, 100, 0.1);
     color: #888888;
     border-color: #666666;

@@ -29,9 +29,9 @@ class AikoCalendar(Gtk.Window):
         self.add(self.main_vbox)
 
         # Styled Container
-        self.container = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
-        self.container.set_name("main-container")
-        self.main_vbox.pack_start(self.container, True, True, 0)
+        self.styled_container = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
+        self.styled_container.set_name("main-container")
+        self.main_vbox.pack_start(self.styled_container, True, True, 0)
 
         # Padding container
         content_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
@@ -39,7 +39,7 @@ class AikoCalendar(Gtk.Window):
         content_vbox.set_margin_bottom(15)
         content_vbox.set_margin_start(15)
         content_vbox.set_margin_end(15)
-        self.container.pack_start(content_vbox, True, True, 0)
+        self.styled_container.pack_start(content_vbox, True, True, 0)
 
         # Header Box (Prev, Title, Next)
         header_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)

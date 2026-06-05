@@ -25,9 +25,9 @@ class AikoRecorder(Gtk.Window):
         self.add(self.main_vbox)
 
         # Styled Container
-        self.container = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
-        self.container.set_name("main-container")
-        self.main_vbox.pack_start(self.container, True, True, 0)
+        self.styled_container = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
+        self.styled_container.set_name("main-container")
+        self.main_vbox.pack_start(self.styled_container, True, True, 0)
 
         # Padding container
         content_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=15)
@@ -35,7 +35,7 @@ class AikoRecorder(Gtk.Window):
         content_vbox.set_margin_bottom(20)
         content_vbox.set_margin_start(20)
         content_vbox.set_margin_end(20)
-        self.container.pack_start(content_vbox, True, True, 0)
+        self.styled_container.pack_start(content_vbox, True, True, 0)
 
         # Title/Status Label
         self.status_label = Gtk.Label(label="Ready to Record")

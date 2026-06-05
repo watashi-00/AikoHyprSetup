@@ -78,7 +78,7 @@
 
     "network": {
         "format-wifi": "<span color='#ffffff'>\uf1eb</span>  {essid}", // @theme:waybar_accent
-        "format-ethernet": "<span color='#ffffff'>\uf796</span>  Connected", // @theme:waybar_accent
+        "format-ethernet": "<span color='#ffffff'>\uf6ff</span>  Connected", // @theme:waybar_accent
         "format-disconnected": "<span color='#ffffff'>\u26a0</span>  Disconnected" // @theme:waybar_accent
     },
 
