@@ -110,7 +110,7 @@ start_mpvpaper() {
     file="$2"
     [ "$monitor" = "ALL" ] && monitor="*"
     if have mpvpaper; then
-        nohup mpvpaper -f -p -o "no-audio --loop-file=inf" "$monitor" "$file" >/dev/null 2>&1 &
+        nohup mpvpaper -f -p -o "no-audio --loop-file=inf --hwdec=auto" "$monitor" "$file" >/dev/null 2>&1 &
     else
         warn "mpvpaper not found."
     fi
