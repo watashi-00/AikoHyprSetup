@@ -251,8 +251,12 @@ select_wallpaper() {
             printf "" > "$STATE_FILE"
             for entry in "${new_entries[@]}"; do printf "assignment=%s\n" "$entry" >> "$STATE_FILE"; done
         fi
-
-        apply_wallpaper
+        
+        if [ -f "$AIKO_SCRIPTS/aiko-wall-sync.py" ]; then
+            python3 "$AIKO_SCRIPTS/aiko-wall-sync.py" "$selected_file"
+        else
+            apply_wallpaper
+        fi
     fi
 }
 
@@ -299,10 +303,6 @@ apply_wallpaper() {
                     hyprctl hyprpaper wallpaper "$mon_t,$target_file" >/dev/null 2>&1 || true
                 ) &
             fi
-        fi
-        # Trigger Aiko Wall Sync to extract colors and rebuild dynamic theme
-        if [ -f "$AIKO_SCRIPTS/aiko-wall-sync.py" ]; then
-            python3 "$AIKO_SCRIPTS/aiko-wall-sync.py" "$file"
         fi
     done
 }
