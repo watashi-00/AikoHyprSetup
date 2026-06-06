@@ -10,16 +10,16 @@
 }
 
 #search-bar-box {
-    background-color: #121315 !important;
+    background-color: #121315;
     border-radius: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1);
     padding: 6px 12px;
 }
 
 #search-entry, #search-entry text {
-    background-color: transparent !important;
-    background-image: none !important;
-    color: #e6e1ea !important;
+    background-color: transparent;
+    background-image: none;
+    color: #e6e1ea;
     font-family: "JetBrainsMono Nerd Font", sans-serif;
     font-size: 16px;
 }

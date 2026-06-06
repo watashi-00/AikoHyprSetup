@@ -86,17 +86,17 @@ checkbutton#task-check:checked check {
 }
 
 entry, entry text {
-    background-image: none !important;
-    background-color: #02040f !important;
-    border: 1px solid #00ffff !important;
+    background-image: none;
+    background-color: #02040f;
+    border: 1px solid #00ffff;
     border-radius: 0;
-    color: #00ffff !important;
+    color: #00ffff;
     padding: 8px;
 }
 
 entry:focus, entry:focus text {
-    box-shadow: 0 0 5px #00ffff !important;
-    background-color: #05081c !important;
+    box-shadow: 0 0 5px #00ffff;
+    background-color: #05081c;
 }
 
 button {

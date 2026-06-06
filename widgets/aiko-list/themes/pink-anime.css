@@ -82,17 +82,17 @@ checkbutton#task-check:checked check {
 }
 
 entry, entry text {
-    background-image: none !important;
-    background-color: #121315 !important;
-    border: 1px solid rgba(255, 143, 189, 0.3) !important;
+    background-image: none;
+    background-color: #121315;
+    border: 1px solid rgba(255, 143, 189, 0.3);
     border-radius: 8px;
-    color: #e6e1ea !important;
+    color: #e6e1ea;
     padding: 8px;
 }
 
 entry:focus, entry:focus text {
-    border-color: #ff8fbd !important;
-    background-color: #1b1c1e !important;
+    border-color: #ff8fbd;
+    background-color: #1b1c1e;
 }
 
 button {

@@ -62,7 +62,7 @@ map_class_to_icon() {
         "code-oss"|"vscode"|"code") echo "code" ;;
         "org.gnome.nautilus"|"thunar") echo "system-file-manager" ;;
         "kitty") echo "terminal" ;;
-        "spotify"|"spotify-client") echo "spotify" ;;
+        "spotify"|"spotify-client"|"com.spotify.client") echo "spotify" ;;
         "org.kde.dolphin"|"dolphin") echo "system-file-manager" ;;
         "org.kde.discover"|"discover") echo "plasmadiscover" ;;
         *) echo "$class" ;;

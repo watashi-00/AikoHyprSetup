@@ -80,23 +80,23 @@ checkbutton#task-check:checked check {
     border-radius: 15px;
 }
 entry, entry text {
-    background-image: none !important;
-    background-color: #141414 !important;
-    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    background-image: none;
+    background-color: #141414;
+    border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 8px;
-    color: #ffffff !important;
+    color: #ffffff;
     padding: 10px;
 }
 
 entry:focus, entry:focus text {
-    background-color: #1c1c1c !important;
-    border-color: #ffffff !important;
-    color: #ffffff !important;
+    background-color: #1c1c1c;
+    border-color: #ffffff;
+    color: #ffffff;
 }
 
 entry selection, entry:selected {
-    background-color: rgba(255, 255, 255, 0.3) !important;
-    color: #ffffff !important;
+    background-color: rgba(255, 255, 255, 0.3);
+    color: #ffffff;
 }
 
 button {
