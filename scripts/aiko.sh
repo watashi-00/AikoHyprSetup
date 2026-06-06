@@ -309,7 +309,7 @@ case "${1:-}" in
         [ -f "$AIKO_SCRIPTS/minimize.sh" ] && exec bash "$AIKO_SCRIPTS/minimize.sh" "${2:-toggle}"
         ;;
     --wallpaper)
-        local cmd="${2:-select}"
+        cmd="${2:-select}"
         if [ "$cmd" = "select" ]; then
             bash "$AIKO_SCRIPTS/lib/widget_launcher.sh" "aiko-wallpaper"
         else
