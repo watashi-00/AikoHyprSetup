@@ -296,15 +296,6 @@ except:
     if [ -f "$waybar_dest/scripts/theme-selector.sh" ]; then
         run env AIKO_ROOT="$waybar_dest" bash "$waybar_dest/scripts/theme-selector.sh" "$active_theme"
     fi
-    
-    # Widget theme links
-    local widget
-    for widget in aiko-note aiko-player aiko-clock aiko-usercard aiko-weather aiko-list aiko-sys aiko-monitors aiko-audio aiko-calendar aiko-timer aiko-recorder; do
-        local w_dir="$waybar_dest/widgets/$widget"
-        if [ -d "$w_dir" ]; then
-            (cd "$w_dir" && run ln -sf "../../themes/$active_theme" "theme.css")
-        fi
-    done
 
     # Add fastfetch to .bashrc if not present
     if [ -f "$HOME/.bashrc" ] && ! grep -q "fastfetch" "$HOME/.bashrc"; then
