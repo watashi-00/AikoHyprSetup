@@ -42,11 +42,11 @@ class=$(echo "$event_data" | sed 's/openwindow>>//' | cut -d',' -f3)
 if [ -n "$class" ]; then
     accent=$(get_accent_color)
     bash "$GEN_SCRIPT" "$accent" "$class"
-    local exit_code=$?
+    exit_code=$?
     
-    if [ $exit_code -eq 200 ]; then
+    if [ "$exit_code" -eq 200 ]; then
         reload_bottom_bar
-    elif [ $exit_code -ne 0 ]; then
+    elif [ "$exit_code" -ne 0 ]; then
         error "Icon generation failed for $class (code: $exit_code)"
     fi
 fi
