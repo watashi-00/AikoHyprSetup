@@ -72,6 +72,8 @@ launch_pinned_bar() {
     local config_file="$2"
     local id="$3"
     local mon_idx="$4"
+    local is_port="${5:-0}"
+    local mon_h="${6:-1080}"
     local real_config
     real_config=$(get_config_path "$config_file")
     
@@ -80,6 +82,27 @@ launch_pinned_bar() {
     fi
     
     local shim="/tmp/waybar-shim-${id}-${mon//[^a-zA-Z0-9]/}.json"
+    
+    # Calculate margins for config-left.jsonc based on orientation and height to keep it centered and properly sized
+    local margin_top=320
+    local margin_bottom=320
+    if [ "$config_file" = "config-left.jsonc" ]; then
+        if [ "$is_port" -eq 1 ]; then
+            # Center a 400px height dock vertically on portrait monitor
+            local calculated_margin=$(( (mon_h - 400) / 2 ))
+            if [ "$calculated_margin" -gt 0 ]; then
+                margin_top=$calculated_margin
+                margin_bottom=$calculated_margin
+            fi
+        else
+            # Center a 440px height dock vertically on landscape monitor
+            local calculated_margin=$(( (mon_h - 440) / 2 ))
+            if [ "$calculated_margin" -gt 0 ]; then
+                margin_top=$calculated_margin
+                margin_bottom=$calculated_margin
+            fi
+        fi
+    fi
     
     # If the config file contains hyprland/workspaces and mon_idx is provided, dynamically override workspaces
     if grep -q "hyprland/workspaces" "$real_config" && [ -n "$mon_idx" ]; then
@@ -115,6 +138,18 @@ launch_pinned_bar() {
                  ($w5): "5"
                }
              }
+           }' > "$shim"
+    elif [ "$config_file" = "config-left.jsonc" ]; then
+        jq -n \
+           --arg include "$real_config" \
+           --arg output "$mon" \
+           --argjson mt "$margin_top" \
+           --argjson mb "$margin_bottom" \
+           '{
+             include: [$include],
+             output: $output,
+             "margin-top": $mt,
+             "margin-bottom": $mb
            }' > "$shim"
     else
         echo "{\"include\": [\"$real_config\"], \"output\": \"$mon\"}" > "$shim"
@@ -176,19 +211,19 @@ if have hyprctl && have jq; then
         if [ "$is_portrait" -eq 1 ]; then
             log "Launching full bar set for $name (Portrait Mode)"
             # Launch order: Left -> Bottom -> Top
-            launch_pinned_bar "$name" "config-left.jsonc" "left" "$i"
+            launch_pinned_bar "$name" "config-left.jsonc" "left" "$i" "$is_portrait" "$height"
             sleep 0.3
-            launch_pinned_bar "$name" "config-bottom.jsonc" "bottom" "$i"
+            launch_pinned_bar "$name" "config-bottom.jsonc" "bottom" "$i" "$is_portrait" "$height"
             sleep 0.3
-            launch_pinned_bar "$name" "config-portrait.jsonc" "portrait" "$i"
+            launch_pinned_bar "$name" "config-portrait.jsonc" "portrait" "$i" "$is_portrait" "$height"
         else
             log "Launching full bar set for $name (Landscape Mode)"
             # Launch order: Left -> Bottom -> Top
-            launch_pinned_bar "$name" "config-left.jsonc" "left" "$i"
+            launch_pinned_bar "$name" "config-left.jsonc" "left" "$i" "$is_portrait" "$height"
             sleep 0.3
-            launch_pinned_bar "$name" "config-bottom.jsonc" "bottom" "$i"
+            launch_pinned_bar "$name" "config-bottom.jsonc" "bottom" "$i" "$is_portrait" "$height"
             sleep 0.3
-            launch_pinned_bar "$name" "config.jsonc" "top" "$i"
+            launch_pinned_bar "$name" "config.jsonc" "top" "$i" "$is_portrait" "$height"
         fi
     done
 else

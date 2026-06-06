@@ -322,7 +322,11 @@ EOF
     find "$waybar_dest" -type f -name "*.sh" -exec chmod +x {} +
 
     log "${MAGENTA}Cleaning up legacy scripts from root...${NC}"
-    for legacy in icon-gen.sh restart-waybar.sh wallpaper.sh theme-selector.sh aiko.sh; do
+    for legacy in icon-gen.sh restart-waybar.sh wallpaper.sh theme-selector.sh aiko.sh \
+                  audio-input.sh audio-output.sh clipboard-history.sh clipboard-listener.sh \
+                  diagnostics.sh icon-listener.sh launcher.sh menu.sh minimize.sh \
+                  power-menu.sh screenshot.sh spotify-art.sh spotify-info.sh \
+                  spotify-playstate.sh sync-fastfetch.py taskbar-update.sh update-backups.sh; do
         if [ -f "$waybar_dest/$legacy" ] && [ ! -L "$waybar_dest/$legacy" ]; then
             log "Removing legacy script: $legacy"
             run rm -f "$waybar_dest/$legacy"

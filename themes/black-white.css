@@ -218,11 +218,48 @@ image#album-art {
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
 }
 
-#custom-launcher-menu {
-    color: #ffffff;
-    font-size: 18px;
-    padding: 0 15px;
+window#waybar.bottom {
+    min-height: 38px;
+    background: rgba(10, 10, 10, 0.92);
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
 }
+
+window#waybar.left {
+    min-width: 64px;
+    background: rgba(10, 10, 10, 0.92);
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 0 5px;
+}
+
+#custom-launcher-terminal, #custom-launcher-browser, #custom-launcher-files,
+#custom-launcher-code, #custom-launcher-settings, #custom-launcher-menu {
+    min-width: 48px;
+    min-height: 48px;
+    font-size: 21px;
+    color: #ffffff;
+    border-radius: 10px;
+    background: transparent;
+    border: none;
+    transition: all 0.18s ease;
+    margin: 0;
+}
+
+#custom-launcher-terminal:hover, #custom-launcher-browser:hover, #custom-launcher-files:hover,
+#custom-launcher-code:hover, #custom-launcher-settings:hover, #custom-launcher-menu:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+}
+
+#taskbar {
+    padding: 0 8px;
+}
+
+#taskbar button.minimized {
+    opacity: 0.45;
+}
+
 
 /* Portrait Mode Optimizations */
 window#waybar.portrait {
