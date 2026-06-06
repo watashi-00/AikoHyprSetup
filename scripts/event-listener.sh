@@ -38,11 +38,15 @@ handle() {
     fi
 }
 
-# Listen to hyprland socket
+# Listen to hyprland socket with automatic reconnection
 if [ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]; then
     log "Aiko Global Event Listener active..."
-    socat -U - "UNIX-CONNECT:$XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock" | while read -r line; do
-        handle "$line"
+    while true; do
+        socat -U - "UNIX-CONNECT:$XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock" | while read -r line; do
+            handle "$line"
+        done
+        # Graceful reconnect delay to prevent high CPU usage on persistent failure
+        sleep 1
     done
 else
     error "HYPRLAND_INSTANCE_SIGNATURE not found. Event listener cannot start."
