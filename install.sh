@@ -261,6 +261,13 @@ action_global_aiko() {
         return 0
     fi
 
+    if [ -L "$aiko_dest" ] && [ "$(readlink -f "$aiko_dest")" = "$(readlink -f "$aiko_src")" ]; then
+        if [ "$mode" != "silent" ]; then
+            log "Global command 'aiko' already exists and is up to date."
+        fi
+        return 0
+    fi
+
     if [ "$mode" != "silent" ]; then
         log "Setting up 'aiko' command..."
     fi

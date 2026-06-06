@@ -160,7 +160,14 @@ accent_color=$(grep "@mako-border" "$selected_file" | cut -d':' -f2 | tr -d '[:s
 [ -z "$accent_color" ] && accent_color="#ff8fbd"
 if [ -f "$AIKO_SCRIPTS/icon-gen.sh" ]; then
     log "Generating themed icons..."
+    set +e
     bash "$AIKO_SCRIPTS/icon-gen.sh" "$accent_color"
+    icon_status=$?
+    set -e
+    if [ "$icon_status" -ne 0 ] && [ "$icon_status" -ne 200 ]; then
+        error "Failed to generate icons (status: $icon_status)"
+        exit "$icon_status"
+    fi
 fi
 
 if [ -f "$AIKO_SCRIPTS/sync-fastfetch.py" ]; then

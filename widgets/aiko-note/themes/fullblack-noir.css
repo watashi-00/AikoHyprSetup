@@ -1,0 +1,42 @@
+@define-color accent_color #ffffff;
+
+#aiko-note-window {
+    background-color: transparent;
+}
+
+#main-container {
+    background-color: rgba(0, 0, 0, 0.99);
+    border: 1px solid rgba(44, 44, 44, 0.8);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+}
+
+#note-title {
+    color: #ffffff;
+    font-family: "JetBrainsMono Nerd Font", sans-serif;
+    font-size: 18px;
+    font-weight: 800;
+}
+
+#note-content {
+    background-color: transparent;
+    background-image: none;
+    color: #eeeeee;
+    font-family: "JetBrainsMono Nerd Font", sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+#note-content text {
+    background-color: transparent;
+    background-image: none;
+}
+
+#note-content selection {
+    background-color: rgba(255, 255, 255, 0.3);
+    color: #ffffff;
+}
+
+#note-cat-icon {
+    opacity: 0.3;
+}

@@ -1,0 +1,76 @@
+#aiko-monitors-window {
+    background-color: transparent;
+}
+
+#main-container {
+    background-color: rgba(0, 0, 0, 0.99);
+    border: 1px solid rgba(44, 44, 44, 0.8);
+    border-radius: 15px;
+}
+
+#header-title {
+    color: #ffffff;
+    font-size: 20px;
+    font-weight: 800;
+}
+
+#monitor-row {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    padding: 10px;
+}
+
+#monitor-name {
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 800;
+}
+
+#monitor-details {
+    color: #cccccc;
+    font-size: 13px;
+}
+
+#rotation-label {
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+combobox, combobox button, combobox cell {
+    background-color: rgba(44, 44, 44, 0.5);
+    color: #ffffff;
+    border: 1px solid rgba(44, 44, 44, 0.8);
+    border-radius: 8px;
+    padding: 5px;
+}
+
+combobox button:hover, combobox button:checked {
+    background-color: rgba(44, 44, 44, 0.8);
+    color: #ffffff;
+}
+
+/* Force popup menu styling for GtkComboBoxText options dropdown */
+menu, popover, combobox window, combobox menu, combobox cell:hover {
+    background-color: #0c0c0c;
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+menu menuitem, menu cell, popover cell {
+    color: #ffffff;
+    background-color: transparent;
+}
+
+menu menuitem:hover, menu cell:hover, popover cell:hover {
+    background-color: #ffffff;
+    color: #000000;
+}
+
+#apply-button {
+    background-color: #ffffff;
+    color: #000000;
+    font-weight: 800;
+    border-radius: 10px;
+    padding: 10px;
+}

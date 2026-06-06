@@ -319,14 +319,7 @@ class AikoAudio(Gtk.Window):
 
     def load_css(self):
         css_provider = Gtk.CssProvider()
-        theme_name = "pink-anime"
-        waybar_style = os.path.expanduser("~/.config/waybar/style.css")
-        if os.path.islink(waybar_style):
-            target = os.readlink(waybar_style)
-            if "black-white" in target: theme_name = "black-white"
-            elif "cyber-blue" in target: theme_name = "cyber-blue"
-
-        theme_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "themes", f"{theme_name}.css")
+        theme_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "theme.css")
         if os.path.exists(theme_path):
             css_provider.load_from_path(theme_path)
             Gtk.StyleContext.add_provider_for_screen(

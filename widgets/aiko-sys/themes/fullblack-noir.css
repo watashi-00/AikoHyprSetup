@@ -1,0 +1,42 @@
+#aiko-sys-window {
+    background-color: transparent;
+}
+
+#main-container {
+    background-color: rgba(0, 0, 0, 0.99);
+    border: 1px solid rgba(44, 44, 44, 0.8);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+}
+
+#resource-icon {
+    color: #ffffff;
+    font-size: 18px;
+}
+
+#resource-name {
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 800;
+}
+
+#resource-value {
+    color: #cccccc;
+    font-size: 14px;
+}
+
+progressbar progress,
+progressbar trough {
+    min-height: 10px;
+    border-radius: 5px;
+}
+
+progressbar trough {
+    background-color: rgba(255, 255, 255, 0.08);
+    border: none;
+}
+
+progressbar progress {
+    background-color: #888888;
+    border: none;
+}

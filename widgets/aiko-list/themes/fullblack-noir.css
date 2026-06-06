@@ -1,0 +1,108 @@
+#aiko-list-window {
+    background-color: transparent;
+}
+
+#main-container {
+    background-color: rgba(0, 0, 0, 0.99);
+    border: 1px solid rgba(44, 44, 44, 0.8);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+}
+
+#list-title {
+    color: #ffffff;
+    font-size: 20px;
+    font-weight: 800;
+}
+
+#list-add-btn {
+    background-color: #ffffff;
+    color: #000000;
+    border-radius: 50%;
+    min-width: 32px;
+    min-height: 32px;
+    font-size: 20px;
+    font-weight: 800;
+    border: none;
+    padding: 0;
+}
+
+#list-add-btn:hover {
+    background-color: #cccccc;
+}
+
+#task-row {
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 10px;
+    margin-bottom: 5px;
+}
+
+#task-label {
+    color: #ffffff;
+    font-size: 15px;
+}
+
+#task-label.done {
+    color: #888888;
+    text-decoration: line-through;
+}
+
+checkbutton#task-check check {
+    background-color: transparent;
+    border: 1px solid rgba(44, 44, 44, 0.8);
+    border-radius: 6px;
+    min-width: 18px;
+    min-height: 18px;
+}
+
+checkbutton#task-check:checked check {
+    background-color: #ffffff;
+    background-image: none;
+}
+
+#task-delete-btn {
+    background: transparent;
+    color: #ffffff;
+    border: none;
+    font-size: 18px;
+    opacity: 0.4;
+}
+
+#task-delete-btn:hover {
+    color: #ff4444;
+    opacity: 1;
+}
+
+#task-dialog {
+    background-color: #0a0a0a;
+    border: 1px solid #ffffff;
+    border-radius: 15px;
+}
+entry, entry text {
+    background-image: none;
+    background-color: #141414;
+    border: 1px solid rgba(44, 44, 44, 0.8);
+    border-radius: 8px;
+    color: #ffffff;
+    padding: 10px;
+}
+
+entry:focus, entry:focus text {
+    background-color: #1c1c1c;
+    border-color: rgba(44, 44, 44, 0.8);
+    color: #ffffff;
+}
+
+entry selection, entry:selected {
+    background-color: rgba(255, 255, 255, 0.3);
+    color: #ffffff;
+}
+
+button {
+    background-color: #ffffff;
+    color: #000000;
+    border-radius: 8px;
+    padding: 6px 16px;
+    font-weight: 700;
+}

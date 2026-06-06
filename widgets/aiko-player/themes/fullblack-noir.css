@@ -1,0 +1,84 @@
+#aiko-player-window {
+    background-color: transparent;
+}
+
+#main-container {
+    background-color: rgba(0, 0, 0, 0.99);
+    border: 1px solid rgba(44, 44, 44, 0.8);
+    border-radius: 15px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
+}
+
+#player-art {
+    border-radius: 12px;
+}
+
+#player-title {
+    color: #ffffff;
+    font-size: 20px;
+    font-weight: 800;
+}
+
+#player-artist, #player-album {
+    color: #bbbbbb;
+    font-size: 14px;
+}
+
+#player-heart {
+    color: #ffffff;
+    font-size: 22px;
+    opacity: 0.8;
+}
+
+#player-time {
+    color: #888888;
+    font-size: 12px;
+}
+
+scale#player-progress contents trough {
+    background-color: rgba(44, 44, 44, 0.5);
+    min-height: 8px;
+    border-radius: 4px;
+}
+
+scale#player-progress contents trough progress {
+    background-color: #888888;
+    min-height: 8px;
+    border-radius: 4px;
+}
+
+scale#player-progress contents trough slider {
+    background-color: #aaaaaa;
+    min-width: 14px;
+    min-height: 14px;
+    margin: -3px;
+}
+
+#player-btn-main {
+    background-color: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+    border: 1px solid rgba(44, 44, 44, 0.8);
+    border-radius: 50%;
+    min-width: 50px;
+    min-height: 50px;
+    font-size: 28px;
+    border: none;
+    transition: all 0.2s ease;
+}
+
+#player-btn-main:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+#player-btn-small {
+    background: transparent;
+    color: #ffffff;
+    font-size: 26px;
+    border: none;
+    opacity: 0.7;
+    transition: all 0.2s ease;
+}
+
+#player-btn-small:hover {
+    opacity: 1;
+}

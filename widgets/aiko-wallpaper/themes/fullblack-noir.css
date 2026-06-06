@@ -1,0 +1,147 @@
+#aiko-wallpaper-window {
+    background-color: transparent;
+}
+
+#main-container {
+    background-color: rgba(10, 10, 10, 0.96);
+    border: 1px solid rgba(44, 44, 44, 0.8);
+    border-radius: 15px;
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.8);
+}
+
+#header-box {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+#monitor-label {
+    color: #ffffff;
+    font-family: "JetBrainsMono Nerd Font", sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+#monitor-combo {
+    background-color: #141414;
+    color: #ffffff;
+    border: 1px solid rgba(44, 44, 44, 0.8);
+    border-radius: 8px;
+    padding: 2px 6px;
+    font-family: "JetBrainsMono Nerd Font", sans-serif;
+}
+
+#close-button {
+    background: transparent;
+    color: #ffffff;
+    border: none;
+    font-size: 18px;
+    font-weight: 800;
+    padding: 0 6px;
+    box-shadow: none;
+}
+
+#close-button:hover {
+    color: #ff4444;
+}
+
+#sidebar-box {
+    border-right: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+#category-list {
+    background-color: transparent;
+}
+
+#category-list row {
+    border-radius: 8px;
+    color: #ffffff;
+    margin: 2px 0;
+    background-color: transparent;
+    font-family: "JetBrainsMono Nerd Font", sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+#category-list row:hover, #category-list row:selected {
+    background-color: rgba(44, 44, 44, 0.6);
+    color: #ffffff;
+}
+
+#grid-scroll {
+    background-color: transparent;
+}
+
+#wallpaper-card {
+    background-color: #141414;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    padding: 8px;
+    box-shadow: none;
+}
+
+#wallpaper-card:hover {
+    border-color: rgba(44, 44, 44, 0.8);
+    background-color: #1e1e1e;
+    box-shadow: 0 4px 10px rgba(44, 44, 44, 0.5);
+}
+
+#wallpaper-card:selected {
+    border-color: rgba(44, 44, 44, 0.8);
+    background-color: rgba(44, 44, 44, 0.6);
+}
+
+#card-image {
+    border-radius: 6px;
+}
+
+#card-title {
+    color: #ffffff;
+    font-family: "JetBrainsMono Nerd Font", sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    margin-top: 4px;
+}
+
+#card-badge {
+    color: #888888;
+    font-family: "JetBrainsMono Nerd Font", sans-serif;
+    font-size: 9px;
+    font-weight: 500;
+}
+
+#bottom-box {
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+#add-folder-button {
+    background-color: #141414;
+    color: #ffffff;
+    border: 1px solid rgba(44, 44, 44, 0.8);
+    border-radius: 8px;
+    padding: 6px 16px;
+    font-family: "JetBrainsMono Nerd Font", sans-serif;
+    font-weight: 700;
+}
+
+#add-folder-button:hover {
+    background-color: #1e1e1e;
+    border-color: rgba(44, 44, 44, 0.8);
+}
+
+#apply-button {
+    background-color: #ffffff;
+    color: #000000;
+    border: none;
+    border-radius: 8px;
+    padding: 6px 20px;
+    font-family: "JetBrainsMono Nerd Font", sans-serif;
+    font-weight: 800;
+}
+
+#apply-button:hover {
+    background-color: #eeeeee;
+}
+
+#apply-button:insensitive {
+    background-color: #333333;
+    color: #666666;
+}
