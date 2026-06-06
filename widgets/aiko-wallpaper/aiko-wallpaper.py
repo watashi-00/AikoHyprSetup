@@ -224,7 +224,7 @@ class AikoWallpaper(Gtk.Window):
         
         # FlowBox grid
         self.flowbox = Gtk.FlowBox()
-        self.flowbox.set_valign(Gtk.Align.TOP)
+        self.flowbox.set_valign(Gtk.Align.START)
         self.flowbox.set_max_children_per_line(6)
         self.flowbox.set_min_children_per_line(2)
         self.flowbox.set_selection_mode(Gtk.SelectionMode.SINGLE)
