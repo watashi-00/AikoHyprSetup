@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Aiko Bluetooth
+Comment=Bluetooth devices and connectivity manager
+Exec=aiko --bluetooth
+Icon=bluetooth-active
+Terminal=false
+Type=Application
+Categories=Utility;Settings;Network;
+Keywords=bluetooth;pair;connect;devices;aiko;
+StartupWMClass=aiko-bluetooth

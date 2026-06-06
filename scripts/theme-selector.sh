@@ -96,7 +96,7 @@ patch_file() {
                 sed -i "/$marker/s/color=['\"][^'\"]*['\"]/color='$value'/g" "$file"
             fi
             if grep -q "=" "$file"; then
-                sed -i "s|^\([[:space:]]*[a-zA-Z0-9._-]*[[:space:]]*=[[:space:]]*\)[^#]*$marker|\1$value # $marker|g" "$file"
+                sed -i "s|^\([[:space:]]*[a-zA-Z0-9._-]*[[:space:]]*=[[:space:]]*\)[^#]*#[[:space:]]*$marker|\1$value # $marker|g" "$file"
             fi
             if grep -q ":" "$file" && [[ "$file" == *.css ]]; then
                  sed -i "s|^\([[:space:]]*[a-zA-Z0-9._-]*[[:space:]]*:[[:space:]]*\)[^;]*;[[:space:]]*/\* $marker \*/|\1$value; /* $marker */|g" "$file"

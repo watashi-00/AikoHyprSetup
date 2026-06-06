@@ -369,7 +369,7 @@ case "${1:-}" in
         bash "$AIKO_SCRIPTS/lib/widget_launcher.sh" "aiko-search"
         ;;
     --bluetooth)
-        [ -f "$AIKO_SCRIPTS/bluetooth.sh" ] && exec bash "$AIKO_SCRIPTS/bluetooth.sh"
+        bash "$AIKO_SCRIPTS/lib/widget_launcher.sh" "aiko-bluetooth"
         ;;
     --all)
         log "Launching all Aiko widgets..."

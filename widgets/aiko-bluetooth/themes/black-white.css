@@ -1,0 +1,156 @@
+#aiko-bluetooth-window {
+    background-color: transparent;
+}
+
+#main-container {
+    background-color: rgba(20, 20, 20, 0.98);
+    border: 2px solid #ffffff;
+    border-radius: 8px;
+}
+
+#header-title {
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: 800;
+}
+
+#section-title {
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+/* Scroll areas and Lists */
+#device-scroll {
+    background: transparent;
+    border: none;
+}
+
+#device-list {
+    background-color: transparent;
+}
+
+/* Device Row */
+.device-row {
+    background-color: rgba(255, 255, 255, 0.02);
+    border-radius: 4px;
+    padding: 8px 12px;
+    margin-bottom: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.device-row:hover {
+    background-color: rgba(255, 255, 255, 0.06);
+    border-color: #ffffff;
+}
+
+/* Labels */
+.device-name {
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.device-status {
+    color: #aaaaaa;
+    font-size: 11px;
+}
+
+.device-icon {
+    color: #ffffff;
+    font-size: 16px;
+}
+
+.status-indicator {
+    font-size: 10px;
+    font-weight: bold;
+}
+
+.status-connected {
+    color: #ffffff;
+    text-decoration: underline;
+}
+
+.status-disconnected {
+    color: #888888;
+}
+
+/* Switch & Toggles */
+switch {
+    background-color: rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+    outline: none;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+switch:checked {
+    background-color: #ffffff;
+}
+
+switch slider {
+    background-color: #000000;
+    border-radius: 2px;
+    min-width: 18px;
+    min-height: 18px;
+    margin: 2px;
+}
+
+/* Buttons */
+button {
+    background-color: transparent;
+    color: #ffffff;
+    border: 1px solid #ffffff;
+    border-radius: 4px;
+    padding: 5px 10px;
+    font-weight: 600;
+    font-size: 12px;
+}
+
+button:hover {
+    background-color: #ffffff;
+    color: #000000;
+}
+
+.icon-button {
+    padding: 4px;
+    border-radius: 4px;
+    min-width: 28px;
+    min-height: 28px;
+}
+
+.remove-btn {
+    background-color: transparent;
+    color: #888888;
+    border-color: #444444;
+}
+
+.remove-btn:hover {
+    background-color: #ff3333;
+    color: #ffffff;
+    border-color: #ff3333;
+}
+
+#close-button {
+    background-color: transparent;
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+}
+
+#close-button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+#scan-button {
+    background-color: #ffffff;
+    color: #000000;
+}
+
+#scan-button:hover {
+    background-color: #dddddd;
+}
+
+#scan-button:disabled {
+    background-color: transparent;
+    color: #555555;
+    border-color: #444444;
+}

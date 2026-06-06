@@ -1,0 +1,165 @@
+#aiko-bluetooth-window {
+    background-color: transparent;
+}
+
+#main-container {
+    background-color: rgba(2, 4, 15, 0.95);
+    border: 2px solid #00ffff;
+    border-radius: 0;
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+}
+
+#header-title {
+    color: #00ffff;
+    font-size: 18px;
+    font-weight: 900;
+    text-shadow: 0 0 5px #00ffff;
+}
+
+#section-title {
+    color: #00ffff;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+/* Scroll areas and Lists */
+#device-scroll {
+    background: transparent;
+    border: none;
+}
+
+#device-list {
+    background-color: transparent;
+}
+
+/* Device Row */
+.device-row {
+    background-color: rgba(0, 255, 255, 0.02);
+    border-radius: 0;
+    padding: 8px 12px;
+    margin-bottom: 8px;
+    border: 1px solid #004466;
+}
+
+.device-row:hover {
+    background-color: rgba(0, 255, 255, 0.08);
+    border-color: #00ffff;
+    box-shadow: 0 0 5px rgba(0, 255, 255, 0.2);
+}
+
+/* Labels */
+.device-name {
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.device-status {
+    color: #00cccc;
+    font-size: 11px;
+    opacity: 0.8;
+}
+
+.device-icon {
+    color: #00ffff;
+    font-size: 16px;
+    text-shadow: 0 0 3px #00ffff;
+}
+
+.status-indicator {
+    font-size: 10px;
+    font-weight: bold;
+}
+
+.status-connected {
+    color: #00ff66;
+}
+
+.status-disconnected {
+    color: #ff0055;
+}
+
+/* Switch & Toggles */
+switch {
+    background-color: rgba(0, 255, 255, 0.1);
+    border-radius: 0;
+    border: 1px solid #005577;
+    outline: none;
+}
+
+switch:checked {
+    background-color: #00ffff;
+    box-shadow: 0 0 5px #00ffff;
+}
+
+switch slider {
+    background-color: #ffffff;
+    border-radius: 0;
+    min-width: 18px;
+    min-height: 18px;
+    margin: 2px;
+}
+
+/* Buttons */
+button {
+    background-color: rgba(0, 255, 255, 0.1);
+    color: #00ffff;
+    border: 1px solid #00ffff;
+    border-radius: 0;
+    padding: 5px 10px;
+    font-weight: 700;
+    font-size: 12px;
+    box-shadow: 0 0 3px rgba(0, 255, 255, 0.2);
+}
+
+button:hover {
+    background-color: #00ffff;
+    color: #02040f;
+    box-shadow: 0 0 8px #00ffff;
+}
+
+.icon-button {
+    padding: 4px;
+    border-radius: 0;
+    min-width: 28px;
+    min-height: 28px;
+}
+
+.remove-btn {
+    background-color: rgba(255, 0, 85, 0.1);
+    color: #ff0055;
+    border-color: rgba(255, 0, 85, 0.3);
+}
+
+.remove-btn:hover {
+    background-color: #ff0055;
+    color: #02040f;
+    border-color: #ff0055;
+    box-shadow: 0 0 8px #ff0055;
+}
+
+#close-button {
+    background-color: transparent;
+    border-color: rgba(0, 255, 255, 0.2);
+    color: #00ffff;
+}
+
+#close-button:hover {
+    background-color: rgba(0, 255, 255, 0.1);
+}
+
+#scan-button {
+    background-color: #00ffff;
+    color: #02040f;
+}
+
+#scan-button:hover {
+    background-color: #80ffff;
+}
+
+#scan-button:disabled {
+    background-color: rgba(100, 100, 100, 0.05);
+    color: #004466;
+    border-color: #003344;
+    box-shadow: none;
+}
