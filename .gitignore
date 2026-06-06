@@ -19,3 +19,7 @@ cache/
 
 # Logs
 *.log
+
+# Dynamic Wallpapers
+*dynamic-wall.css
+*dynamic-wall.template.css

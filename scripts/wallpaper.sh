@@ -274,6 +274,10 @@ apply_wallpaper() {
                 ) &
             fi
         fi
+        # Trigger Aiko Wall Sync to extract colors and rebuild dynamic theme
+        if [ -f "$AIKO_SCRIPTS/aiko-wall-sync.py" ]; then
+            python3 "$AIKO_SCRIPTS/aiko-wall-sync.py" "$file"
+        fi
     done
 }
 
