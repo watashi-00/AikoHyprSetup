@@ -309,11 +309,16 @@ case "${1:-}" in
         [ -f "$AIKO_SCRIPTS/minimize.sh" ] && exec bash "$AIKO_SCRIPTS/minimize.sh" "${2:-toggle}"
         ;;
     --wallpaper)
-        script="$AIKO_SCRIPTS/wallpaper.sh"
-        if [ -f "$script" ]; then
-            bash "$script" "${2:-select}"
+        local cmd="${2:-select}"
+        if [ "$cmd" = "select" ]; then
+            bash "$AIKO_SCRIPTS/lib/widget_launcher.sh" "aiko-wallpaper"
         else
-            error "wallpaper.sh not found."
+            script="$AIKO_SCRIPTS/wallpaper.sh"
+            if [ -f "$script" ]; then
+                bash "$script" "$cmd"
+            else
+                error "wallpaper.sh not found."
+            fi
         fi
         ;;
     --theme)
