@@ -46,7 +46,7 @@ load_assignments() {
                 payload="${line#assignment=}"
                 monitor="${payload%%|*}"
                 file="${payload#*|}"
-                if [ "$monitor" != "$payload" ] && [ -n "$file" ] && [ -f "$file" ]; then
+                if [ "$monitor" != "$payload" ] && [ -n "$file" ] && [ -e "$file" ]; then
                     assignments+=("$monitor|$file")
                 fi
                 ;;
@@ -74,7 +74,7 @@ write_hyprpaper_config() {
     for entry in "${assignments[@]}"; do
         monitor="${entry%%|*}"
         file="${entry#*|}"
-        if ! is_animated_file "$file"; then
+        if [ -f "$file" ] && ! is_animated_file "$file"; then
             static_assignments+=("$monitor|$file")
             static_files+=("$file")
         fi
