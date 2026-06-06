@@ -33,6 +33,7 @@ is_animated_file() {
 stop_running() {
     pkill -x hyprpaper >/dev/null 2>&1 || true
     pkill -x mpvpaper >/dev/null 2>&1 || true
+    pkill -f linux-wallpaperengine >/dev/null 2>&1 || true
     sleep 0.2
 }
 
@@ -211,11 +212,18 @@ select_wallpaper() {
 
     local selected_file
     selected_file=$(zenity --file-selection --title="Select Image/Video for $target" \
-        --file-filter="Media | *.jpg *.png *.webp *.jpeg *.gif *.mp4 *.webm" 2>/dev/null)
+        --file-filter="Media & Project Files | *.jpg *.png *.webp *.jpeg *.gif *.mp4 *.webm project.json" 2>/dev/null)
     
     if [ -n "$selected_file" ]; then
-        # CROP STEP
-        selected_file=$(crop_image "$selected_file" "$target")
+        # If project.json is selected, use its parent folder as the target
+        if [[ "$selected_file" == */project.json ]]; then
+            selected_file="$(dirname "$selected_file")"
+        fi
+        
+        # CROP STEP (Only for static image files, skip for directories/animated files)
+        if [ -f "$selected_file" ]; then
+            selected_file=$(crop_image "$selected_file" "$target")
+        fi
         
         if [ "$target" = "ALL" ]; then
             printf "assignment=ALL|%s\n" "$selected_file" > "$STATE_FILE"
@@ -261,16 +269,34 @@ apply_wallpaper() {
     if [ -s "$HYPRPAPER_CONF" ]; then grep -q '^wallpaper =' "$HYPRPAPER_CONF" && start_hyprpaper; fi
     for entry in "${assignments[@]}"; do
         monitor="${entry%%|*}"; file="${entry#*|}";
-        if is_animated_file "$file"; then
-            start_mpvpaper "$monitor" "$file"
+        
+        local target_file="$file"
+        local is_wpe=0
+        local wpe_type=""
+        
+        # If it is a Wallpaper Engine project directory
+        if [ -d "$file" ] && [ -f "$file/project.json" ]; then
+            is_wpe=1
+            wpe_type=$(jq -r '.type // "Scene"' "$file/project.json" 2>/dev/null || echo "Scene")
+            local wpe_file=$(jq -r '.file // ""' "$file/project.json" 2>/dev/null || echo "")
+            if [ -n "$wpe_file" ] && [ -f "$file/$wpe_file" ]; then
+                target_file="$file/$wpe_file"
+            fi
+        fi
+        
+        if [ "$is_wpe" -eq 1 ] && [ "$wpe_type" != "Video" ] && have linux-wallpaperengine; then
+            log "Starting linux-wallpaperengine for $monitor..."
+            nohup linux-wallpaperengine --screen-assets "$monitor" "$file" >/dev/null 2>&1 &
+        elif is_animated_file "$target_file"; then
+            start_mpvpaper "$monitor" "$target_file"
         else
             if [ "$can_live_update" -eq 1 ] && have hyprctl; then
                 (
                     sleep 0.5
                     hyprctl hyprpaper unload all >/dev/null 2>&1 || true
-                    hyprctl hyprpaper preload "$file" >/dev/null 2>&1 || true
+                    hyprctl hyprpaper preload "$target_file" >/dev/null 2>&1 || true
                     local mon_t="$monitor"; [ "$mon_t" = "ALL" ] && mon_t=""
-                    hyprctl hyprpaper wallpaper "$mon_t,$file" >/dev/null 2>&1 || true
+                    hyprctl hyprpaper wallpaper "$mon_t,$target_file" >/dev/null 2>&1 || true
                 ) &
             fi
         fi
