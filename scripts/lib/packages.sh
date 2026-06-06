@@ -70,14 +70,14 @@ install_one_package() {
     if [ "$pm" = "pacman" ] && [ "$pkg" = "waybar" ]; then
         if have yay; then
             log "Force installing waybar-cava via yay..."
-            if yay -S --needed --noconfirm waybar-cava; then
+            if yay -S --noconfirm waybar-cava; then
                 return 0
             fi
             log "waybar-cava failed. Trying waybar-hyprland via yay..."
             yay -S --noconfirm waybar-hyprland && return 0
         elif have paru; then
             log "Force installing waybar-cava via paru..."
-            if paru -S --needed --noconfirm waybar-cava; then
+            if paru -S --noconfirm waybar-cava; then
                 return 0
             fi
             log "waybar-cava failed. Trying waybar-hyprland via paru..."
