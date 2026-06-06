@@ -2,6 +2,12 @@
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk, GLib, Pango
+
+# Force dark theme variant
+settings = Gtk.Settings.get_default()
+if settings:
+    settings.set_property("gtk-application-prefer-dark-theme", True)
+
 import os
 import sys
 import subprocess
