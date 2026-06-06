@@ -22,9 +22,18 @@ get_accent_color() {
 }
 
 reload_bottom_bar() {
-    pkill -f "waybar --config .*config-bottom.jsonc" || true
+    pkill -f "waybar -c /tmp/waybar-shim-bottom-" || pkill -f "waybar --config .*config-bottom.jsonc" || true
     sleep 0.4
-    nohup waybar --config "$AIKO_ROOT/config-bottom.jsonc" --style "$STYLE_FILE" >/dev/null 2>&1 &
+    local found=0
+    for shim in /tmp/waybar-shim-bottom-*.json; do
+        if [ -f "$shim" ]; then
+            nohup waybar -c "$shim" -s "$STYLE_FILE" >/dev/null 2>&1 &
+            found=1
+        fi
+    done
+    if [ "$found" -eq 0 ]; then
+        nohup waybar --config "$AIKO_ROOT/config-bottom.jsonc" --style "$STYLE_FILE" >/dev/null 2>&1 &
+    fi
 }
 
 event_data="$1"

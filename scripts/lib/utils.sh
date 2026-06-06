@@ -106,6 +106,13 @@ have() {
     command -v "$1" >/dev/null 2>&1
 }
 
+# Fallback wrapper for ImageMagick v6 systems where 'magick' is named 'convert'
+if ! command -v magick >/dev/null 2>&1 && command -v convert >/dev/null 2>&1; then
+    magick() {
+        convert "$@"
+    }
+fi
+
 # Standard Logging
 # Usage: log "message" (uses $AIKO_LOG_COMPONENT if defined)
 _aiko_log_format() {

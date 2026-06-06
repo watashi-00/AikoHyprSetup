@@ -171,6 +171,10 @@ action_git_pull() {
     else
         warn "Source at $AIKO_ROOT is not a git repository."
         if confirm "Do you want to download the latest version from GitHub?" "n"; then
+            if ! have curl || ! have unzip; then
+                error "Error: Both 'curl' and 'unzip' are required to download and extract updates."
+                return 1
+            fi
             local TEMP_DIR
             TEMP_DIR=$(mktemp -d)
             log "Downloading latest master archive..."
