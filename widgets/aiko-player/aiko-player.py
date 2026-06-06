@@ -21,8 +21,8 @@ class AikoPlayer(Gtk.Window):
         self.set_resizable(True)
         
         # Enforce fixed size
-        self.set_default_size(500, 250)
-        self.set_size_request(500, 250)
+        self.set_default_size(500, 300)
+        self.set_size_request(500, 300)
 
         # Paths
         self.script_dir = os.path.dirname(os.path.abspath(__file__))
