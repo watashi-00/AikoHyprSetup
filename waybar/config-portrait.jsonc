@@ -57,6 +57,7 @@
     },
 
     "cava": {
+        "cava_config": "~/.config/cava/config",
         "framerate": 60,
         "autosens": 0,
         "sensitivity": 1.7,
