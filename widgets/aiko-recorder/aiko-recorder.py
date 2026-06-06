@@ -144,12 +144,28 @@ class AikoRecorder(Gtk.Window):
             except subprocess.CalledProcessError:
                 self.show_all()
                 return
+        else:
+            # Fullscreen: query focused monitor under Hyprland to avoid prompt
+            focused_monitor = None
+            try:
+                monitors_raw = subprocess.check_output(["hyprctl", "monitors", "-j"])
+                import json
+                monitors_data = json.loads(monitors_raw.decode("utf-8"))
+                for m in monitors_data:
+                    if m.get("focused"):
+                        focused_monitor = m.get("name")
+                        break
+            except Exception:
+                pass
+            
+            if focused_monitor:
+                cmd.extend(["-o", focused_monitor])
 
         if self.audio_toggle.get_active():
             cmd.append("-a")
 
         try:
-            subprocess.Popen(cmd)
+            subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             subprocess.run(["notify-send", "Aiko Recorder", "Recording started...", "-i", "media-record"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         except Exception as e:
             subprocess.run(["notify-send", "Aiko Recorder", f"Failed to start recording: {e}", "-i", "dialog-error"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
