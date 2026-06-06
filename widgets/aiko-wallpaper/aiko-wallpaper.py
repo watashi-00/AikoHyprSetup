@@ -610,4 +610,9 @@ class AikoWallpaper(Gtk.Window):
         return False
 
 if __name__ == "__main__":
-    AikoWallpaper()
+    try:
+        AikoWallpaper()
+        Gtk.main()
+    except Exception as e:
+        print(f"Failed to start AikoWallpaper: {e}")
+        sys.exit(1)
