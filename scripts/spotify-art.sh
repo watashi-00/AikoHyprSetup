@@ -13,35 +13,38 @@ if ! have playerctl; then
     exit 0
 fi
 
-artUrl=$(playerctl metadata mpris:artUrl 2> /dev/null)
+# Prefer Spotify specifically, then fallback to any running player
+artUrl=$(playerctl --player=spotify,spotifyd metadata mpris:artUrl 2> /dev/null || playerctl metadata mpris:artUrl 2> /dev/null)
 
 if [ -z "$artUrl" ]; then
     echo ""
     exit 0
 fi
 
-filename="/tmp/spotify_cover.png"
-lastUrlFile="/tmp/spotify_cover_url.txt"
-lastUrl=$(cat "$lastUrlFile" 2> /dev/null || echo "")
+# Generate unique filename based on URL hash to bypass Waybar's image caching
+url_hash=$(echo -n "$artUrl" | md5sum | cut -d' ' -f1)
+filename="/tmp/spotify_cover_${url_hash}.png"
+
+if [ -f "$filename" ]; then
+    echo "$filename"
+    exit 0
+fi
+
+# Clean up any old covers
+find /tmp -name "spotify_cover_*.png" -delete 2>/dev/null
 
 # Support file:// paths and http(s) URLs
 if [[ "$artUrl" == file://* ]]; then
-    # strip file://
     filepath="${artUrl#file://}"
     if [ -f "$filepath" ]; then
         cp "$filepath" "$filename" 2> /dev/null || true
-        echo "$artUrl" > "$lastUrlFile"
         echo "$filename"
         exit 0
     fi
 fi
 
-if [ "$artUrl" != "$lastUrl" ]; then
-    # try download, fall back to leaving previous file
-    if have curl; then
-        curl -s -L "$artUrl" -o "$filename" || true
-    fi
-    echo "$artUrl" > "$lastUrlFile"
+if have curl; then
+    curl -s -L "$artUrl" -o "$filename" || true
 fi
 
 if [ -f "$filename" ]; then
