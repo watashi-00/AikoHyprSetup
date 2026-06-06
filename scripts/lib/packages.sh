@@ -21,7 +21,7 @@ packages_for_pm() {
                 cliphist libnotify network-manager-applet grim slurp curl \
                 hyprpicker swappy xdg-utils bluez ttf-font-awesome \
                 ttf-jetbrains-mono-nerd polkit-kde-agent zenity gthumb imagemagick \
-                python-gobject python-psutil socat fastfetch wf-recorder
+                python-gobject python-psutil socat fastfetch wf-recorder mpv mpvpaper
             ;;
         apt)
             printf '%s\n' \
@@ -30,7 +30,7 @@ packages_for_pm() {
                 cliphist libnotify-bin network-manager-gnome grim slurp curl \
                 hyprpicker swappy xdg-utils bluez fonts-font-awesome \
                 fonts-jetbrains-mono polkit-kde-agent-1 zenity gthumb imagemagick \
-                python3-gi python3-psutil socat fastfetch wf-recorder
+                python3-gi python3-psutil socat fastfetch wf-recorder mpv mpvpaper
             ;;
         dnf)
             printf '%s\n' \
@@ -39,7 +39,7 @@ packages_for_pm() {
                 cliphist libnotify NetworkManager-applet grim slurp curl \
                 hyprpicker swappy xdg-utils bluez fontawesome-fonts \
                 jetbrains-mono-fonts polkit-kde zenity gthumb ImageMagick \
-                python3-gobject python3-psutil socat fastfetch wf-recorder
+                python3-gobject python3-psutil socat fastfetch wf-recorder mpv mpvpaper
             ;;
         zypper)
             printf '%s\n' \
@@ -48,7 +48,7 @@ packages_for_pm() {
                 cliphist libnotify-tools NetworkManager-applet grim slurp curl \
                 hyprpicker swappy xdg-utils bluez fontawesome-fonts \
                 jetbrains-mono-fonts polkit-kde-agent-6 zenity gthumb ImageMagick \
-                python3-gobject python3-psutil socat fastfetch wf-recorder
+                python3-gobject python3-psutil socat fastfetch wf-recorder mpv mpvpaper
             ;;
         apk)
             printf '%s\n' \
@@ -57,7 +57,7 @@ packages_for_pm() {
                 cliphist libnotify network-manager-applet grim slurp curl \
                 hyprpicker swappy xdg-utils bluez fontawesome-fonts \
                 ttf-jetbrains-mono polkit-kde-agent zenity gthumb imagemagick \
-                py3-gobject3 py3-psutil socat fastfetch wf-recorder
+                py3-gobject3 py3-psutil socat fastfetch wf-recorder mpv mpvpaper
             ;;
     esac
 }
@@ -84,6 +84,20 @@ install_one_package() {
             sudo_cmd pacman -S --noconfirm waybar-hyprland || return 1
         fi
         return 0
+    fi
+    
+    # Specialized logic for mpvpaper on Arch Linux (AUR package)
+    if [ "$pm" = "pacman" ] && [ "$pkg" = "mpvpaper" ]; then
+        if have yay; then
+            log "Installing mpvpaper via yay..."
+            yay -S --needed --noconfirm mpvpaper && return 0
+        elif have paru; then
+            log "Installing mpvpaper via paru..."
+            paru -S --needed --noconfirm mpvpaper && return 0
+        else
+            warn "mpvpaper is in the AUR. Please install an AUR helper (like yay) or install mpvpaper manually."
+            return 1
+        fi
     fi
 
     case "$pm" in
