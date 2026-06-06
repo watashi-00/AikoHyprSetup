@@ -13,8 +13,8 @@ class AikoClock(Gtk.Window):
         self.set_type_hint(Gdk.WindowTypeHint.DIALOG)
         self.set_keep_above(True)
         self.set_decorated(False)
-        self.set_resizable(False)
-        self.set_default_size(200, 120)
+        self.set_resizable(True)
+        self.set_default_size(300, 150)
 
         # Load CSS
         self.load_css()

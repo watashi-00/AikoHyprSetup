@@ -19,8 +19,8 @@ class AikoWeather(Gtk.Window):
         self.set_type_hint(Gdk.WindowTypeHint.DIALOG)
         self.set_keep_above(True)
         self.set_decorated(False)
-        self.set_resizable(False)
-        self.set_default_size(250, 350)
+        self.set_resizable(True)
+        self.set_default_size(280, 400)
         self.set_name("aiko-weather-window")
 
         # Paths

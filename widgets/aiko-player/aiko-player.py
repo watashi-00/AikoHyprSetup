@@ -18,11 +18,11 @@ class AikoPlayer(Gtk.Window):
         self.set_type_hint(Gdk.WindowTypeHint.DIALOG)
         self.set_keep_above(True)
         self.set_decorated(False)
-        self.set_resizable(False)
+        self.set_resizable(True)
         
         # Enforce fixed size
-        self.set_default_size(480, 260)
-        self.set_size_request(480, 260)
+        self.set_default_size(500, 250)
+        self.set_size_request(500, 250)
 
         # Paths
         self.script_dir = os.path.dirname(os.path.abspath(__file__))
