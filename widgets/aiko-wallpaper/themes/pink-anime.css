@@ -84,7 +84,7 @@
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
-#wallpaper-card:selected {
+flowboxchild:selected #wallpaper-card, #wallpaper-card:selected {
     border-color: #ff8fbd;
     background-color: rgba(255, 143, 189, 0.15);
 }

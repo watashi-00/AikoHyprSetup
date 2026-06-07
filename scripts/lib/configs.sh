@@ -289,13 +289,22 @@ except:
     log "${MAGENTA}Applying active theme and patching config colors...${NC}"
     local active_theme="pink-anime.css"
     if [ -L "$waybar_dest/style.css" ]; then
-        active_theme=$(basename "$(readlink -f "$waybar_dest/style.css")")
+        active_theme=$(basename "$(readlink "$waybar_dest/style.css")")
     fi
     
     # Run theme-selector silently to restore theme files, symlinks and config patches
     if [ -f "$waybar_dest/scripts/theme-selector.sh" ]; then
         run env AIKO_ROOT="$waybar_dest" bash "$waybar_dest/scripts/theme-selector.sh" "$active_theme"
     fi
+
+    # Widget theme links
+    local widget
+    for widget in aiko-note aiko-player aiko-clock aiko-usercard aiko-weather aiko-list aiko-sys aiko-monitors aiko-audio aiko-calendar aiko-timer aiko-recorder; do
+        local w_dir="$waybar_dest/widgets/$widget"
+        if [ -d "$w_dir" ]; then
+            (cd "$w_dir" && run ln -sf "../../themes/$active_theme" "theme.css")
+        fi
+    done
 
     # Add fastfetch to .bashrc if not present
     if [ -f "$HOME/.bashrc" ] && ! grep -q "fastfetch" "$HOME/.bashrc"; then

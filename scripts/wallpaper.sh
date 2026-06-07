@@ -252,7 +252,19 @@ select_wallpaper() {
             for entry in "${new_entries[@]}"; do printf "assignment=%s\n" "$entry" >> "$STATE_FILE"; done
         fi
         
-        if [ -f "$AIKO_SCRIPTS/aiko-wall-sync.py" ]; then
+        # Check if active theme is dynamic-wall
+        local is_dynamic=0
+        local waybar_style="$AIKO_ROOT/style.css"
+        [ ! -f "$waybar_style" ] && waybar_style="$AIKO_ROOT/waybar/style.css"
+        if [ -L "$waybar_style" ]; then
+            local target
+            target=$(readlink "$waybar_style")
+            if [[ "$target" == *dynamic-wall* ]]; then
+                is_dynamic=1
+            fi
+        fi
+
+        if [ "$is_dynamic" -eq 1 ] && [ -f "$AIKO_SCRIPTS/aiko-wall-sync.py" ]; then
             python3 "$AIKO_SCRIPTS/aiko-wall-sync.py" "$selected_file"
         else
             apply_wallpaper

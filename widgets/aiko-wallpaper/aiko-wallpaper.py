@@ -404,17 +404,14 @@ class AikoWallpaper(Gtk.Window):
         self.show_all()
 
     def create_wallpaper_card(self, item):
-        btn = Gtk.Button()
-        btn.set_name("wallpaper-card")
-        btn.wallpaper_data = item
-        
-        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=5)
-        btn.add(box)
+        card = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=5)
+        card.set_name("wallpaper-card")
+        card.wallpaper_data = item
         
         # Image preview
         img = Gtk.Image()
         img.set_name("card-image")
-        box.pack_start(img, True, True, 0)
+        card.pack_start(img, True, True, 0)
         
         # Async load thumbnail
         threading.Thread(target=self.load_thumbnail_async, args=(item, img)).start()
@@ -425,7 +422,7 @@ class AikoWallpaper(Gtk.Window):
         lbl.set_text(item["name"])
         lbl.set_ellipsize(Pango.EllipsizeMode.END)
         lbl.set_max_width_chars(15)
-        box.pack_start(lbl, False, False, 0)
+        card.pack_start(lbl, False, False, 0)
         
         # Type badge
         badge = Gtk.Label()
@@ -434,9 +431,9 @@ class AikoWallpaper(Gtk.Window):
         if item["type"] == "wpe":
             t_label = f"WPE: {item['wpe_type']}"
         badge.set_text(t_label)
-        box.pack_start(badge, False, False, 0)
+        card.pack_start(badge, False, False, 0)
         
-        return btn
+        return card
 
     def load_thumbnail_async(self, item, gtk_image):
         thumb_path = item["thumbnail"]
@@ -592,8 +589,18 @@ class AikoWallpaper(Gtk.Window):
         wall_script = os.path.expanduser("~/.config/waybar/scripts/wallpaper.sh")
         
         # We start sync asynchronously to let the UI react quickly
+        waybar_style = os.path.expanduser("~/.config/waybar/style.css")
+        is_dynamic = False
+        if os.path.islink(waybar_style):
+            try:
+                target = os.readlink(waybar_style)
+                if "dynamic-wall" in target:
+                    is_dynamic = True
+            except:
+                pass
+
         def apply_task():
-            if os.path.exists(sync_script):
+            if is_dynamic and os.path.exists(sync_script):
                 subprocess.run(["python3", sync_script, wall_path])
             elif os.path.exists(wall_script):
                 subprocess.run(["bash", wall_script, "apply"])
@@ -602,7 +609,10 @@ class AikoWallpaper(Gtk.Window):
         
         # Show a desktop notification
         try:
-            subprocess.run(["notify-send", "Aiko Wallpaper Engine", f"Wallpaper applied to {monitor}!\nSyncing accent colors..."])
+            msg = f"Wallpaper applied to {monitor}!"
+            if is_dynamic:
+                msg += "\nSyncing accent colors..."
+            subprocess.run(["notify-send", "Aiko Wallpaper Engine", msg])
         except:
             pass
             
