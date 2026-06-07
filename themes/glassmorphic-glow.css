@@ -1,0 +1,325 @@
+/*
+ @name: Glassmorphic Glow
+ @author: Antigravity
+ @hypr-active-border: rgba(ff8fbdf2) rgba(8b5cf6f2) 45deg
+ @hypr-inactive-border: rgba(161423aa)
+ @hypr-gaps-in: 10
+ @hypr-gaps-out: 18
+ @hypr-rounding: 18
+ @hypr-active-opacity: 0.95
+ @hypr-inactive-opacity: 0.85
+ @wofi-bg: rgba(16, 14, 23, 0.75)
+ @wofi-border: rgba(255, 143, 189, 0.4)
+ @wofi-text: #f3f0f5
+ @wofi-accent: rgba(139, 92, 246, 0.85)
+ @mako-bg: rgba(16, 14, 23, 0.8)
+ @mako-text: #f3f0f5
+ @mako-border: #ff8fbd
+ @mako-rounding: 18
+ @waybar_accent: #ff8fbd
+ @widget-aiko-note: glassmorphic-glow.css
+ @widget-aiko-player: glassmorphic-glow.css
+ @widget-aiko-clock: glassmorphic-glow.css
+ @widget-aiko-usercard: glassmorphic-glow.css
+ @widget-aiko-weather: glassmorphic-glow.css
+ @widget-aiko-list: glassmorphic-glow.css
+ @widget-aiko-sys: glassmorphic-glow.css
+ @widget-aiko-calendar: glassmorphic-glow.css
+ @widget-aiko-timer: glassmorphic-glow.css
+ @widget-aiko-recorder: glassmorphic-glow.css
+ @widget-aiko-search: glassmorphic-glow.css
+ @widget-aiko-wallpaper: glassmorphic-glow.css
+ @widget-aiko-bluetooth: glassmorphic-glow.css
+ @widget-aiko-audio: glassmorphic-glow.css
+ @widget-aiko-monitors: glassmorphic-glow.css
+*/
+
+* {
+    font-family: "Outfit", "JetBrainsMono Nerd Font", "Font Awesome 6 Free", sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: #f3f0f5;
+}
+
+window#waybar {
+    background: rgba(16, 14, 23, 0.65);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 143, 189, 0.22);
+    box-shadow: 0 8px 32px rgba(13, 8, 18, 0.65), inset 0 0 10px rgba(255, 255, 255, 0.02);
+    padding: 0 16px;
+}
+
+window#waybar.screenshot {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+}
+
+window#waybar.screenshot.top .modules-left,
+window#waybar.screenshot.top .modules-right {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    min-width: 0;
+    padding: 0;
+    margin: 0;
+}
+
+#screenshot-tools {
+    background: rgba(16, 14, 23, 0.75);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 143, 189, 0.35);
+    box-shadow: 0 12px 36px rgba(13, 8, 18, 0.7);
+    padding: 0 12px;
+}
+
+#custom-area, #custom-full, #custom-picker, #custom-edit, #custom-close {
+    color: #ffc1db;
+    padding: 8px 18px;
+    font-size: 18px;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#custom-area:hover, #custom-full:hover, #custom-picker:hover, #custom-edit:hover, #custom-close:hover {
+    background: rgba(255, 134, 185, 0.22);
+    color: #ffffff;
+    border-radius: 14px;
+}
+
+#custom-close {
+    color: #ff708f;
+}
+
+window#waybar.top {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+}
+
+window#waybar.top .modules-left,
+window#waybar.top .modules-right {
+    background: rgba(16, 14, 23, 0.65);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 143, 189, 0.22);
+    box-shadow: 0 8px 32px rgba(13, 8, 18, 0.65), inset 0 0 10px rgba(255, 255, 255, 0.02);
+}
+
+window#waybar.top .modules-left {
+    padding: 4px 16px;
+    min-width: 880px;
+    margin-left: 12px;
+    margin-top: 10px;
+}
+
+window#waybar.top .modules-right {
+    padding: 4px 16px;
+    margin-right: 12px;
+    margin-top: 10px;
+}
+
+window#waybar.top {
+    min-height: 48px;
+}
+
+window#waybar.bottom {
+    min-height: 42px;
+    background: rgba(16, 14, 23, 0.65);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 143, 189, 0.2);
+    margin-bottom: 10px;
+}
+
+window#waybar.left {
+    min-width: 72px;
+    background: rgba(16, 14, 23, 0.65);
+    border-radius: 24px;
+    border: 1px solid rgba(255, 143, 189, 0.2);
+    padding: 0 6px;
+    margin-left: 10px;
+}
+
+#workspaces {
+    min-width: 240px;
+    margin-right: 50px;
+}
+
+#workspaces button {
+    padding: 0;
+    min-width: 52px;
+    min-height: 32px;
+    color: #f0c2da;
+    background: rgba(255, 255, 255, 0.03);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    border-radius: 12px;
+    margin: 2px 4px;
+    border: 1px solid rgba(255, 134, 185, 0.08);
+}
+
+#workspaces button:hover {
+    background: rgba(255, 134, 185, 0.22);
+    border-color: rgba(255, 134, 185, 0.35);
+    color: #ffffff;
+    box-shadow: 0 0 12px rgba(255, 134, 185, 0.15);
+}
+
+#workspaces button.active {
+    color: #100e17;
+    background-color: #ff8fbd;
+    border-color: #ffc2dc;
+    box-shadow: 0 0 16px rgba(255, 143, 189, 0.4);
+}
+
+#spotify-info {
+    padding: 0;
+    margin: 0;
+}
+
+#custom-spotify, #custom-spotify label {
+    color: #ffc2dc;
+    padding: 0;
+    margin: 0;
+    min-width: 160px;
+}
+
+#spotify-buttons {
+    min-width: 150px;
+    margin: 0 0 0 8px;
+    padding: 0;
+}
+
+#custom-spotify-prev, #custom-spotify-play, #custom-spotify-next {
+    min-width: 32px;
+}
+
+#custom-spotify-prev { margin: 0; }
+#custom-spotify-play { margin: 0 30px; }
+#custom-spotify-next { margin: 0; }
+
+#cava {
+    color: #ff86b9;
+    margin-left: 45px;
+    padding: 0 4px;
+    font-size: 11px;
+}
+
+#custom-spotify-prev, #custom-spotify-play, #custom-spotify-next {
+    color: #ffc1db;
+    background: transparent;
+    padding: 6px;
+    margin: 0 2px;
+    border-radius: 12px;
+    border: none;
+    transition: all 0.2s ease;
+    font-size: 16px;
+}
+
+#custom-audio-output, #custom-audio-input, #bluetooth,
+#network, #battery, #clock, #custom-power {
+    color: #ffc1db;
+    background: transparent;
+    padding: 6px;
+    margin: 0 2px;
+    border-radius: 12px;
+    border: none;
+    transition: all 0.2s ease;
+    font-size: 14px;
+}
+
+#custom-spotify-prev:hover, #custom-spotify-play:hover, #custom-spotify-next:hover,
+#custom-audio-output:hover, #custom-audio-input:hover, #bluetooth:hover,
+#network:hover, #battery:hover, #clock:hover, #custom-power:hover {
+    background: rgba(255, 134, 185, 0.25);
+    color: #ffffff;
+    box-shadow: 0 0 10px rgba(255, 143, 189, 0.15);
+}
+
+#custom-power {
+    font-size: 14px;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+image#album-art {
+    min-width: 44px;
+    min-height: 44px;
+    margin: 0 8px 0 50px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 134, 185, 0.3);
+}
+
+#tray {
+    padding: 0 8px;
+    margin: 0 4px;
+}
+
+#custom-launcher-terminal, #custom-launcher-browser, #custom-launcher-files,
+#custom-launcher-code, #custom-launcher-settings, #custom-launcher-menu {
+    min-width: 52px;
+    min-height: 52px;
+    font-size: 22px;
+    color: #ffc1db;
+    border-radius: 16px;
+    background: transparent;
+    border: none;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    margin: 0;
+}
+
+#custom-launcher-terminal:hover, #custom-launcher-browser:hover, #custom-launcher-files:hover,
+#custom-launcher-code:hover, #custom-launcher-settings:hover, #custom-launcher-menu:hover {
+    background: rgba(255, 134, 185, 0.22);
+    color: #ffffff;
+    box-shadow: 0 0 14px rgba(255, 143, 189, 0.2);
+}
+
+#taskbar {
+    padding: 0 10px;
+}
+
+#taskbar button {
+    padding: 4px 8px;
+    margin: 0 4px;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+}
+
+#taskbar button:hover {
+    background: rgba(255, 134, 185, 0.16);
+}
+
+#taskbar button.active {
+    background: rgba(255, 134, 185, 0.28);
+    border-bottom: 2px solid #ff8fbd;
+    box-shadow: 0 4px 12px rgba(255, 143, 189, 0.2);
+}
+
+#taskbar button.minimized {
+    opacity: 0.45;
+}
+
+/* Portrait Mode Optimizations */
+window#waybar.portrait {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+}
+
+window#waybar.portrait .modules-left,
+window#waybar.portrait .modules-center,
+window#waybar.portrait .modules-right {
+    background: rgba(16, 14, 23, 0.65);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 134, 185, 0.22);
+    padding: 3px 8px;
+    margin: 0 3px;
+}
+
+window#waybar.portrait .modules-left { min-width: 0; }
+window#waybar.portrait #workspaces { min-width: 0; margin-right: 8px; }
+window#waybar.portrait #workspaces button { min-width: 44px; min-height: 28px; font-size: 11px; }
+window#waybar.portrait #custom-power { font-size: 13px; padding: 0 10px; }
+window#waybar.portrait #custom-spotify { min-width: 0; font-size: 11px; padding: 0 6px; }
+window#waybar.portrait #cava { font-size: 10px; margin-left: 12px; padding: 0; }

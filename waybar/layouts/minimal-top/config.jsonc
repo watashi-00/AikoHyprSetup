@@ -1,0 +1,158 @@
+{
+    "layer": "top",
+    "position": "top",
+    "height": 52,
+    "spacing": 8,
+    "margin-top": 8,
+    "fixed-center": true,
+
+    "modules-left": ["hyprland/workspaces", "image#album-art", "group/spotify-info", "cava"],
+    "modules-center": [],
+
+    "group/spotify-info": {
+        "orientation": "vertical",
+        "modules": [
+            "custom/spotify",
+            "group/spotify-buttons"
+        ]
+    },
+
+    "group/spotify-buttons": {
+        "orientation": "horizontal",
+        "modules": [
+            "custom/spotify-prev",
+            "custom/spotify-play",
+            "custom/spotify-next"
+        ]
+    },
+    "modules-right": ["custom/audio-output", "custom/audio-input", "bluetooth", "network", "battery", "clock", "custom/power"],
+
+    "hyprland/workspaces": {
+        "format": "{icon}",
+        "on-click": "activate",
+        "all-outputs": false,
+        "persistent-workspaces": {
+            "eDP-1": [1, 2, 3, 4, 5],
+            "HDMI-A-1": [6, 7, 8, 9, 10]
+        },
+        "format-icons": {
+            "1": "1",
+            "2": "2",
+            "3": "3",
+            "4": "4",
+            "5": "5",
+            "6": "1",
+            "7": "2",
+            "8": "3",
+            "9": "4",
+            "10": "5"
+        }
+    },
+
+    "custom/audio-output": {
+        "format": "<span color='#00ffff'>\uf028</span> {}%", // @theme:waybar_accent
+        "interval": 1,
+        "exec": "$HOME/.config/waybar/scripts/audio-output.sh",
+        "on-click": "pavucontrol",
+        "on-click-right": "$HOME/.config/waybar/scripts/audio-output.sh --toggle"
+    },
+
+    "custom/audio-input": {
+        "format": "<span color='#00ffff'>\uf130</span> {}%", // @theme:waybar_accent
+        "interval": 1,
+        "exec": "$HOME/.config/waybar/scripts/audio-input.sh",
+        "on-click": "pavucontrol -t 4",
+        "on-click-right": "$HOME/.config/waybar/scripts/audio-input.sh --toggle",
+        "tooltip": false
+    },
+
+    "bluetooth": {
+        "format": "<span color='#00ffff'>\uf294</span>", // @theme:waybar_accent
+        "format-connected": "<span color='#00ffff'>\uf294</span> {device_alias}", // @theme:waybar_accent
+        "tooltip-format": "{controller_alias}\t{controller_address}",
+        "tooltip-format-connected": "{controller_alias}\t{controller_address}\n\n{device_enumerate}",
+        "tooltip-format-enumerate-connected": "{device_alias}\t{device_address}",
+        "on-click": "aiko --bluetooth"
+    },
+
+
+    "network": {
+        "format-wifi": "<span color='#00ffff'>\uf1eb</span>  {essid}", // @theme:waybar_accent
+        "format-ethernet": "<span color='#00ffff'>\udb80\ude00</span>  Connected", // @theme:waybar_accent
+        "format-disconnected": "<span color='#00ffff'>\u26a0</span>  Disconnected" // @theme:waybar_accent
+    },
+
+    "battery": {
+        "format": "<span color='#00ffff'>{icon}</span>  {capacity}%", // @theme:waybar_accent
+        "format-icons": ["\uf244", "\uf243", "\uf242", "\uf241", "\uf240"]
+    },
+
+    "clock": {
+        "format": "{:%I:%M %p - %a, %d %b}",
+        "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
+        "on-click": "aiko --calendar"
+    },
+
+    "custom/power": {
+        "format": "<span color='#00ffff'>\uf011</span>", // @theme:waybar_accent
+        "on-click": "aiko --power",
+        "tooltip": false
+    },
+
+    "tray": {
+        "spacing": 10
+    },
+
+    "image#album-art": {
+        "exec": "bash $HOME/.config/waybar/scripts/spotify-art.sh",
+        "size": 44,
+        "interval": 2,
+        "tooltip": false
+    },
+
+    "custom/spotify": {
+        "format": "{}",
+        "escape": true,
+        "interval": 2,
+        "exec": "playerctl metadata --format '{{artist}} - {{title}}' 2> /dev/null",
+        "on-click": "playerctl play-pause",
+        "max-length": 18
+    },
+
+    "custom/spotify-prev": {
+        "format": "<span color='#00ffff'>\uf048</span>", // @theme:waybar_accent
+        "on-click": "playerctl previous",
+        "tooltip": false
+    },
+
+    "custom/spotify-play": {
+        "format": "<span color='#00ffff'>{}</span>", // @theme:waybar_accent
+        "interval": 1,
+        "exec": "playerctl status 2> /dev/null | grep -q 'Playing' && echo '' || echo ''",
+        "on-click": "playerctl play-pause",
+        "tooltip": false
+    },
+
+    "custom/spotify-next": {
+        "format": "<span color='#00ffff'>\uf051</span>", // @theme:waybar_accent
+        "on-click": "playerctl next",
+        "tooltip": false
+    },
+
+    "cava": {
+        "cava_config": "~/.config/cava/config",
+        "framerate": 60,
+        "autosens": 0,
+        "sensitivity": 1.5,
+        "bars": 16,
+        "lower_cutoff_freq": 50,
+        "higher_cutoff_freq": 10000,
+        "method": "pulse",
+        "source": "auto",
+        "stereo": true,
+        "bar_delimiter": 0,
+        "noise_reduction": 0.2,
+        "input_delay": 2,
+        "format-icons" : [" ", "▁", "▂", "▃", "▄", "▅", "▆", "▇", "█"]
+    }
+}

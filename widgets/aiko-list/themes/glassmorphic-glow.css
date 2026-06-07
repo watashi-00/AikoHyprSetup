@@ -1,0 +1,104 @@
+#aiko-list-window {
+    background-color: transparent;
+}
+
+#main-container {
+    background-color: rgba(16, 14, 23, 0.65);
+    border: 2px solid #ff8fbd;
+    border-radius: 20px;
+}
+
+#list-title {
+    color: #ff8fbd;
+    font-size: 20px;
+    font-weight: 800;
+}
+
+#list-add-btn {
+    background-color: #ff8fbd;
+    color: #100e17;
+    border-radius: 50%;
+    min-width: 32px;
+    min-height: 32px;
+    font-size: 20px;
+    font-weight: 800;
+    border: none;
+    padding: 0;
+}
+
+#list-add-btn:hover {
+    background-color: #ffb3d1;
+}
+
+#task-row {
+    padding: 5px 0;
+}
+
+#task-label {
+    color: #a9a2b3;
+    font-size: 16px;
+}
+
+#task-label.done {
+    color: #ff8fbd;
+    opacity: 0.7;
+    text-decoration: line-through;
+}
+
+#task-check {
+    color: #ff8fbd;
+}
+
+checkbutton#task-check check {
+    background-color: transparent;
+    border: 2px solid #ff8fbd;
+    border-radius: 6px;
+    min-width: 20px;
+    min-height: 20px;
+}
+
+checkbutton#task-check:checked check {
+    background-color: #ff8fbd;
+    background-image: none;
+}
+
+#task-delete-btn {
+    background: transparent;
+    color: #a9a2b3;
+    border: none;
+    font-size: 18px;
+    opacity: 0.5;
+}
+
+#task-delete-btn:hover {
+    color: #ff4f4f;
+    opacity: 1;
+}
+
+#task-dialog {
+    background-color: #100e17;
+    border: 2px solid #ff8fbd;
+    border-radius: 20px;
+}
+
+entry, entry text {
+    background-image: none;
+    background-color: #121315;
+    border: 1px solid rgba(255, 143, 189, 0.3);
+    border-radius: 8px;
+    color: #a9a2b3;
+    padding: 8px;
+}
+
+entry:focus, entry:focus text {
+    border-color: #ff8fbd;
+    background-color: #1b1c1e;
+}
+
+button {
+    background-color: #ff8fbd;
+    color: #100e17;
+    border-radius: 8px;
+    padding: 5px 15px;
+    font-weight: 700;
+}

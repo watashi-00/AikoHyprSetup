@@ -34,6 +34,7 @@ Options:
   --update-check    Check remote branches, versions, commit dates and messages
   --wallpaper       Open the wallpaper selector
   --theme           Open the theme selector
+  --layout          Open the Waybar layout selector
   --monitors        Open the Monitor configuration widget
   --audio           Open the Aiko-Audio manager widget
   --note            Open the Aiko-Note widget
@@ -327,6 +328,14 @@ case "${1:-}" in
             bash "$script"
         else
             error "theme-selector.sh not found."
+        fi
+        ;;
+    --layout)
+        script="$AIKO_SCRIPTS/layout-selector.sh"
+        if [ -f "$script" ]; then
+            bash "$script" "${2:-}"
+        else
+            error "layout-selector.sh not found."
         fi
         ;;
     --monitors)

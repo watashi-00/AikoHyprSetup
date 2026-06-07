@@ -1,0 +1,51 @@
+#aiko-weather-window {
+    background-color: transparent;
+}
+
+#main-container {
+    background-color: rgba(16, 14, 23, 0.65);
+    border: 2px solid #ff8fbd;
+    border-radius: 20px;
+}
+
+#weather-large-icon {
+    color: #ff8fbd;
+    font-size: 64px;
+}
+
+#weather-current-temp {
+    color: #ff8fbd;
+    font-size: 32px;
+    font-weight: 800;
+}
+
+#weather-current-desc {
+    color: #a9a2b3;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+#weather-feels-like {
+    color: #f3f0f5;
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+separator {
+    background-color: rgba(255, 143, 189, 0.2);
+}
+
+#forecast-day {
+    color: #ff8fbd;
+    font-weight: 800;
+}
+
+#forecast-icon {
+    color: #ff8fbd;
+    font-size: 20px;
+}
+
+#forecast-temp {
+    color: #a9a2b3;
+    font-weight: 700;
+}

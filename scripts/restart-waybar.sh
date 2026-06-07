@@ -21,9 +21,14 @@ AIKO_LOG_COMPONENT="restart"
 STYLE_CSS="$AIKO_ROOT/style.css"
 [ ! -f "$STYLE_CSS" ] && STYLE_CSS="$AIKO_ROOT/waybar/style.css"
 
+ACTIVE_LAYOUT_DIR="$AIKO_ROOT/active_layout"
+[ ! -d "$ACTIVE_LAYOUT_DIR" ] && ACTIVE_LAYOUT_DIR="$AIKO_ROOT/waybar/active_layout"
+
 get_config_path() {
     local name="$1"
-    if [ -f "$AIKO_ROOT/$name" ]; then
+    if [ -d "$ACTIVE_LAYOUT_DIR" ] && [ -f "$ACTIVE_LAYOUT_DIR/$name" ]; then
+        echo "$ACTIVE_LAYOUT_DIR/$name"
+    elif [ -f "$AIKO_ROOT/$name" ]; then
         echo "$AIKO_ROOT/$name"
     else
         echo "$AIKO_ROOT/waybar/$name"
@@ -75,10 +80,19 @@ launch_pinned_bar() {
     local is_port="${5:-0}"
     local mon_h="${6:-1080}"
     local real_config
-    real_config=$(get_config_path "$config_file")
     
-    if [ ! -f "$real_config" ]; then
-        return
+    if [ -d "$ACTIVE_LAYOUT_DIR" ]; then
+        if [ -f "$ACTIVE_LAYOUT_DIR/$config_file" ]; then
+            real_config="$ACTIVE_LAYOUT_DIR/$config_file"
+        else
+            # Skip launching if not present in the active layout profile
+            return
+        fi
+    else
+        real_config=$(get_config_path "$config_file")
+        if [ ! -f "$real_config" ]; then
+            return
+        fi
     fi
     
     local shim="/tmp/waybar-shim-${id}-${mon//[^a-zA-Z0-9]/}.json"
@@ -228,11 +242,25 @@ if have hyprctl && have jq; then
     done
 else
     # Fallback
-    nohup waybar --config "$(get_config_path config-left.jsonc)" --style "$STYLE_CSS" >/dev/null 2>&1 &
-    sleep 0.3
-    nohup waybar --config "$(get_config_path config-bottom.jsonc)" --style "$STYLE_CSS" >/dev/null 2>&1 &
-    sleep 0.3
-    nohup waybar --config "$(get_config_path config.jsonc)" --style "$STYLE_CSS" >/dev/null 2>&1 &
+    if [ -d "$ACTIVE_LAYOUT_DIR" ]; then
+        if [ -f "$ACTIVE_LAYOUT_DIR/config-left.jsonc" ]; then
+            nohup waybar --config "$ACTIVE_LAYOUT_DIR/config-left.jsonc" --style "$STYLE_CSS" >/dev/null 2>&1 &
+            sleep 0.3
+        fi
+        if [ -f "$ACTIVE_LAYOUT_DIR/config-bottom.jsonc" ]; then
+            nohup waybar --config "$ACTIVE_LAYOUT_DIR/config-bottom.jsonc" --style "$STYLE_CSS" >/dev/null 2>&1 &
+            sleep 0.3
+        fi
+        if [ -f "$ACTIVE_LAYOUT_DIR/config.jsonc" ]; then
+            nohup waybar --config "$ACTIVE_LAYOUT_DIR/config.jsonc" --style "$STYLE_CSS" >/dev/null 2>&1 &
+        fi
+    else
+        nohup waybar --config "$(get_config_path config-left.jsonc)" --style "$STYLE_CSS" >/dev/null 2>&1 &
+        sleep 0.3
+        nohup waybar --config "$(get_config_path config-bottom.jsonc)" --style "$STYLE_CSS" >/dev/null 2>&1 &
+        sleep 0.3
+        nohup waybar --config "$(get_config_path config.jsonc)" --style "$STYLE_CSS" >/dev/null 2>&1 &
+    fi
 fi
 
 # Restart Listeners

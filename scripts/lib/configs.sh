@@ -243,17 +243,24 @@ install_configs() {
     local mako_dest="$HOME/.config/mako"
     local wofi_dest="$HOME/.config/wofi"
 
-    local waybar_files=(
-        config.jsonc config-bottom.jsonc config-left.jsonc config-portrait.jsonc config-screenshot.jsonc style.css
-    )
+
 
     log "${MAGENTA}Installing Waybar configs...${NC}"
-    for file in "${waybar_files[@]}"; do
-        if [ -f "$AIKO_SOURCE_WAYBAR/$file" ]; then
-            copy_file "$AIKO_SOURCE_WAYBAR/$file" "$waybar_dest/$file"
-            patch_installed_paths "$waybar_dest/$file"
-        fi
-    done
+    if [ -f "$AIKO_SOURCE_WAYBAR/style.css" ]; then
+        copy_file "$AIKO_SOURCE_WAYBAR/style.css" "$waybar_dest/style.css"
+    fi
+
+    log "${MAGENTA}Installing Layout Profiles...${NC}"
+    if [ -d "$AIKO_SOURCE_WAYBAR/layouts" ]; then
+        copy_dir_contents "$AIKO_SOURCE_WAYBAR/layouts" "$waybar_dest/layouts"
+        # Standardize paths inside layout configurations
+        find "$waybar_dest/layouts" -type f -name "*.jsonc" -exec sed -i "s#@HOME@#$HOME#g;s#/home/watashi#$HOME#g;s#\$HOME#$HOME#g;s#~/.config#$HOME/.config#g" {} +
+    fi
+
+    # Set default active layout if not already set
+    if [ ! -L "$waybar_dest/active_layout" ] && [ ! -d "$waybar_dest/active_layout" ]; then
+        (cd "$waybar_dest" && ln -sf layouts/default active_layout)
+    fi
 
     log "${MAGENTA}Installing helper scripts...${NC}"
     # Scripts now live ONLY in the scripts/ subfolder of the destination
