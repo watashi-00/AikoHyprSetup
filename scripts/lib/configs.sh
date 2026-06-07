@@ -154,6 +154,89 @@ preserve_hyprland_hw_settings() {
     fi
 }
 
+setup_gpu_hyprland_config() {
+    local hypr_conf="$1"
+    [ -f "$hypr_conf" ] || return 0
+
+    # Check if the configuration already has Nvidia-specific environment variables
+    if grep -q "AQ_DRM_DEVICES" "$hypr_conf" || grep -q "GBM_BACKEND.*nvidia" "$hypr_conf"; then
+        log "Nvidia/Multi-GPU configuration already present in hyprland.conf. Skipping auto-detection."
+        return 0
+    fi
+
+    # Detect GPUs
+    local nv_pci
+    nv_pci=$(lspci 2>/dev/null | grep -i "NVIDIA" | head -n 1 | awk '{print $1}')
+    
+    local primary_pci
+    primary_pci=$(lspci 2>/dev/null | grep -i -E "Intel|AMD|ATI" | grep -i -E "VGA|3D" | head -n 1 | awk '{print $1}')
+
+    # Case 1: Nvidia Hybrid (Nvidia + Intel/AMD)
+    if [ -n "$nv_pci" ] && [ -n "$primary_pci" ]; then
+        local nvidia_card=""
+        local primary_card=""
+        
+        if [ -L "/dev/dri/by-path/pci-$nv_pci-card" ]; then
+            nvidia_card=$(readlink -f "/dev/dri/by-path/pci-$nv_pci-card")
+        fi
+        if [ -L "/dev/dri/by-path/pci-$primary_pci-card" ]; then
+            primary_card=$(readlink -f "/dev/dri/by-path/pci-$primary_pci-card")
+        fi
+        
+        # Fallbacks if paths are empty
+        [ -z "$nvidia_card" ] && nvidia_card="/dev/dri/card1"
+        [ -z "$primary_card" ] && primary_card="/dev/dri/card2"
+
+        warn "We detected a Hybrid GPU setup (Intel/AMD + NVIDIA)."
+        if confirm "Would you like to enable multi-GPU / Nvidia optimizations for Hyprland?" "y"; then
+            log "Configuring Nvidia and multi-GPU settings for Hyprland..."
+            {
+                echo ""
+                echo "# --- Nvidia and Multi-GPU configuration ---"
+                echo "env = LIBVA_DRIVER_NAME,nvidia"
+                echo "env = GBM_BACKEND,nvidia-drm"
+                echo "env = __GLX_VENDOR_LIBRARY_NAME,nvidia"
+                echo "env = XDG_SESSION_TYPE,wayland"
+                echo "env = AQ_DRM_DEVICES,$primary_card:$nvidia_card"
+                echo "env = AQ_NO_ATOMIC,1"
+                echo "env = WLR_NO_HARDWARE_CURSORS,1"
+                echo ""
+                echo "cursor {"
+                echo "    no_hardware_cursors = true"
+                echo "}"
+                echo "# ------------------------------------------"
+            } >> "$hypr_conf"
+            success "GPU optimizations added to hyprland.conf!"
+        else
+            log "Skipped Nvidia hybrid GPU optimizations."
+        fi
+        
+    # Case 2: Nvidia Single GPU
+    elif [ -n "$nv_pci" ]; then
+        warn "We detected a single NVIDIA GPU setup."
+        if confirm "Would you like to enable Nvidia Wayland optimizations for Hyprland?" "y"; then
+            log "Configuring Nvidia single GPU settings..."
+            {
+                echo ""
+                echo "# --- Nvidia Wayland configuration ---"
+                echo "env = LIBVA_DRIVER_NAME,nvidia"
+                echo "env = GBM_BACKEND,nvidia-drm"
+                echo "env = __GLX_VENDOR_LIBRARY_NAME,nvidia"
+                echo "env = XDG_SESSION_TYPE,wayland"
+                echo "env = WLR_NO_HARDWARE_CURSORS,1"
+                echo ""
+                echo "cursor {"
+                echo "    no_hardware_cursors = true"
+                echo "}"
+                echo "# -------------------------------------"
+            } >> "$hypr_conf"
+            success "Nvidia optimizations added to hyprland.conf!"
+        else
+            log "Skipped Nvidia optimizations."
+        fi
+    fi
+}
+
 install_configs() {
     local waybar_dest="$HOME/.config/waybar"
     local hypr_dest="$HOME/.config/hypr"
@@ -220,6 +303,7 @@ install_configs() {
         fi
 
         patch_installed_paths "$hypr_conf"
+        setup_gpu_hyprland_config "$hypr_conf"
         [ -f "$hypr_dest/shortcuts.txt" ] && patch_installed_paths "$hypr_dest/shortcuts.txt"
     fi
 
