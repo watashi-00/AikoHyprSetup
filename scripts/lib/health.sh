@@ -127,11 +127,26 @@ apply_changes() {
         run env AIKO_ROOT="$waybar_dest" "$waybar_dest/restart-waybar.sh"
     elif have waybar; then
         pkill waybar 2>/dev/null || true
-        waybar --config "$waybar_dest/config-left.jsonc" --style "$waybar_dest/style.css" &
-        sleep 0.3
-        waybar --config "$waybar_dest/config-bottom.jsonc" --style "$waybar_dest/style.css" &
-        sleep 0.3
-        waybar --config "$waybar_dest/config.jsonc" --style "$waybar_dest/style.css" &
+        local active_layout="$waybar_dest/active_layout"
+        if [ -d "$active_layout" ]; then
+            if [ -f "$active_layout/config-left.jsonc" ]; then
+                waybar --config "$active_layout/config-left.jsonc" --style "$waybar_dest/style.css" &
+                sleep 0.3
+            fi
+            if [ -f "$active_layout/config-bottom.jsonc" ]; then
+                waybar --config "$active_layout/config-bottom.jsonc" --style "$waybar_dest/style.css" &
+                sleep 0.3
+            fi
+            if [ -f "$active_layout/config.jsonc" ]; then
+                waybar --config "$active_layout/config.jsonc" --style "$waybar_dest/style.css" &
+            fi
+        else
+            waybar --config "$waybar_dest/config-left.jsonc" --style "$waybar_dest/style.css" &
+            sleep 0.3
+            waybar --config "$waybar_dest/config-bottom.jsonc" --style "$waybar_dest/style.css" &
+            sleep 0.3
+            waybar --config "$waybar_dest/config.jsonc" --style "$waybar_dest/style.css" &
+        fi
     else
         warn "waybar not found."
     fi
