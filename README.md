@@ -33,28 +33,42 @@ cd AikoHyprSetup
 ./install.sh
 ```
 
-## ✨ Features & Aiko CLI v2
+## ✨ Features & Aiko CLI v3
 
-AikoHyprSetup comes with a powerful global CLI command and a suite of interactive Python widgets that run right on your desktop. The setup is now completely modular, using a centralized utility library for consistent performance and design.
+AikoHyprSetup comes with a powerful global CLI command and a suite of interactive Python widgets that run right on your desktop. The setup is completely modular, using a centralized utility library for consistent performance and design.
 
 Once installed, you can use the `aiko` command from anywhere to manage your environment:
 
 ```bash
 aiko --help         # Show all available commands
+aiko --version      # Show version information
 aiko --theme        # Open the interactive Theme Selector
-aiko --wallpaper    # Open the interactive Wallpaper Selector
+aiko --wallpaper    # Open the interactive Wallpaper Selector (now with Live/Video Wallpapers!)
+aiko --bluetooth    # Open the Bluetooth Manager
 aiko --launcher     # Open application launcher (Wofi)
+aiko --search       # Open advanced search utility (Wofi)
 aiko --power        # Open stylized power menu
 aiko --clip         # Open clipboard history
 aiko --screenshot   # Open screenshot utility bar
+aiko --gpu          # Open GPU setup and hardware optimization menu
 aiko --diag         # Run system health and dependencies diagnostics
 aiko --restart      # Reload Waybar and Hyprland
 aiko --update [branch] # Update or switch setup to a specific branch (defaults to master)
 aiko --update-test  # Shortcut to update/switch setup to the test branch
+aiko --update-check # Check remote branches, versions, and commit statuses
 ```
 
+### 🚀 Major v3 Features
+*   **Dynamic Wallpapers & Theme Sync**: Auto color palette extraction and theme sync for dynamic wallpapers, supporting Wallpaper Engine video/scene launcher integration using `mpvpaper` (with hardware decoding options).
+*   **Interactive Bluetooth Manager**: A new dedicated interactive GTK Bluetooth management widget (`aiko-bluetooth`) for pairing and connecting to devices.
+*   **Auto GPU Configuration**: Nvidia and multi-GPU compatibility setup helper (`aiko --gpu`), configuring DRM/WLR env variables automatically in Hyprland configuration.
+*   **Smart Resource Management**: Event listener hook to automatically pause resource-heavy components (like `mpvpaper` or `cava`) when entering fullscreen mode, restoring them upon exit.
+*   **Arch Helper Support**: Added `yay` and `paru` helper integration for automatic dependencies resolving during installation.
+
 ### 🧩 Interactive Widgets
-The setup includes rich, standalone floating widgets for Waybar. They are now powered by a unified launcher that handles binary fallbacks and environment detection:
+The setup includes rich, standalone floating widgets for Waybar. They are powered by a unified launcher that handles binary fallbacks and environment detection:
+*   `aiko --wallpaper` : **[New in v3]** Interactive wallpaper management widget with video and dynamic wallpaper support.
+*   `aiko --bluetooth` : **[New in v3]** Bluetooth device management widget with UI.
 *   `aiko --search` : A premium Spotlight-style search panel and app launcher (replaces old wofi `search.sh`).
 *   `aiko --note` : A sticky note app for quick thoughts.
 *   `aiko --clock` : A beautiful oversized desktop clock.
@@ -199,4 +213,4 @@ Important rules:
 *   External configs go into the `configs/` subfolder and `install.sh` decides the final destination.
 
 ---
-*Updated on June 4, 2026.*
+*Updated on June 7, 2026.*
