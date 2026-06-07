@@ -128,8 +128,10 @@ apply_changes() {
     elif have waybar; then
         pkill waybar 2>/dev/null || true
         waybar --config "$waybar_dest/config-left.jsonc" --style "$waybar_dest/style.css" &
-        waybar --config "$waybar_dest/config.jsonc" --style "$waybar_dest/style.css" &
+        sleep 0.3
         waybar --config "$waybar_dest/config-bottom.jsonc" --style "$waybar_dest/style.css" &
+        sleep 0.3
+        waybar --config "$waybar_dest/config.jsonc" --style "$waybar_dest/style.css" &
     else
         warn "waybar not found."
     fi

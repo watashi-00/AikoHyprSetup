@@ -198,7 +198,7 @@ setup_gpu_hyprland_config() {
                 echo "env = __GLX_VENDOR_LIBRARY_NAME,nvidia"
                 echo "env = XDG_SESSION_TYPE,wayland"
                 echo "env = AQ_DRM_DEVICES,$primary_card:$nvidia_card"
-                echo "env = AQ_NO_ATOMIC,1"
+                echo "# env = AQ_NO_ATOMIC,1"
                 echo "env = WLR_NO_HARDWARE_CURSORS,1"
                 echo ""
                 echo "cursor {"
