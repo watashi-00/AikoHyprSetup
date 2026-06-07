@@ -36,14 +36,26 @@ jobs:
           tar -cJvf "AikoHyprSetup-${VERSION}.tar.xz" AikoHyprSetup/
           zip -r "AikoHyprSetup-${VERSION}.zip" AikoHyprSetup/
 
+      - name: Determine Release Body
+        id: release_body
+        run: |
+          EXISTING_BODY=$(gh release view "v${{ env.AIKO_VERSION }}" --json body -q .body 2>/dev/null || true)
+          if [ -n "$EXISTING_BODY" ] && ! echo "$EXISTING_BODY" | grep -q "Automated release generated from master branch"; then
+            echo "Preserving existing custom release notes."
+            echo "$EXISTING_BODY" > release_notes.md
+          else
+            echo "Using default automated release notes."
+            echo -e "Automated release generated from master branch.\nVersion: ${{ env.AIKO_VERSION }}" > release_notes.md
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ env.AIKO_VERSION }}
           name: AikoHyprSetup v${{ env.AIKO_VERSION }}
-          body: |
-            Automated release generated from master branch.
-            Version: ${{ env.AIKO_VERSION }}
+          body_path: release_notes.md
           draft: false
           prerelease: false
           files: |
