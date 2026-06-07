@@ -52,7 +52,7 @@ if [ -z "$selected_file" ]; then
         options+="$name\n"
     done
 
-    selected_name=$(echo -e "$options" | wofi --dmenu --prompt "Select Theme" --width 300 --height 350)
+    selected_name=$(echo -e "$options" | wofi --dmenu --prompt "Select Theme" --width 300 --height 350 || true)
     [ -z "$selected_name" ] && exit 0
 
     for t in "${themes[@]}"; do

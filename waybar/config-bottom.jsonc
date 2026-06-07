@@ -20,8 +20,21 @@
         "all-workspaces": true,
         "ignore-list": [
             "Waybar",
-            "^aiko-.*",
-            "^Aiko-.*"
+            "aiko-audio.py", "aiko-audio",
+            "aiko-bluetooth.py", "aiko-bluetooth",
+            "aiko-calendar.py", "aiko-calendar",
+            "aiko-clock.py", "aiko-clock",
+            "aiko-list.py", "aiko-list",
+            "aiko-monitors.py", "aiko-monitors",
+            "aiko-note.py", "aiko-note",
+            "aiko-player.py", "aiko-player",
+            "aiko-recorder.py", "aiko-recorder",
+            "aiko-search.py", "aiko-search",
+            "aiko-sys.py", "aiko-sys",
+            "aiko-timer.py", "aiko-timer",
+            "aiko-usercard.py", "aiko-usercard",
+            "aiko-wallpaper.py", "aiko-wallpaper",
+            "aiko-weather.py", "aiko-weather"
         ],
         "icon-theme": "Aiko"
     }
