@@ -121,6 +121,16 @@ if [ -f "$MAKO_TEMPLATE" ]; then
     sed 's/[[:space:]]\+#.*$//' "$MAKO_TEMPLATE" > "$MAKO_CONF"
 fi
 
+# Patch all jsonc config files in the active layout
+active_layout_dir="$AIKO_ROOT/active_layout"
+[ ! -d "$active_layout_dir" ] && active_layout_dir="$AIKO_ROOT/waybar/active_layout"
+if [ -d "$active_layout_dir" ]; then
+    for f in "$active_layout_dir"/*.jsonc; do
+        [ -f "$f" ] && patch_file "$f"
+    done
+fi
+
+# Fallbacks for legacy/monolithic layouts
 if [ -f "$AIKO_ROOT/waybar/config.jsonc" ]; then
     patch_file "$AIKO_ROOT/waybar/config.jsonc"
 fi
