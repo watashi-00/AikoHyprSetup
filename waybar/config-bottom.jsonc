@@ -19,7 +19,9 @@
         "all-outputs": false,
         "all-workspaces": true,
         "ignore-list": [
-            "Waybar"
+            "Waybar",
+            "^aiko-.*",
+            "^Aiko-.*"
         ],
         "icon-theme": "Aiko"
     }
