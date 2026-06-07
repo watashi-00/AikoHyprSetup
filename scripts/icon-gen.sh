@@ -65,6 +65,7 @@ map_class_to_icon() {
         "spotify"|"spotify-client"|"com.spotify.client") echo "spotify" ;;
         "org.kde.dolphin"|"dolphin") echo "system-file-manager" ;;
         "org.kde.discover"|"discover") echo "plasmadiscover" ;;
+        "blueman-manager"|"blueman-adapters"|"blueman") echo "blueman" ;;
         *) echo "$class" ;;
     esac
 }
@@ -81,6 +82,57 @@ find_icon_path() {
         # Find exactly the name or common variations
         local found=$(find "$dir" -maxdepth 10 \( -name "$name.svg" -o -name "$name.png" -o -name "${name,,}.svg" -o -name "${name,,}.png" \) 2>/dev/null | grep -E "apps|scalable" | head -n 1)
         if [ -n "$found" ]; then echo "$found"; return 0; fi
+    done
+    return 1
+}
+
+find_icon_from_desktop() {
+    local class="${1}"
+    local class_lower="${1,,}"
+    local icon=""
+    
+    local desktop_dirs=(
+        "$HOME/.local/share/applications"
+        "/usr/share/applications"
+        "/var/lib/flatpak/exports/share/applications"
+    )
+    
+    for dir in "${desktop_dirs[@]}"; do
+        [ -d "$dir" ] || continue
+        local files
+        files=$(grep -Rl -i "^StartupWMClass=${class}$" "$dir" 2>/dev/null || grep -Rl -i "^StartupWMClass=${class_lower}$" "$dir" 2>/dev/null || true)
+        if [ -n "$files" ]; then
+            for f in $files; do
+                icon=$(grep -oP '^Icon=\K.*' "$f" | head -n 1)
+                if [ -n "$icon" ]; then
+                    echo "$icon"
+                    return 0
+                fi
+            done
+        fi
+    done
+    
+    for dir in "${desktop_dirs[@]}"; do
+        [ -d "$dir" ] || continue
+        local f_name="$dir/${class_lower}.desktop"
+        if [ -f "$f_name" ]; then
+            icon=$(grep -oP '^Icon=\K.*' "$f_name" | head -n 1)
+            if [ -n "$icon" ]; then
+                echo "$icon"
+                return 0
+            fi
+        fi
+        if [[ "$class_lower" == *-* ]]; then
+            local prefix="${class_lower%%-*}"
+            local f_prefix="$dir/${prefix}.desktop"
+            if [ -f "$f_prefix" ]; then
+                icon=$(grep -oP '^Icon=\K.*' "$f_prefix" | head -n 1)
+                if [ -n "$icon" ]; then
+                    echo "$icon"
+                    return 0
+                fi
+            fi
+        fi
     done
     return 1
 }
@@ -102,6 +154,15 @@ process_icon() {
         icon_path=$(find_icon_path "$icon_name")
         [ -n "$icon_path" ] && break
     done
+
+    # Fallback to searching desktop files if not found by direct lookup
+    if [ -z "$icon_path" ]; then
+        local desktop_icon
+        desktop_icon=$(find_icon_from_desktop "$app_input")
+        if [ -n "$desktop_icon" ]; then
+            icon_path=$(find_icon_path "$desktop_icon")
+        fi
+    fi
 
     if [ -n "$icon_path" ]; then
         if magick -background none "$icon_path" -resize 32x32 \
