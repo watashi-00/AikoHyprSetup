@@ -1,0 +1,62 @@
+#aiko-usercard-window {
+    background-color: transparent;
+}
+
+#main-container {
+    background-color: rgba(16, 14, 23, 0.65);
+    border: 2px solid #ff8fbd;
+    border-radius: 20px;
+}
+
+#usercard-name {
+    color: #ff8fbd;
+    font-size: 24px;
+    font-weight: 800;
+}
+
+#usercard-handle {
+    color: #a9a2b3;
+    font-size: 14px;
+    opacity: 0.7;
+}
+
+#usercard-tag {
+    color: #ff8fbd;
+    background-color: rgba(255, 143, 189, 0.1);
+    border-radius: 8px;
+    padding: 2px 10px;
+    font-weight: 700;
+}
+
+#usercard-country {
+    color: #a9a2b3;
+    font-weight: 600;
+}
+
+#usercard-quote-box {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    border-left: 4px solid #ff8fbd;
+}
+
+#usercard-quote-text {
+    color: #f3f0f5;
+    font-style: italic;
+}
+
+#usercard-quote-icon {
+    color: #ff8fbd;
+    font-size: 18px;
+}
+
+#usercard-bottom-tag-container {
+    background-color: rgba(255, 143, 189, 0.15);
+    border-radius: 14px;
+    padding: 8px;
+}
+
+#usercard-bottom-tag {
+    color: #ff8fbd;
+    font-weight: 800;
+    font-size: 13px;
+}

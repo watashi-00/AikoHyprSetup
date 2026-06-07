@@ -1,0 +1,103 @@
+#aiko-audio-window {
+    background-color: transparent;
+}
+
+#main-container {
+    background-color: rgba(16, 14, 23, 0.65);
+    border: 2px solid #ff8fbd;
+    border-radius: 20px;
+}
+
+#header-title {
+    color: #ff8fbd;
+    font-size: 18px;
+    font-weight: 800;
+}
+
+#section-title {
+    color: #ff8fbd;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+#section-desc {
+    color: #a9a2b3;
+    font-size: 11px;
+}
+
+#channel-label {
+    color: #a9a2b3;
+    font-size: 13px;
+    font-weight: 600;
+    min-width: 40px;
+}
+
+/* Sliders */
+scale trough {
+    background-color: rgba(255, 143, 189, 0.1);
+    min-height: 8px;
+    border-radius: 4px;
+}
+
+scale highlight {
+    background-color: #ff8fbd;
+    border-radius: 4px;
+}
+
+scale slider {
+    background-color: #ffffff;
+    border: 2px solid #ff8fbd;
+    min-height: 16px;
+    min-width: 16px;
+    border-radius: 8px;
+}
+
+/* Checkbox */
+checkbutton {
+    color: #a9a2b3;
+    font-size: 12px;
+}
+
+checkbutton check {
+    color: #ff8fbd;
+    background-color: rgba(16, 14, 23, 0.65);
+    border: 1px solid #ff8fbd;
+    border-radius: 3px;
+}
+
+checkbutton check:checked {
+    background-color: #ff8fbd;
+    color: #ffffff;
+}
+
+/* Buttons */
+button {
+    background-color: rgba(255, 143, 189, 0.15);
+    color: #ff8fbd;
+    border: 1px solid #ff8fbd;
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+button:hover {
+    background-color: #ff8fbd;
+    color: #ffffff;
+}
+
+button:disabled {
+    background-color: rgba(100, 100, 100, 0.1);
+    color: #888888;
+    border-color: #666666;
+}
+
+#close-button {
+    background-color: transparent;
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+}
+
+#close-button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
