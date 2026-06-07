@@ -315,6 +315,42 @@ action_gpu_setup() {
     fi
 }
 
+action_clear_icon_cache() {
+    log "Clearing Aiko icon cache..."
+    local cache_dir="$HOME/.config/waybar/cache/icons"
+    if [ -d "$cache_dir" ]; then
+        rm -rf "$cache_dir"
+        success "Icon cache cleared successfully!"
+    else
+        log "Icon cache is already empty."
+    fi
+    local icon_theme="$HOME/.local/share/icons/Aiko"
+    if [ -d "$icon_theme" ] || [ -L "$icon_theme" ]; then
+        rm -rf "$icon_theme"
+        log "Removed Aiko icon theme link."
+    fi
+
+    if confirm "Would you like to regenerate icons now?" "y"; then
+        local style_file="$HOME/.config/waybar/style.css"
+        local color="#ff8fbd"
+        if [ -f "$style_file" ]; then
+            local extracted_color
+            extracted_color=$(grep -oP '@waybar_accent:\s*\K#[0-9a-fA-F]{6}' "$style_file" | head -n 1 || true)
+            if [ -n "$extracted_color" ]; then
+                color="$extracted_color"
+            fi
+        fi
+        log "Regenerating icons with accent color $color..."
+        if [ -f "$HOME/.config/waybar/scripts/icon-gen.sh" ]; then
+            env AIKO_ROOT="$HOME/.config/waybar" bash "$HOME/.config/waybar/scripts/icon-gen.sh" "$color"
+            success "Icons regenerated successfully!"
+        else
+            warn "icon-gen.sh not found."
+        fi
+    fi
+    return 0
+}
+
 action_cleanup_backups() {
     cleanup_generated_backups
     return 0
@@ -376,6 +412,7 @@ submenu_maintenance() {
         [3]="🩺  Environment Diagnostics"
         [4]="🧪  Codebase Self-Test"
         [5]="🗑️   Clean Generated Backups"
+        [6]="🧹  Clear Icon Cache"
         [0]="⬅   Back"
     )
     declare -A actions=(
@@ -384,9 +421,10 @@ submenu_maintenance() {
         [3]="action_diagnostics"
         [4]="action_self_test"
         [5]="action_cleanup_backups"
+        [6]="action_clear_icon_cache"
         [0]="menu_back"
     )
-    local order=(1 2 3 4 5 0)
+    local order=(1 2 3 4 5 6 0)
     menu "Maintenance & Diagnostics" labels actions order
 }
 
