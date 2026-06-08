@@ -293,7 +293,17 @@ install_configs() {
     fi
 
     log "${MAGENTA}Installing Assets...${NC}"
-    [ -d "$AIKO_ASSETS" ] && copy_dir_contents "$AIKO_ASSETS" "$waybar_dest/assets"
+    if [ -d "$AIKO_ASSETS" ]; then
+        if [ -f "$waybar_dest/assets/aiko-frame.txt" ]; then
+            # Copy all assets except aiko-frame.txt to preserve client's custom edit
+            while read -r src; do
+                [ "$(basename "$src")" = "aiko-frame.txt" ] && continue
+                copy_file "$src" "$waybar_dest/assets/$(basename "$src")"
+            done < <(find "$AIKO_ASSETS" -mindepth 1 -maxdepth 1)
+        else
+            copy_dir_contents "$AIKO_ASSETS" "$waybar_dest/assets"
+        fi
+    fi
 
     log "${MAGENTA}Installing Hyprland config...${NC}"
     if [ "$INSTALL_HYPR" -eq 1 ] && [ -d "$AIKO_CONFIGS/hypr" ]; then

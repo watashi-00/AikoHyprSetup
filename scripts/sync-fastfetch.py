@@ -111,10 +111,15 @@ def sync_fastfetch():
     
     if source == "auto":
         padding = 2 # Default padding for distro logos
+        data["logo"]["color"]["1"] = color
     else:
         padding = calculate_padding(ascii_path)
+        # Preserve user-configured custom logo color (from --edit-logo)
+        if "color" not in data["logo"]:
+            data["logo"]["color"] = {}
+        if "1" not in data["logo"]["color"]:
+            data["logo"]["color"]["1"] = color
 
-    data["logo"]["color"]["1"] = color
     data["logo"]["padding"]["left"] = padding
     data["logo"]["padding"]["right"] = 0
 
