@@ -85,6 +85,10 @@
             "key": "󰑭",
             "keyColor": "magenta"
         },
-        "break"
+        "break",
+        {
+            "type": "colors",
+            "symbol": "circle"
+        }
     ]
 }
