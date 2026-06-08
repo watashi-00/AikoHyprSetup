@@ -327,49 +327,77 @@ install_configs() {
     mkdir -p "$HOME/.config/kitty" "$HOME/.config/fastfetch"
     [ -d "$AIKO_CONFIGS/kitty" ] && copy_dir_contents "$AIKO_CONFIGS/kitty" "$HOME/.config/kitty"
 
-    local existing_source=""
-    if [ -f "$HOME/.config/fastfetch/config.jsonc" ]; then
-        existing_source=$(python3 -c "
-import json, os, re
-path = os.path.expanduser('~/.config/fastfetch/config.jsonc')
-try:
-    with open(path, 'r') as f:
-        content = f.read()
-    clean_lines = [line for line in content.split('\n') if not re.match(r'^\s*//', line)]
-    clean_content = re.sub(r',\s*}', '}', '\n'.join(clean_lines))
-    clean_content = re.sub(r',\s*\]', ']', clean_content)
-    data = json.loads(clean_content)
-    source = data.get('logo', {}).get('source')
-    if source:
-        print(source)
-except:
-    pass
-" 2>/dev/null)
+    local fastfetch_dest="$HOME/.config/fastfetch/config.jsonc"
+    local temp_client_config="/tmp/fastfetch-client-config.jsonc"
+    rm -f "$temp_client_config"
+
+    # If the client already has a config, copy it to a temporary location before we overwrite it
+    if [ -f "$fastfetch_dest" ]; then
+        cp "$fastfetch_dest" "$temp_client_config"
     fi
 
     [ -d "$AIKO_CONFIGS/fastfetch" ] && copy_dir_contents "$AIKO_CONFIGS/fastfetch" "$HOME/.config/fastfetch"
-    patch_installed_paths "$HOME/.config/fastfetch/config.jsonc"
+    patch_installed_paths "$fastfetch_dest"
 
-    if [ -n "$existing_source" ]; then
+    # If there was an existing client config, merge its settings back into the newly installed config
+    if [ -f "$temp_client_config" ]; then
         python3 -c "
-import json, os, sys, re
-path = os.path.expanduser('~/.config/fastfetch/config.jsonc')
-source = sys.argv[1]
+import json, os, re, sys
+
+def clean_json_content(content):
+    # Remove block comments /* ... */
+    content = re.sub(r'/\*.*?\*/', '', content, flags=re.DOTALL)
+    # Remove single line comments // ...
+    content = re.sub(r'//.*', '', content)
+    # Remove trailing commas before closing braces/brackets
+    content = re.sub(r',\s*([\]}])', r'\1', content)
+    return content.strip()
+
+client_path = sys.argv[1]
+dest_path = sys.argv[2]
+
 try:
-    with open(path, 'r') as f:
-        content = f.read()
-    clean_lines = [line for line in content.split('\n') if not re.match(r'^\s*//', line)]
-    clean_content = re.sub(r',\s*}', '}', '\n'.join(clean_lines))
-    clean_content = re.sub(r',\s*\]', ']', clean_content)
-    data = json.loads(clean_content)
-    if 'logo' not in data:
-        data['logo'] = {}
-    data['logo']['source'] = source
-    with open(path, 'w') as f:
-        json.dump(data, f, indent=4)
-except:
+    with open(client_path, 'r') as f:
+        client_content = f.read()
+    cleaned_client = clean_json_content(client_content)
+    client_data = json.loads(cleaned_client)
+except Exception as e:
+    # If parsing client config failed, exit gracefully
+    sys.exit(0)
+
+try:
+    with open(dest_path, 'r') as f:
+        dest_content = f.read()
+    cleaned_dest = clean_json_content(dest_content)
+    dest_data = json.loads(cleaned_dest)
+except Exception as e:
+    sys.exit(0)
+
+# Merge logo settings (source, type, padding, etc.)
+if 'logo' in client_data:
+    if 'logo' not in dest_data:
+        dest_data['logo'] = {}
+    for k, v in client_data['logo'].items():
+        dest_data['logo'][k] = v
+
+# Merge display settings
+if 'display' in client_data:
+    if 'display' not in dest_data:
+        dest_data['display'] = {}
+    for k, v in client_data['display'].items():
+        dest_data['display'][k] = v
+
+# Merge modules (overwrite entirely to keep custom modules and layout)
+if 'modules' in client_data and client_data['modules']:
+    dest_data['modules'] = client_data['modules']
+
+try:
+    with open(dest_path, 'w') as f:
+        json.dump(dest_data, f, indent=4)
+except Exception as e:
     pass
-" "$existing_source" 2>/dev/null
+" "$temp_client_config" "$fastfetch_dest" 2>/dev/null
+        rm -f "$temp_client_config"
     fi
 
     log "${MAGENTA}Installing Cava config...${NC}"
