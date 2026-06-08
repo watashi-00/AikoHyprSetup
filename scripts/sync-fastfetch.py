@@ -120,7 +120,7 @@ def sync_fastfetch():
 
     # Dynamic palette generation and injection
     palette = generate_palette(color)
-    format_str = "  ".join(f"{{##{c.lstrip('#')}}}■" for c in palette)
+    format_str = " ".join(f"{{##{c.lstrip('#')}}}■" for c in palette)
     if "modules" in data:
         for module in data["modules"]:
             if isinstance(module, dict) and module.get("type") == "custom" and "■" in module.get("format", ""):
