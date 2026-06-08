@@ -377,6 +377,23 @@ except:
     [ -d "$AIKO_CONFIGS/cava" ] && copy_dir_contents "$AIKO_CONFIGS/cava" "$HOME/.config/cava"
     patch_installed_paths "$HOME/.config/cava/config"
 
+    # Auto-detect default audio sink and configure it as the input source for Cava
+    local detected_source=""
+    if command -v pactl >/dev/null 2>&1; then
+        detected_source=$(pactl get-default-sink 2>/dev/null || true)
+    fi
+    if [ -z "$detected_source" ] && command -v wpctl >/dev/null 2>&1; then
+        detected_source=$(wpctl inspect @DEFAULT_AUDIO_SINK@ 2>/dev/null | grep -E 'node\.name' | head -n 1 | awk -F '"' '{print $2}' || true)
+    fi
+    if [ -z "$detected_source" ] && command -v pactl >/dev/null 2>&1; then
+        detected_source=$(pactl info 2>/dev/null | grep "Default Sink" | awk '{print $3}' || true)
+    fi
+
+    if [ -n "$detected_source" ]; then
+        log "Auto-detected default audio sink: $detected_source"
+        sed -i "s#source = auto#source = ${detected_source}.monitor#g" "$HOME/.config/cava/config"
+    fi
+
     log "${MAGENTA}Applying active theme and patching config colors...${NC}"
     local active_theme="pink-anime.css"
     if [ -L "$waybar_dest/style.css" ]; then
