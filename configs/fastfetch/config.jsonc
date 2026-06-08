@@ -87,8 +87,10 @@
         },
         "break",
         {
-            "type": "colors",
-            "symbol": "circle"
+            "type": "custom",
+            "key": " ",
+            "separator": "",
+            "format": "{##ff8fbd}■  {##feb58f}■  {##f4fe8f}■  {##a1fe8f}■  {##8ffed1}■  {##8fd8fe}■  {##998ffe}■  {##ec8ffe}■"
         }
     ]
 }

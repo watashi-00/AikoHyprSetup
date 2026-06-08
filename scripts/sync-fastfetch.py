@@ -3,6 +3,30 @@ import os
 import json
 import re
 import sys
+import colorsys
+
+def hex_to_rgb(hex_str):
+    hex_str = hex_str.lstrip("#")
+    try:
+        return tuple(int(hex_str[i:i+2], 16) for i in (0, 2, 4))
+    except:
+        return (255, 143, 189) # Fallback
+
+def rgb_to_hex(rgb):
+    return "#{:02x}{:02x}{:02x}".format(*(int(c) for c in rgb))
+
+def generate_palette(accent_hex):
+    r, g, b = hex_to_rgb(accent_hex)
+    h, l, s = colorsys.rgb_to_hls(r/255.0, g/255.0, b/255.0)
+    palette = []
+    for i in range(8):
+        hi = (h + i * 0.125) % 1.0
+        # Keep lightness and saturation high/pastel
+        li = max(0.5, min(l, 0.8))
+        si = max(0.6, s)
+        ri, gi, bi = colorsys.hls_to_rgb(hi, li, si)
+        palette.append(rgb_to_hex((ri*255, gi*255, bi*255)))
+    return palette
 
 def get_theme_color(waybar_dir):
     style_path = os.path.join(waybar_dir, "style.css")
@@ -21,6 +45,7 @@ def get_theme_color(waybar_dir):
     except:
         pass
     return default_color
+
 
 def calculate_padding(ascii_path):
     if not os.path.exists(ascii_path):
@@ -93,11 +118,19 @@ def sync_fastfetch():
     data["logo"]["padding"]["left"] = padding
     data["logo"]["padding"]["right"] = 0
 
+    # Dynamic palette generation and injection
+    palette = generate_palette(color)
+    format_str = "  ".join(f"{{##{c.lstrip('#')}}}■" for c in palette)
+    if "modules" in data:
+        for module in data["modules"]:
+            if isinstance(module, dict) and module.get("type") == "custom" and "■" in module.get("format", ""):
+                module["format"] = format_str
+
     # Save Config
     try:
         with open(config_path, 'w') as f:
             json.dump(data, f, indent=4)
-        print(f"[fastfetch-sync] Updated logo padding to {padding} and color to {color}")
+        print(f"[fastfetch-sync] Updated logo padding to {padding}, color to {color} and custom colors palette")
     except Exception as e:
         print(f"Error saving fastfetch config: {e}")
 
