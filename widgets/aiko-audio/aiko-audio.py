@@ -215,14 +215,23 @@ class AikoAudio(Gtk.Window):
         
         # 1. Update installed config
         home_waybar = os.path.expanduser("~/.config/waybar")
+        home_cava = os.path.expanduser("~/.config/cava/config")
         restart_script = os.path.join(home_waybar, "scripts/restart-waybar.sh")
         
         # Patch all jsonc files in ~/.config/waybar recursively
         try:
+            # Waybar configs
             subprocess.run([
                 "find", home_waybar, "-name", "*.jsonc", "-exec", 
                 "sed", "-i", f's/"source":\\s*"[^"]*"/"source": "{source_id}"/g', "{}", "+"
             ], check=True)
+            
+            # Standalone Cava config
+            if os.path.exists(home_cava):
+                # Use a safe delimiter for sed if source_id contains slashes (though unlikely for ID/auto)
+                subprocess.run([
+                    "sed", "-i", f's/^source\\s*=\\s*.*/source = {source_id}/', home_cava
+                ], check=True)
             
             # 2. Restart Waybar
             if os.path.exists(restart_script):
