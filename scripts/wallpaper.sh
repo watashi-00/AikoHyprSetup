@@ -110,7 +110,8 @@ start_mpvpaper() {
     file="$2"
     [ "$monitor" = "ALL" ] && monitor="*"
     if have mpvpaper; then
-        nohup mpvpaper -f -p -o "no-audio --loop-file=inf --hwdec=auto" "$monitor" "$file" >/dev/null 2>&1 &
+        # Added --video-unscaled=no --panscan=1.0 to ensure filling the screen (cropping if aspect ratio differs)
+        nohup mpvpaper -f -p -o "no-audio --loop-file=inf --hwdec=auto --video-unscaled=no --panscan=1.0" "$monitor" "$file" >/dev/null 2>&1 &
     else
         warn "mpvpaper not found."
     fi
@@ -129,7 +130,7 @@ crop_image() {
     choice=$(zenity --list --title="Wallpaper Framing - $monitor_name" \
         --text="How would you like to frame this image?" \
         --column="Option" --column="Description" \
-        "Auto" "Automatic Center-Crop to 16:9 (Fastest)" \
+        "Auto" "Automatic Center-Crop (Detect Resolution)" \
         "Manual" "Open Editor for Manual Crop (gThumb/Swappy)" \
         "Original" "Keep original file (might stretch or have bars)" \
         --width=450 --height=320 2>/dev/null)
@@ -143,14 +144,26 @@ crop_image() {
     mkdir -p "$output_dir"
     local output="$output_dir/cropped_$(date +%s).png"
 
+    # Detect monitor resolution for Auto crop
+    local width=1920
+    local height=1080
+    if have hyprctl && [ "$monitor_name" != "ALL" ]; then
+        local mon_info
+        mon_info=$(hyprctl monitors -j | jq -r ".[] | select(.name == \"$monitor_name\")" 2>/dev/null || echo "")
+        if [ -n "$mon_info" ]; then
+            width=$(echo "$mon_info" | jq -r '.width')
+            height=$(echo "$mon_info" | jq -r '.height')
+        fi
+    fi
+
     if [ "$choice" = "Auto" ]; then
-        log "Applying automatic 16:9 center crop..."
+        log "Applying automatic ${width}x${height} center crop..."
         if have magick; then
-            magick "$input" -resize "1920x1080^" -gravity center -extent 1920x1080 "$output"
+            magick "$input" -resize "${width}x${height}^" -gravity center -extent "${width}x${height}" "$output"
             echo "$output"
             return 0
         elif have convert; then
-            convert "$input" -resize "1920x1080^" -gravity center -extent 1920x1080 "$output"
+            convert "$input" -resize "${width}x${height}^" -gravity center -extent "${width}x${height}" "$output"
             echo "$output"
             return 0
         else
