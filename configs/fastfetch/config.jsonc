@@ -87,8 +87,9 @@
         },
         "break",
         {
-            "type": "custom",
-            "format": "{##ff8fbd}█{##feb58f}█{##f4fe8f}█{##a1fe8f}█{##8ffed1}█{##8fd8fe}█{##998ffe}█{##ec8ffe}█"
+        "type": "custom",
+        "key": " ",
+        "format": "{{#3b2638}}████{{#ff7bb8}}████{{#ff9ccc}}████{{#ffd1e4}}████{{#ff9ccc}}████{{#ff7bb8}}████{{#fff1f7}}████"
         }
     ]
 }
