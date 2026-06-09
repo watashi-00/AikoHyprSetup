@@ -1,5 +1,20 @@
 # AikoHyprSetup
 
+<p align="center">
+  <a href="https://github.com/watashi-00/AikoHyprSetup/tree/traffic">
+    <img src="https://raw.githubusercontent.com/watashi-00/AikoHyprSetup/traffic/views.svg" alt="Views" />
+  </a>
+  <a href="https://github.com/watashi-00/AikoHyprSetup/tree/traffic">
+    <img src="https://raw.githubusercontent.com/watashi-00/AikoHyprSetup/traffic/views-unique.svg" alt="Unique Views" />
+  </a>
+  <a href="https://github.com/watashi-00/AikoHyprSetup/tree/traffic">
+    <img src="https://raw.githubusercontent.com/watashi-00/AikoHyprSetup/traffic/clones.svg" alt="Clones" />
+  </a>
+  <a href="https://github.com/watashi-00/AikoHyprSetup/tree/traffic">
+    <img src="https://raw.githubusercontent.com/watashi-00/AikoHyprSetup/traffic/clones-unique.svg" alt="Unique Clones" />
+  </a>
+</p>
+
 A versatile, highly aesthetic, and fully customizable environment for Hyprland and Waybar. Featuring multiple visual styles, interactive Python widgets, and a modular automation engine for a seamless desktop experience.
 
 ## 📦 Pre-built Artifacts (GitHub Releases)

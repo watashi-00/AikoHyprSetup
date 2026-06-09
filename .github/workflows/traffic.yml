@@ -1,0 +1,51 @@
+name: GitHub Traffic Badges
+
+on:
+  schedule:
+    - cron: '0 3 * * *' # Rodará todos os dias às 03:00 UTC
+  workflow_dispatch: # Permite rodar manualmente a qualquer momento
+
+jobs:
+  update-badges:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Views Badge
+        uses: albertoarena/github-traffic-badge@v1
+        with:
+          token: ${{ secrets.TRAFFIC_TOKEN }}
+          metric: views
+          output: views.svg
+          branch: traffic
+          color: blue
+
+      - name: Clones Badge
+        uses: albertoarena/github-traffic-badge@v1
+        with:
+          token: ${{ secrets.TRAFFIC_TOKEN }}
+          metric: clones
+          output: clones.svg
+          branch: traffic
+          color: green
+
+      - name: Unique Views Badge
+        uses: albertoarena/github-traffic-badge@v1
+        with:
+          token: ${{ secrets.TRAFFIC_TOKEN }}
+          metric: views-unique
+          output: views-unique.svg
+          branch: traffic
+          color: purple
+
+      - name: Unique Clones Badge
+        uses: albertoarena/github-traffic-badge@v1
+        with:
+          token: ${{ secrets.TRAFFIC_TOKEN }}
+          metric: clones-unique
+          output: clones-unique.svg
+          branch: traffic
+          color: orange
