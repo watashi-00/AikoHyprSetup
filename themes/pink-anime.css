@@ -198,6 +198,7 @@ window#waybar.left {
     padding: 0 4px;
     font-size: 10px;
     letter-spacing: 0;
+    height: 60px;
 }
 
 #custom-spotify-prev, #custom-spotify-play, #custom-spotify-next {
