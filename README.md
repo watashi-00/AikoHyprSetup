@@ -2,16 +2,16 @@
 
 <p align="center">
   <a href="https://github.com/watashi-00/AikoHyprSetup/tree/traffic">
-    <img src="https://raw.githubusercontent.com/watashi-00/AikoHyprSetup/traffic/views.svg" alt="Views" />
+    <img src="https://raw.githubusercontent.com/watashi-00/AikoHyprSetup/traffic/views.svg?v=1" alt="Views" />
   </a>
   <a href="https://github.com/watashi-00/AikoHyprSetup/tree/traffic">
-    <img src="https://raw.githubusercontent.com/watashi-00/AikoHyprSetup/traffic/views-unique.svg" alt="Unique Views" />
+    <img src="https://raw.githubusercontent.com/watashi-00/AikoHyprSetup/traffic/views-unique.svg?v=1" alt="Unique Views" />
   </a>
   <a href="https://github.com/watashi-00/AikoHyprSetup/tree/traffic">
-    <img src="https://raw.githubusercontent.com/watashi-00/AikoHyprSetup/traffic/clones.svg" alt="Clones" />
+    <img src="https://raw.githubusercontent.com/watashi-00/AikoHyprSetup/traffic/clones.svg?v=1" alt="Clones" />
   </a>
   <a href="https://github.com/watashi-00/AikoHyprSetup/tree/traffic">
-    <img src="https://raw.githubusercontent.com/watashi-00/AikoHyprSetup/traffic/clones-unique.svg" alt="Unique Clones" />
+    <img src="https://raw.githubusercontent.com/watashi-00/AikoHyprSetup/traffic/clones-unique.svg?v=1" alt="Unique Clones" />
   </a>
 </p>
 
