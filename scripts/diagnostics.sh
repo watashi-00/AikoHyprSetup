@@ -54,7 +54,7 @@ done
 
 # --- 2. Python Environment ---
 log "Checking Python environment..."
-py_modules=(gi psutil json urllib.request threading)
+py_modules=(gi psutil json urllib.request threading cairo)
 for m in "${py_modules[@]}"; do
     if python3 -c "import $m" >/dev/null 2>&1; then
         success "Python module '$m' OK"
