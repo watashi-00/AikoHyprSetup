@@ -213,34 +213,53 @@ class AikoAudio(Gtk.Window):
         if not source_id:
             source_id = "auto"
         
-        # 1. Update installed config
         home_waybar = os.path.expanduser("~/.config/waybar")
         home_cava = os.path.expanduser("~/.config/cava/config")
         restart_script = os.path.join(home_waybar, "scripts/restart-waybar.sh")
         
-        # Patch all jsonc files in ~/.config/waybar recursively
         try:
-            # Waybar configs
-            subprocess.run([
-                "find", home_waybar, "-name", "*.jsonc", "-exec", 
-                "sed", "-i", f's/"source":\\s*"[^"]*"/"source": "{source_id}"/g', "{}", "+"
-            ], check=True)
+            # 1. Update Waybar configs using safe native Python regex
+            if os.path.exists(home_waybar):
+                for root, dirs, files in os.walk(home_waybar):
+                    for file in files:
+                        if file.endswith(".jsonc"):
+                            filepath = os.path.join(root, file)
+                            try:
+                                with open(filepath, 'r') as f:
+                                    content = f.read()
+                                
+                                # Replace only the value inside "source": "..."
+                                new_content = re.sub(r'("source":\s*)"[^"]*"', r'\g<1>"' + source_id + '"', content)
+                                
+                                if new_content != content:
+                                    with open(filepath, 'w') as f:
+                                        f.write(new_content)
+                            except:
+                                pass
             
-            # Standalone Cava config
+            # 2. Update Standalone Cava config using safe native Python regex
             if os.path.exists(home_cava):
-                # Use a safe delimiter for sed if source_id contains slashes (though unlikely for ID/auto)
-                subprocess.run([
-                    "sed", "-i", f's/^source\\s*=\\s*.*/source = {source_id}/', home_cava
-                ], check=True)
+                try:
+                    with open(home_cava, 'r') as f:
+                        content = f.read()
+                    
+                    # Replace only the active line starting with source =
+                    new_content = re.sub(r'(?m)^source\s*=\s*.*', f'source = {source_id}', content)
+                    
+                    if new_content != content:
+                        with open(home_cava, 'w') as f:
+                            f.write(new_content)
+                except:
+                    pass
             
-            # 2. Restart Waybar
+            # 3. Restart Waybar
             if os.path.exists(restart_script):
                 subprocess.Popen(["bash", restart_script])
-                self.show_message_dialog(Gtk.MessageType.INFO, "Success", f"Cava source updated to '{source_id}' and Waybar restarted!")
+                self.show_message_dialog(Gtk.MessageType.INFO, "Success", f"Cava source safely updated to '{source_id}' and Waybar restarted!")
             else:
-                self.show_message_dialog(Gtk.MessageType.WARNING, "Partial Success", f"Config updated to '{source_id}', but restart script not found.")
+                self.show_message_dialog(Gtk.MessageType.WARNING, "Partial Success", f"Config safely updated to '{source_id}', but restart script not found.")
         except Exception as e:
-            self.show_message_dialog(Gtk.MessageType.ERROR, "Error", f"Failed to update config: {e}")
+            self.show_message_dialog(Gtk.MessageType.ERROR, "Error", f"Failed to update config safely: {e}")
 
     def update_volumes(self):
         self.updating_volume = True
