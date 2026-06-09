@@ -21,6 +21,7 @@ jobs:
           metric: views
           output: views.svg
           branch: traffic
+          label: Views
           color: blue
 
       - name: Clones Badge
@@ -30,6 +31,7 @@ jobs:
           metric: clones
           output: clones.svg
           branch: traffic
+          label: Clones
           color: green
 
       - name: Unique Views Badge
@@ -39,6 +41,7 @@ jobs:
           metric: views-unique
           output: views-unique.svg
           branch: traffic
+          label: Unique Views
           color: purple
 
       - name: Unique Clones Badge
@@ -48,4 +51,6 @@ jobs:
           metric: clones-unique
           output: clones-unique.svg
           branch: traffic
+          label: Unique Clones
           color: orange
+
