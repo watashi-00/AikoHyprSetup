@@ -195,10 +195,9 @@ window#waybar.left {
 #cava {
     color: #ff86b9;
     margin-left: 40px;
-    padding: 0 4px;
+    padding: 0 12px;
     font-size: 10px;
     letter-spacing: 0;
-    height: 60px;
 }
 
 #custom-spotify-prev, #custom-spotify-play, #custom-spotify-next {
