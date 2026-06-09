@@ -22,7 +22,7 @@ class AikoAudio(Gtk.Window):
         self.set_type_hint(Gdk.WindowTypeHint.DIALOG)
         self.set_decorated(False)
         self.set_resizable(False)
-        self.set_default_size(360, 420)
+        self.set_default_size(360, 560)
         self.set_keep_above(False)  # Ensure focus transitions work cleanly
         self.set_position(Gtk.WindowPosition.CENTER)
 
@@ -47,7 +47,7 @@ class AikoAudio(Gtk.Window):
         header_hbox.set_margin_end(10)
         self.styled_container.pack_start(header_hbox, False, False, 0)
 
-        title_label = Gtk.Label(label="Audio & Headphone Settings")
+        title_label = Gtk.Label(label="Audio & Visualizer Settings")
         title_label.set_name("header-title")
         header_hbox.pack_start(title_label, False, False, 0)
 
@@ -104,7 +104,39 @@ class AikoAudio(Gtk.Window):
         self.reset_btn.connect("clicked", self.on_reset_clicked)
         balance_frame.pack_start(self.reset_btn, False, False, 0)
 
-        # Section 2: Headphone Fix/Driver
+        # Section 2: Cava Source ID
+        cava_frame = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
+        cava_frame.set_name("settings-section")
+        cava_frame.set_margin_start(10)
+        cava_frame.set_margin_end(10)
+        self.styled_container.pack_start(cava_frame, False, False, 0)
+
+        cava_title = Gtk.Label(label="Cava Visualizer Source")
+        cava_title.set_name("section-title")
+        cava_title.set_xalign(0.0)
+        cava_title.set_yalign(0.5)
+        cava_frame.pack_start(cava_title, False, False, 0)
+
+        cava_desc = Gtk.Label(label="If the visualizer is using the wrong audio (e.g. mic or headset), enter a fixed ID or 'auto'.")
+        cava_desc.set_line_wrap(True)
+        cava_desc.set_name("section-desc")
+        cava_desc.set_xalign(0.0)
+        cava_desc.set_yalign(0.5)
+        cava_frame.pack_start(cava_desc, False, False, 0)
+
+        cava_hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+        self.cava_entry = Gtk.Entry()
+        self.cava_entry.set_placeholder_text("e.g. 56 or auto")
+        self.cava_entry.set_text(self.get_current_cava_source())
+        cava_hbox.pack_start(self.cava_entry, True, True, 0)
+
+        self.cava_apply_btn = Gtk.Button(label="Apply")
+        self.cava_apply_btn.set_name("apply-button")
+        self.cava_apply_btn.connect("clicked", self.on_apply_cava_clicked)
+        cava_hbox.pack_start(self.cava_apply_btn, False, False, 0)
+        cava_frame.pack_start(cava_hbox, False, False, 0)
+
+        # Section 3: Headphone Fix/Driver
         driver_frame = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
         driver_frame.set_name("settings-section")
         driver_frame.set_margin_start(10)
@@ -157,6 +189,49 @@ class AikoAudio(Gtk.Window):
             self.set_visual(visual)
 
         self.show_all()
+
+    def get_current_cava_source(self):
+        # Look in the active layout first
+        active_config = os.path.expanduser("~/.config/waybar/config.jsonc")
+        if not os.path.exists(active_config):
+            # Fallback to a common location in the repo structure if running locally
+            active_config = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "waybar/layouts/default/config.jsonc")
+
+        if os.path.exists(active_config):
+            try:
+                with open(active_config, 'r') as f:
+                    content = f.read()
+                    match = re.search(r'"source":\s*"([^"]+)"', content)
+                    if match:
+                        return match.group(1)
+            except:
+                pass
+        return "auto"
+
+    def on_apply_cava_clicked(self, btn):
+        source_id = self.cava_entry.get_text().strip()
+        if not source_id:
+            source_id = "auto"
+        
+        # 1. Update installed config
+        home_waybar = os.path.expanduser("~/.config/waybar")
+        restart_script = os.path.join(home_waybar, "scripts/restart-waybar.sh")
+        
+        # Patch all jsonc files in ~/.config/waybar recursively
+        try:
+            subprocess.run([
+                "find", home_waybar, "-name", "*.jsonc", "-exec", 
+                "sed", "-i", f's/"source":\\s*"[^"]*"/"source": "{source_id}"/g', "{}", "+"
+            ], check=True)
+            
+            # 2. Restart Waybar
+            if os.path.exists(restart_script):
+                subprocess.Popen(["bash", restart_script])
+                self.show_message_dialog(Gtk.MessageType.INFO, "Success", f"Cava source updated to '{source_id}' and Waybar restarted!")
+            else:
+                self.show_message_dialog(Gtk.MessageType.WARNING, "Partial Success", f"Config updated to '{source_id}', but restart script not found.")
+        except Exception as e:
+            self.show_message_dialog(Gtk.MessageType.ERROR, "Error", f"Failed to update config: {e}")
 
     def update_volumes(self):
         self.updating_volume = True
