@@ -210,7 +210,7 @@ class AikoAudio(Gtk.Window):
 
     def apply_volumes(self, left, right):
         try:
-            subprocess.run(["pactl", "set-sink-volume", "@DEFAULT_SINK@", f"{left}%", f"{right}%"], check=True)
+            subprocess.run(["pactl", f"set-sink-volume", "@DEFAULT_SINK@", f"{left}%", f"{right}%"], check=True)
         except Exception as e:
             print(f"Error setting volumes: {e}")
 
