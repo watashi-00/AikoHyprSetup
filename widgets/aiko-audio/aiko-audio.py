@@ -217,6 +217,20 @@ class AikoAudio(Gtk.Window):
         home_cava = os.path.expanduser("~/.config/cava/config")
         restart_script = os.path.join(home_waybar, "scripts/restart-waybar.sh")
         
+        # Standard CAVA defaults for Waybar
+        cava_defaults = {
+            "framerate": 60,
+            "autosens": 0,
+            "sensitivity": 1.5,
+            "bars": 16,
+            "lower_cutoff_freq": 50,
+            "higher_cutoff_freq": 10000,
+            "method": "pipewire",
+            "stereo": "true",
+            "bar_delimiter": 0,
+            "noise_reduction": 0.2
+        }
+        
         try:
             # 1. Update Waybar configs using safe native Python regex
             if os.path.exists(home_waybar):
@@ -228,8 +242,30 @@ class AikoAudio(Gtk.Window):
                                 with open(filepath, 'r') as f:
                                     content = f.read()
                                 
-                                # Replace only the value inside "source": "..."
-                                new_content = re.sub(r'("source":\s*)"[^"]*"', r'\g<1>"' + source_id + '"', content)
+                                new_content = content
+                                
+                                # Check if "cava" block exists
+                                if '"cava":' in new_content:
+                                    # 1. Update/Inject essential tags
+                                    for key, value in cava_defaults.items():
+                                        key_pattern = f'"{key}":'
+                                        if key_pattern not in new_content:
+                                            # Inject missing key after the "cava": { line
+                                            val_str = str(value).lower() if isinstance(value, bool) else str(value)
+                                            if isinstance(value, str) and value not in ["true", "false"]:
+                                                val_str = f'"{value}"'
+                                                
+                                            new_content = re.sub(r'("cava":\s*\{)', r'\1\n        ' + f'"{key}": {val_str},', new_content)
+                                        else:
+                                            # If key exists, ensure bars is always 16
+                                            if key == "bars":
+                                                new_content = re.sub(r'("bars":\s*)\d+', r'\1 16', new_content)
+                                    
+                                    # 2. Ensure "source" exists and is updated with the user ID
+                                    if '"source":' not in new_content:
+                                        new_content = re.sub(r'("cava":\s*\{)', r'\1\n        "source": "' + source_id + '",', new_content)
+                                    else:
+                                        new_content = re.sub(r'("source":\s*)"[^"]*"', r'\g<1>"' + source_id + '"', new_content)
                                 
                                 if new_content != content:
                                     with open(filepath, 'w') as f:
