@@ -245,6 +245,8 @@ class AikoAudio(Gtk.Window):
                     
                     # Replace only the active line starting with source =
                     new_content = re.sub(r'(?m)^source\s*=\s*.*', f'source = {source_id}', content)
+                    # Also ensure bars = 16 to prevent overflow if it was set to 0 or commented (supports # or ; as comment)
+                    new_content = re.sub(r'(?m)^[;#]?\s*bars\s*=\s*.*', 'bars = 16', new_content)
                     
                     if new_content != content:
                         with open(home_cava, 'w') as f:
